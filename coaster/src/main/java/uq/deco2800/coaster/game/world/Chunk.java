@@ -131,7 +131,23 @@ public class Chunk {
 		TileInfo currentTileType = getBiomeTileInfo(this.biomeType);
 		BiomeType leftChunk = getBiomeTypeOfX(xPos - MIDDLE_CHUNK_POS - CHUNK_WIDTH);
 		TileInfo leftTileType = getBiomeTileInfo(leftChunk); //previous chunk
-
+		generateFlat(0, CHUNK_WIDTH, CHUNK_HEIGHT / 2, TileInfo.get(Tiles.DIRT), true);
+		if (true) {
+			return;
+		}
+		for (int x = 0; x < CHUNK_WIDTH; x++) {
+			for (int y = 0; y < CHUNK_HEIGHT; y++) {
+				if (y % 10 == 0) {
+					blocks.get(x, y).setTileType(TileInfo.get(Tiles.DIRT));
+				}
+				if (x % 10 == 0) {
+					fillVerticalSpace(x, 0, CHUNK_HEIGHT, TileInfo.get(Tiles.DIRT));
+				}
+			}
+		}
+		if (true) {
+			return;
+		}
 		for (int x = 0; x < CHUNK_WIDTH; x++) {
 			// gets the top block placement
 			this.topBlocks[x] = getTopBlockFromWaveForms(xPos + x, GROUND_LEVEL, 0, GROUND_LEVEL_LIMIT,

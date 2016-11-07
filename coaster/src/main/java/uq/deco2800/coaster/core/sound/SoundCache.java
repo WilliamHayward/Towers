@@ -279,6 +279,9 @@ public class SoundCache {
 	 * @param identifier Play the sound that has this unique identifier.
 	 */
 	public static void play(String identifier) {
+		if (true) {
+			return;
+		}
 		if (effectsCollection.containsKey(identifier)) {
 			if (muted) {
 				effectsCollection.get(identifier).play(0.0);

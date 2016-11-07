@@ -44,7 +44,6 @@ public class Engine extends AnimationTimer {
 	private boolean isMultiplayer = false;
 	private boolean passiveInfo = false;
 
-
 	private String currentMenuName;
 
 	private PassiveInfoPanelController passiveController;
@@ -61,18 +60,6 @@ public class Engine extends AnimationTimer {
 	 */
 	public Renderer getRenderer() {
 		return renderer;
-	}
-
-	public void setMultiplayer(boolean status) {
-		if (status) {
-			isMultiplayer = true;
-		} else {
-			isMultiplayer = false;
-		}
-	}
-
-	public boolean getMultiplayer() {
-		return isMultiplayer;
 	}
 
 	public void setSkillTreeController(SkillTreeController controller) {
@@ -391,7 +378,8 @@ public class Engine extends AnimationTimer {
 			Toaster.toast("Check points auto loading enabled");
 		}
 
-		SoundCache.getInstance().tick(ms);
+		//SoundCache.getInstance();
+		//SoundCache.tick(ms);
 
 		checkInputs();
 		// Prevents game from running will paused on in a menu

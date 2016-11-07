@@ -671,9 +671,9 @@ public class World {
 			processEntities(ms);
 			addEntities();
 			removeEntities();
-			if (this.lightningEnabled) {
-				processLightning();
-			}
+			//if (this.lightningEnabled) {
+				//processLightning();
+			//}
 		}
 	}
 	
@@ -811,7 +811,8 @@ public class World {
 		}
 
 		loadAroundPlayer(player);
-		npcGenerator(player, randomGen.nextInt(100), true, 0, null);
+		//TODO: This is where npc's generate
+		//npcGenerator(player, randomGen.nextInt(100), true, 0, null);
 		setGameOver(player.getCurrentState() == EntityState.DEAD);
 	}
 
