@@ -5,7 +5,6 @@ import javafx.scene.layout.VBox;
 import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Window;
-import uq.deco2800.coaster.graphics.screens.GameScreen;
 
 public class PauseMenuController {
 

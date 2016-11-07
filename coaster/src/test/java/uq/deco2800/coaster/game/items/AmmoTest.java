@@ -12,8 +12,6 @@ import uq.deco2800.coaster.game.world.WorldTiles;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-
 /**
  * Created by Hayley on 21/10/2016.
  */

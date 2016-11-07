@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uq.deco2800.coaster.TestHelper;
-import uq.deco2800.coaster.game.entities.MobilityTest;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;

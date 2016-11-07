@@ -4,7 +4,6 @@ import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.EntityState;
 import uq.deco2800.coaster.game.entities.LandTrap;
-import uq.deco2800.coaster.game.entities.Landmine;
 import uq.deco2800.coaster.game.entities.npcs.npcactions.DefaultMove;
 import uq.deco2800.coaster.game.entities.npcs.npcactions.Jump;
 import uq.deco2800.coaster.game.items.Item;

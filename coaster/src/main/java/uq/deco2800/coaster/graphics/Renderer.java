@@ -77,9 +77,7 @@ public class Renderer {
 
 	public void renderMulti(long ms) {
 		if (World.getInstance().getPlayerEntities().size() > 0) {
-			//todo this
-//			Entity playerEntity = World.getInstance().getFirstPlayer();
-			WorldTiles tiles = World.getInstance().getTiles();
+			World.getInstance().getTiles();
 			//Chunk.CHUNK_WIDTH
 			//100
 			viewport.centerOnY(110);//tiles.getHeight() / 2);

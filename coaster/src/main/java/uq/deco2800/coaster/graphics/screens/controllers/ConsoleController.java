@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import uq.deco2800.coaster.game.debug.CommandDispatch;
-import uq.deco2800.coaster.graphics.Window;
 
 /**
  * The controller for the debug/developer console.

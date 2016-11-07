@@ -18,7 +18,6 @@ import uq.deco2800.coaster.game.entities.particles.Particle;
 import uq.deco2800.coaster.game.entities.particles.ParticleSource;
 import uq.deco2800.coaster.game.entities.weapons.CritBullet;
 import uq.deco2800.coaster.game.entities.weapons.GenericBullet;
-import uq.deco2800.coaster.game.entities.weapons.GrenadeBullet;
 import uq.deco2800.coaster.game.entities.weapons.SuperBullet;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;

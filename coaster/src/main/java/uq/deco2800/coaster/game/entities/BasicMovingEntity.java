@@ -2,7 +2,6 @@ package uq.deco2800.coaster.game.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import uq.deco2800.coaster.game.entities.particles.Particle;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.graphics.Viewport;
 

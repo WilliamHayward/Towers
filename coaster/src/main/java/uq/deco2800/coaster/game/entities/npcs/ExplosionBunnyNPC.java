@@ -10,8 +10,6 @@ import uq.deco2800.coaster.graphics.sprites.SpriteList;
  * Created by adam on 10/22/16.
  */
 public class ExplosionBunnyNPC extends MeleeEnemyNPC {
-	private int fadeTimer;
-	private boolean exploded;
 	public ExplosionBunnyNPC(){
 		super();
 		moveSpeedHor = 15;

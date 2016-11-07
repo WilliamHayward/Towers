@@ -54,7 +54,7 @@ public class MountTest {
 	public void testFly() {
 		initialise();
 		Mount mount = new Mount();
-		Player player = new Player();
+		new Player();
 		mount.fly(true, false, false, false);
 		assertTrue(mount.getVelX() < 0);
 		mount.fly(false, true, false, false);
@@ -69,7 +69,7 @@ public class MountTest {
 	public void testSpawning() {
 		initialise();
 		Mount mount = new Mount();
-		Player player = new Player();
+		new Player();
 		mount.fly(true, false, false, false);
 		assertTrue(mount.getVelX() < 0);
 		mount.fly(false, true, false, false);

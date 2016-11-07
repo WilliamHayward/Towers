@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 import org.junit.Test;
@@ -436,7 +435,6 @@ public class WorldTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testInvalidWorldTiles() {
 		init();
-		int[] topBlocks = { 0 };
 		new WorldTiles(17, Chunk.CHUNK_HEIGHT, Chunk.CHUNK_WIDTH);
 	}
 

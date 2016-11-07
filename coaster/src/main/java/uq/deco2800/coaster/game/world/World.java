@@ -13,12 +13,10 @@ import uq.deco2800.coaster.game.entities.ItemEntity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.*;
 import uq.deco2800.coaster.game.entities.npcs.mounts.Mount;
-import uq.deco2800.coaster.game.entities.*;
 import uq.deco2800.coaster.game.entities.npcs.companions.CompanionNPC;
 import uq.deco2800.coaster.game.entities.puzzle.RoomDoor;
 import uq.deco2800.coaster.game.entities.puzzle.TerrainEntity;
 import uq.deco2800.coaster.game.entities.puzzle.Totem;
-import uq.deco2800.coaster.game.entities.weapons.GenericBullet;
 import uq.deco2800.coaster.game.items.ItemRegistry;
 import uq.deco2800.coaster.game.mechanics.Difficulty;
 import uq.deco2800.coaster.game.preservation.ExportableEntity;
@@ -667,7 +665,6 @@ public class World {
 	 * and calls tick on them as well.
 	 */
 	public void gameLoop(long ms) {
-
 		// converts to frames per second
 		framesPerSecond = ms == 0 ? Long.MAX_VALUE : 1000 / ms;
 		if (!isGameOver()) {
@@ -679,42 +676,7 @@ public class World {
 			}
 		}
 	}
-
-
-	public void gameLoopMulti(long ms) {
-		framesPerSecond = ms == 0 ? Long.MAX_VALUE : 1000 / ms;
-		if (!isGameOver()) {
-			processEntitiesMulti(ms);
-			addEntitiesMulti();
-			removeEntities();
-			if (this.lightningEnabled) {
-				processLightning();
-			}
-
-		}
-	}
-
-	private void addEntitiesMulti() {
-		for (Entity entity : newEntities) {
-			entity.setWorld(this);
-			if (entity instanceof PlayerMultiDummy) {
-				logger.info("Adding dummy");
-				// playerEntities.add((PlayerMultiDummy) entity);
-				allEntities.add(entity);
-			} else if (entity instanceof PlayerMulti) {
-				logger.info("Adding Multi");
-				playerEntities.add((PlayerMulti) entity);
-				allEntities.add(entity);
-			} else if (entity instanceof GenericBullet) {
-				allEntities.add(entity);
-			} else {
-				newEntities.clear();
-				throw new IllegalArgumentException("cannot add non PlayerMulti or GenericBullet during multiplayer");
-			}
-		}
-		newEntities.clear();
-	}
-
+	
 	/**
 	 * This method is used to set lightning on and off
 	 */
@@ -779,9 +741,7 @@ public class World {
 	private void addEntities() {
 		for (Entity entity : newEntities) {
 			allEntities.add(entity);
-			if (entity instanceof PlayerMulti) {
-				playerEntities.add((PlayerMulti) entity);
-			} else if (entity instanceof Player) {
+			if (entity instanceof Player) {
 				playerEntities.add((Player) entity);
 			} else if (entity instanceof BaseNPC) {
 				npcEntities.add(entity);
@@ -807,9 +767,7 @@ public class World {
 	private void removeEntities() {
 		for (Entity entity : deleteEntities) {
 			allEntities.remove(entity);
-			if (entity instanceof PlayerMulti) {
-				playerEntities.remove(entity);
-			} else if (entity instanceof Player) {
+			if (entity instanceof Player) {
 				playerEntities.remove(entity);
 			} else if (entity instanceof BaseNPC) {
 				npcEntities.remove(entity);
@@ -827,26 +785,6 @@ public class World {
 		}
 		deleteEntities.clear();
 	}
-
-	private void processEntitiesMulti(long ms) {
-		for (Player p : playerEntities) {
-			if (p instanceof PlayerMulti) {
-				//logger.info("PlayerMulti loop");
-				((PlayerMulti) p).entityLoop(ms);
-			} else {
-				logger.error("Player in multiplayer that isn't of right class " + p.getClass().toGenericString());
-			}
-		}
-		for (Entity entity : allEntities) {
-			if (entity instanceof GenericBullet) {
-				entity.entityLoop(ms);
-			} else if (entity instanceof PlayerMultiDummy) {
-				((PlayerMultiDummy) entity).entityLoop(ms);
-			}
-		}
-
-	}
-
 
 	/**
 	 * Controls flow of the game, such as: make entities move generates terrain

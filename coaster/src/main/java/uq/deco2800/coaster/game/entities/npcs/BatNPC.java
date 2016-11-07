@@ -1,6 +1,5 @@
 package uq.deco2800.coaster.game.entities.npcs;
 
-import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.items.ItemDrop;
 import uq.deco2800.coaster.game.items.ItemRegistry;
 import uq.deco2800.coaster.game.entities.Entity;

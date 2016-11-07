@@ -81,8 +81,6 @@ public class SkillTreeController {
 	private int nukeLevelCounter = 0;
 	private int highnoonLevelCounter = 0;
 	private int sniperShotLevelCounter = 0;
-	private int damageBoostLevel = 0;
-	private int healingLevel = 0;
 	private int indexNumber = 0;
 	private int deathBlossomIndex = 0;
 	private int invincibleIndex = 0;
@@ -422,7 +420,6 @@ public class SkillTreeController {
 				}
 			}
 		} else if (selectedSkill == "Damage boost") {
-			damageBoostLevel++;
 			int skillPointCost = 0;
 			for (Passive p: allSkills) {
 				if (p.getName().equals("Damage boost")) {

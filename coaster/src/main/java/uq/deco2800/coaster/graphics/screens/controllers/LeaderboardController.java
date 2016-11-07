@@ -6,8 +6,6 @@ package uq.deco2800.coaster.graphics.screens.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,14 +17,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -192,11 +188,10 @@ public class LeaderboardController {
 		tabs.setVisible(true);
 		tabs.setManaged(true);
 
-		// Update with initial grid if removed 
-		String experienceGridId = experienceGrid.getId();
-		String killsGridId = killsGrid.getId();
-		String networthGridId = networthGrid.getId();
-		String timeGridId = timeGrid.getId();
+		experienceGrid.getId();
+		killsGrid.getId();
+		networthGrid.getId();
+		timeGrid.getId();
 		
 		// Remove any residual elements. 
 		errorPane.getChildren().removeAll(errorPane.getChildren());
@@ -235,11 +230,8 @@ public class LeaderboardController {
 			// Update experience scores 
 			this.experienceScores = updatedExperienceScores;
 			
-			// Clear previous pane scores
-			int currentIndex = 0;
 			for (Node node : experienceGrid.getChildren()) {
 				if (node instanceof GridPane) {
-					GridPane pane = (GridPane) node;
 					if (GridPane.getRowIndex(rank) != 0) {
 						experienceGrid.getChildren().remove(node);
 					}
@@ -258,11 +250,8 @@ public class LeaderboardController {
 			// Update experience scores 
 			this.killsScores = updatedKillsScores;
 			
-			// Clear previous pane scores
-			int currentIndex = 0;
 			for (Node node : killsGrid.getChildren()) {
 				if (node instanceof GridPane) {
-					GridPane pane = (GridPane) node;
 					if (GridPane.getRowIndex(rank) != 0) {
 						killsGrid.getChildren().remove(node);
 					}
@@ -280,11 +269,8 @@ public class LeaderboardController {
 			// Update experience scores 
 			this.networthScores = updatedNetworthScores;
 			
-			// Clear previous pane scores
-			int currentIndex = 0;
 			for (Node node : networthGrid.getChildren()) {
 				if (node instanceof GridPane) {
-					GridPane pane = (GridPane) node;
 					if (GridPane.getRowIndex(rank) != 0) {
 						networthGrid.getChildren().remove(node);
 					}
@@ -302,11 +288,8 @@ public class LeaderboardController {
 			// Update experience scores 
 			this.timeScores = updatedTimeScores;
 			
-			// Clear previous pane scores
-			int currentIndex = 0;
 			for (Node node : timeGrid.getChildren()) {
 				if (node instanceof GridPane) {
-					GridPane pane = (GridPane) node;
 					if (GridPane.getRowIndex(rank) != 0) {
 						timeGrid.getChildren().remove(node);
 					}

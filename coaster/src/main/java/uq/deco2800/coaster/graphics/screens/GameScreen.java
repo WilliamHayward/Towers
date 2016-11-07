@@ -979,8 +979,8 @@ public class GameScreen extends Screen {
 		gc.setFill(new Color(1, 0, 0, 1));
 		new Sprite(SpriteList.DEATH_BLOSSOM);
 		new Sprite(SpriteList.HIGH_NOON);
-		Sprite splitShot = new Sprite(SpriteList.SPLIT_SHOT);
-		Sprite timeLock = new Sprite(SpriteList.TIME_LOCK);
+		new Sprite(SpriteList.SPLIT_SHOT);
+		new Sprite(SpriteList.TIME_LOCK);
 		double qCooldown = ((Player) entity).getCooldown(0);
 		double eCooldown = ((Player) entity).getCooldown(1);
 		double rCooldown = ((Player) entity).getCooldown(2);

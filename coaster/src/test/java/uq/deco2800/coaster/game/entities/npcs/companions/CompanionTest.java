@@ -85,8 +85,8 @@ public class CompanionTest {
 		world.addEntity(player);
 		world.addEntity(testCompanion);
 
-		Player currentTarget = testCompanion.determinePriorityTarget();
-		assert (currentTarget = player) != null;
+		testCompanion.determinePriorityTarget();
+		assert (player) != null;
 
 	}
 

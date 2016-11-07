@@ -4,7 +4,6 @@ import uq.deco2800.coaster.core.input.ControlsKeyMap;
 import uq.deco2800.coaster.core.input.GameAction;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 
 /**
  * This scenario ends the tutorial

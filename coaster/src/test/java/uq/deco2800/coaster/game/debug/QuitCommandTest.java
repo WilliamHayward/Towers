@@ -1,15 +1,11 @@
 package uq.deco2800.coaster.game.debug;
 
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.world.World;
-
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import uq.deco2800.coaster.TestHelper;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 
 /**

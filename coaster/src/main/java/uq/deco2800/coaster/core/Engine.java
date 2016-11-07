@@ -8,8 +8,6 @@ import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.PlayerMulti;
-import uq.deco2800.coaster.game.entities.PlayerMultiDummy;
 import uq.deco2800.coaster.game.entities.npcs.*;
 import uq.deco2800.coaster.game.entities.npcs.mounts.*;
 import uq.deco2800.coaster.game.entities.puzzle.Lever;
@@ -53,8 +51,6 @@ public class Engine extends AnimationTimer {
 	private SkillTreeController skillTreeController;
 
 	private boolean isGameOver;
-
-	private boolean multiplayer;
 
 	public void setGraphicsOutput(Renderer renderer) {
 		this.renderer = renderer;
@@ -142,10 +138,6 @@ public class Engine extends AnimationTimer {
 	 * Respond to key presses, check game over, and render
 	 */
 	public void handle(long now) {
-		if (multiplayer) {
-			handleMulti(now);
-			return;
-		}
 		// Don't do anything if the game is currently over, all the user can do
 		// is press the button.
 		{
@@ -412,85 +404,7 @@ public class Engine extends AnimationTimer {
 		lastTime = thisTime;
 		checkUi();
 	}
-
-	public void handleMulti(long now) {
-		World world = World.getInstance();
-		// Don't do anything if the game is currently over, all the user can do
-		// is press the button.
-		if (isGameOver) {
-			return;
-		} else if (world.isGameOver()) {
-			inMenu = true;
-			isGameOver = true;
-			renderer.toggleScreen("Game Over");
-		}
-		Multiplayer.tickReceive();
-		addNewPlayerTick(world);
-		long thisTime = System.currentTimeMillis();
-		long ms = thisTime - lastTime;
-		soundTick(ms);
-		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
-			renderer.toggleScreen("Debug Console");
-		}
-
-		checkInputs();
-		renderer.renderMulti(ms);
-		if (!isPaused && !inMenu) {
-			world.gameLoopMulti(ms);
-		}
-
-		InputManager.updateKeyStates();
-		lastTime = thisTime;
-		checkUi();
-		Multiplayer.tick(now);
-		/*		if (InputManager.justPressed(GameAction.PAUSE) && !inMenu) {
-			togglePause();
-		}RCARRIER TODO*/
-
-		// If a different menu screen is active - disable it
-		/*
-		if (InputManager.justPressed(GameAction.PAUSE) && inMenu
-				&& currentMenuName != null) {
-			renderer.disableScreen(currentMenuName);
-			inMenu = false;
-		}
-*/
-				/*
-		// Prevents game from running will paused on in a menu
-		renderer.render(ms);
-		if (!isPaused && !inMenu) {
-			world.gameLoop(ms);
-		}*/
-	}
-
-	private void addNewPlayerTick(World world) {
-		uq.deco2800.singularity.common.representations.coaster.state.NewPlayer np = Multiplayer.getNewPlayer();
-		if (!np.getName().equals("")) {
-			PlayerMultiDummy pmd = new PlayerMultiDummy(np.getName());
-			if (np.getHost()) {
-				logger.info("Adding host to game");
-				pmd.setPosition(10, 100);
-				Multiplayer.setTickrate(np.getTick());
-			} else {
-				pmd.setPosition(20, 100);
-				logger.info("Adding client to game");
-			}
-			world.addEntity(pmd);
-		}
-	}
-
-	private void soundTick(long ms) {
-		if (InputManager.justPressed(GameAction.MUTE)) {
-			if (SoundCache.getMute()) {
-				SoundCache.unmute();
-			} else {
-				SoundCache.mute();
-			}
-		}
-		SoundCache.getInstance().tick(ms);
-	}
-
-
+	
 	/**
 	 * Sees if the state of skillTreeOn has changed and if so updates the
 	 * screen.
@@ -629,24 +543,6 @@ public class Engine extends AnimationTimer {
 		Toaster.toast("Loaded.");
 	}
 
-
-	public boolean initEngineMulti(String name, int tr) {
-		multiplayer = true;
-		boolean ok;
-		if (tr == 0) {
-			ok = Multiplayer.init();
-		} else {
-			ok = Multiplayer.init(tr);
-		}
-		if (!ok) {
-			return ok;
-		}
-		initGeneric();
-		initDefaults();
-		initWorldMulti(name, World.getInstance());
-		return true;
-	}
-
 	/**
 	 * Initialize engine variables
 	 *
@@ -672,37 +568,6 @@ public class Engine extends AnimationTimer {
 		skillTreeOn = false;
 		isPaused = false;
 		inMenu = false;
-	}
-
-	public void initWorldMulti(String name, World world) {
-		PlayerMulti p = new PlayerMulti(true, name);
-		//Player p = new Player();
-		((InventoryController) FXMLControllerRegister.get(InventoryController.class)).setInventory(p);
-		p.setBlocksOtherEntities(true);
-
-		if (p.getName().equals("")) {
-			throw new IllegalArgumentException("Player parsed cannot have empty name");
-		}
-		world.initMulti();
-		world.addEntity(p);
-		world.setDecoGenEnabled(false);
-		world.setNpcGenEnabled(false);
-		world.setBuildingGenEnabled(false);
-		world.setTotemGenEnabled(false);
-		world.setTerrainDestruction(false);
-		world.setLightning(false);
-		p.setPosition(10, 100);
-		p.setBlocksOtherEntities(true);
-		//p.setBlocksOtherEntities(true);
-		logger.info("initing multiworld world tiles");
-		world.setTiles(world.getMultiWorld());
-
-		//PlayerMulti pm = new PlayerMulti(true);
-		//pm.setName(p.getName());
-		//Multiplayer.pushNewPlayer(pm);
-		Multiplayer.pushNewPlayer(p);
-		// set the player to the given starting positions, making sure he spawns slightly above ground.
-		setWorld(world);
 	}
 
 	public void initWorld(World world) {

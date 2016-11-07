@@ -2,7 +2,6 @@ package uq.deco2800.coaster.game.tutorial;
 
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.PowerUp;
-import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.items.Item;
 import uq.deco2800.coaster.game.items.ItemRegistry;
 /**

@@ -47,6 +47,11 @@ public class Window extends Application {
 		TileInfo.clearRegistry();
 		TileInfo.registerTiles();
 	}
+	
+	
+	public void init(Stage stage) {
+		
+	}
 
 	public void start(Stage stage) {
 		// Load assets
@@ -74,7 +79,6 @@ public class Window extends Application {
 
 		// Init JavaFX scene
 		Canvas gameScreenCanvas = new Canvas(resWidth, resHeight);
-		Canvas uiCanvas = new Canvas(resWidth, resHeight);
 		Canvas debugCanvas = new Canvas(resWidth, resHeight);
 		Canvas toasterCanvas = new Canvas(resWidth, resHeight);
 
@@ -108,15 +112,12 @@ public class Window extends Application {
 		Screen startScreen = new MenuScreen("screens/StartScreen.fxml");
 		Screen regoScreen = new FXMLScreen("screens/coasterRego.fxml");
 
-		Screen multiScreen = new MultiScreen("screens/MultiScreen.fxml");
-
 		Screen difficultyScreen = new MenuScreen("screens/DifficultyScreen.fxml");
 		Screen helpScreen = new MenuScreen("screens/AboutScreen.fxml");
 		Screen leaderboard = new MenuScreen("screens/leaderboard.fxml");
 
 		Screen gameScreen = new GameScreen(viewport, gameScreenCanvas);
 
-		Screen uiScreen = new UIScreen(viewport, uiCanvas);
 		Screen controlsScreen = new ControlsScreen("screens/controlScreen.fxml");
 		Screen gameOverScreen = new MenuScreen("screens/gameOverScreen.fxml");
 		Screen debugScreen = new DebugScreen(viewport, engine, debugCanvas);
@@ -175,14 +176,13 @@ public class Window extends Application {
 		weaponScreen.setSize(600, 1068);
 		weaponScreen.centerScreenX(resWidth);
 		weaponScreen.centerScreenY(resHeight);
-		startScreen.setVisible(false);
+		/**startScreen.setVisible(false);
 		multiScreen.setVisible(false);
 		regoScreen.setVisible(false);
 		gameScreen.setVisible(false);
 		difficultyScreen.setVisible(false);
 		helpScreen.setVisible(false);
 		leaderboard.setVisible(false);
-		uiScreen.setVisible(false);
 		controlsScreen.setVisible(false);
 		gameOverScreen.setVisible(false);
 		debugScreen.setVisible(false);
@@ -198,7 +198,7 @@ public class Window extends Application {
 		commerceScreen.setVisible(false);
 		itemScreen.setVisible(false);
 		tutorialScreen.setVisible(false);
-		weaponScreen.setVisible(false);
+		weaponScreen.setVisible(false);*/
 
 		// Add all screens to renderer
 		renderer.addScreen("Skills Screen", skillScreen);
@@ -211,9 +211,7 @@ public class Window extends Application {
 		renderer.addScreen("Difficulty", difficultyScreen);
 		renderer.addScreen("Help Screen", helpScreen);
 		renderer.addScreen("Leaderboard", leaderboard);
-		renderer.addScreen("Multi Screen", multiScreen);
 		renderer.addScreen("Game", gameScreen);
-		renderer.addScreen("UI", uiScreen);
 		renderer.addScreen("Controls Screen", controlsScreen);
 		renderer.addScreen("Game Over", gameOverScreen);
 		renderer.addScreen("Debug", debugScreen);
@@ -245,31 +243,6 @@ public class Window extends Application {
 	 */
 	public boolean getLoaded() {
 		return loaded;
-	}
-
-
-	public static boolean initGameMulti(String name) {
-		return initGameMulti(name, -1);
-	}
-
-	public static boolean initGameMulti(String name, int tr) {
-		logger.debug("Game multi initiation started");
-		boolean ok = engine.initEngineMulti(name, tr);
-		if (!ok) {
-			return ok;
-		}
-		Renderer r = engine.getRenderer();
-		r.getScreen("Start Screen").setDisable(true);
-
-		// Set the original 'defaults'
-		// This is repeated code, but will not be 'repeated' later
-		r.hideAllScreens();
-		r.getScreen("Game").setVisible(true);
-		r.getScreen("Toaster").setVisible(true);
-		r.getScreen("PopUp").setVisible(true);
-		SoundCache.getInstance().play("game");
-		engine.start();
-		return true;
 	}
 
 	/**

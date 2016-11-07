@@ -56,7 +56,7 @@ public class PlayerInstructionTest {
 	@Ignore //runs locally, but not with gradle 
 	public void testScenarioBasic() {
 		initialise();
-		Player player = new Player();
+		new Player();
 		BasicActionScenario scenario = new BasicActionScenario(GameAction.JUMP);
 		assertEquals(GameAction.ENABLE_CHECKPOINTS, scenario.getAction());
 		scenario.reward();

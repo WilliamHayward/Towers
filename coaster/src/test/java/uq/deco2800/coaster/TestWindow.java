@@ -12,7 +12,6 @@ import uq.deco2800.coaster.graphics.screens.FXMLScreen;
 import uq.deco2800.coaster.graphics.screens.OptionsMenuScreen;
 import uq.deco2800.coaster.graphics.screens.PauseMenuScreen;
 import uq.deco2800.coaster.graphics.screens.PopUpScreen;
-import uq.deco2800.coaster.graphics.screens.MenuScreen;
 import uq.deco2800.coaster.graphics.screens.controllers.FXMLControllerRegister;
 import uq.deco2800.coaster.graphics.sprites.SpriteCache;
 
