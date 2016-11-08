@@ -36,4 +36,5 @@ public enum Tiles {
 	SILVER, 
 	GOLD, 
 	DIAMOND,
+	BRICK
 }

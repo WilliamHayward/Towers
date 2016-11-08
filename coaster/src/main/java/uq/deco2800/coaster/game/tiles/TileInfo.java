@@ -45,7 +45,7 @@ public abstract class TileInfo {
 	 */
 	public static void registerTiles() {
 
-		registerTile((new TileSolid(Tiles.DIRT)).setDisplayName("Dirt").setDefaultFilename("dirt.png")
+		registerTile((new TileSolid(Tiles.DIRT)).setDisplayName("Dirt").setDefaultFilename("brick.png")
 				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.DIRT)
 				.setBackgroundTile(Tiles.DIRT_BACKGROUND));
 		registerTile((new TileSolid(Tiles.DIRT_DAMAGED)).setDisplayName("Dirt (Damaged)").setDefaultFilename("dirt-damaged.png")

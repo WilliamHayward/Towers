@@ -136,13 +136,13 @@ public class Player extends BasicMovingEntity {
 
 	protected static final float BASE_JUMP_SPEED = -20f;
 	protected static final float BASE_MOVE_SPEED = 10f;
+	
+	static float scale = 4f;
 
-	protected static final float BASE_WIDTH = 1f;
-	protected static final float BASE_HEIGHT = 2f;
-	protected static final float SLIDE_WIDTH = 2f;
-	protected static final float SLIDE_HEIGHT = 1f;
-	protected static final float CROUCH_WIDTH = 1f;
-	protected static final float CROUCH_HEIGHT = 1.5f;
+	protected static final float BASE_WIDTH = 1f * scale;
+	protected static final float BASE_HEIGHT = 1.41f * scale;
+	protected static final float CROUCH_WIDTH = 0.96f * scale;
+	protected static final float CROUCH_HEIGHT = 1f * scale;
 
 
 	protected int healing;
@@ -245,8 +245,6 @@ public class Player extends BasicMovingEntity {
 		this.maxHealth = stats.getMaxHealth();
 		this.currentHealth = maxHealth;
 
-
-
 		for (int i = 0; i < 4; i++) {
 			spellLoopIterations.add(i, new ArrayList<>());
 			spellLoopTimings.add(i, new ArrayList<>());
@@ -289,21 +287,19 @@ public class Player extends BasicMovingEntity {
 		this.jumpSpeed = BASE_JUMP_SPEED;
 
 		// Add sprites for arm and head
-		commonSpriteSet.put(BodyPart.HEAD, new AngledSpriteRelation(new Sprite(SpriteList.KNIGHT_HEAD), this,
+		/*commonSpriteSet.put(BodyPart.HEAD, new AngledSpriteRelation(new Sprite(SpriteList.KNIGHT_HEAD), this,
 				headRenderAngle, 0.0f, 0.05f, 0.8f, 0.7f, 0.5f, 0.5f));
 		commonSpriteSet.put(BodyPart.ARM, new AngledSpriteRelation(new Sprite(SpriteList.KNIGHT_ARM), this,
 				armRenderAngle, 0.25f, 0.7f, 0.5f, 0.5f, 0.1f, 0.075f));
 
 		sprintSpriteSet.put(BodyPart.HEAD, new AngledSpriteRelation(new Sprite(SpriteList.KNIGHT_HEAD), this,
 				headRenderAngle, 0.0f, 0.05f, 0.8f, 0.7f, 0.5f, 0.5f));
-
+		 */
 		// Add this for standing, jumping and moving
 		this.additionalSpritesCache.put(EntityState.STANDING, commonSpriteSet);
 		this.additionalSpritesCache.put(EntityState.JUMPING, commonSpriteSet);
 		this.additionalSpritesCache.put(EntityState.MOVING, commonSpriteSet);
 		this.additionalSpritesCache.put(EntityState.SPRINTING, sprintSpriteSet);
-
-		commonHitboxes.add(defineHitbox(BodyPart.HEAD, 0.8f, 0.7f, 0.0f, 0.05f));
 
 		this.hitboxesCache.put(EntityState.STANDING, commonHitboxes);
 		this.hitboxesCache.put(EntityState.JUMPING, commonHitboxes);
@@ -388,11 +384,11 @@ public class Player extends BasicMovingEntity {
 			equippedBoots = (Armour) ItemRegistry.getItem(id);
 			rank = equippedBoots.getRank();
 			if (rank == 1) {
-				commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_WEAK, 0.8f, 0.65f, 0.0f, 0.0f));
+				//commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_WEAK, 0.8f, 0.65f, 0.0f, 0.0f));
 			} else if (rank == 2) {
-				commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_MED, 0.8f, 1f, 0.2f, 0.7f));
+				//commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_MED, 0.8f, 1f, 0.2f, 0.7f));
 			} else {
-				commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_STRONG, 0.8f, 0.65f, 0.0f, 0.0f));
+				//commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_STRONG, 0.8f, 0.65f, 0.0f, 0.0f));
 			}
 		}
 	}
@@ -419,11 +415,11 @@ public class Player extends BasicMovingEntity {
 			equippedPants = (Armour) ItemRegistry.getItem(id);
 			rank = equippedPants.getRank();
 			if (rank == 1) {
-				commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_WEAK, 0.9f, 1.5f, 0.3f, 0.8f));
+				//commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_WEAK, 0.9f, 1.5f, 0.3f, 0.8f));
 			} else if (rank == 2) {
-				commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_MED, 0.9f, 1.5f, 0.3f, 0.9f));
+				//commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_MED, 0.9f, 1.5f, 0.3f, 0.9f));
 			} else {
-				commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_STRONG, 0.9f, 1.5f, 0.3f, 0.8f));
+				//commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_STRONG, 0.9f, 1.5f, 0.3f, 0.8f));
 			}
 		}
 	}
@@ -451,9 +447,9 @@ public class Player extends BasicMovingEntity {
 			equippedChest = (Armour) ItemRegistry.getItem(id);
 			rank = equippedChest.getRank();
 			if (rank == 1) {
-				commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_WEAK, 0.8f, 1f, 0.2f, 0.7f));
+				//commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_WEAK, 0.8f, 1f, 0.2f, 0.7f));
 			} else if (rank == 2) {
-				commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_MED, 0.8f, 1f, 0.2f, 0.7f));
+				//commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_MED, 0.8f, 1f, 0.2f, 0.7f));
 			} else {
 				commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_STRONG, 0.8f, 1f, 0.2f, 0.7f));
 			}
@@ -483,11 +479,11 @@ public class Player extends BasicMovingEntity {
 			equippedHead = (Armour) ItemRegistry.getItem(id);
 			rank = equippedHead.getRank();
 			if (rank == 1) {
-				commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_WEAK, 0.8f, 0.65f, 0.0f, 0.0f));
+				//commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_WEAK, 0.8f, 0.65f, 0.0f, 0.0f));
 			} else if (rank == 2) {
-				commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_MED, 0.8f, 0.65f, 0.0f, 0.0f));
+				//commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_MED, 0.8f, 0.65f, 0.0f, 0.0f));
 			} else {
-				commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_STRONG, 0.8f, 0.65f, 0.0f, 0.0f));
+				//commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_STRONG, 0.8f, 0.65f, 0.0f, 0.0f));
 			}
 		}
 	}
@@ -594,7 +590,19 @@ public class Player extends BasicMovingEntity {
 		boolean companionUpgradePressed = justPressed(GameAction.UPGRADE_COMPANION);
 		// callum
 		skillState(skillKeys);
-		updateRenderAngle();
+		//updateRenderAngle();
+		if (strafeActive) {
+			if (InputManager.getDiffX(posX) > 0) {
+				renderFacing = 1;
+			} else {
+				renderFacing = -1;
+			}
+
+			if (inputDir == 0) {
+				facing = renderFacing;
+			}
+		}
+
 		playerInput.updateGameInput();
 		moveStateEntity(ms);
 
@@ -606,13 +614,13 @@ public class Player extends BasicMovingEntity {
 				justPressed(GameAction.WEAPON_NINE)));
 
 		// add sprites for currently equipped weapons
-		if (equippedWeapon.getProjectileType() == ProjectileType.MELEE) {
+		/*if (equippedWeapon.getProjectileType() == ProjectileType.MELEE) {
 			commonSpriteSet.put(BodyPart.VOID, new AngledSpriteRelation(equippedWeapon.getSprite(), this,
 					weaponRenderAngle, 0f, 0f, 0f, 0f, 0f, 0f));
 		} else {
 			commonSpriteSet.put(BodyPart.VOID, new AngledSpriteRelation(equippedWeapon.getSprite(), this,
 					weaponRenderAngle, 0.40f, 0.6f, 1.0f, 1.0f, 0.2f, 0.090f));
-		}
+		}*/
 		// Companion Stuff
 		if (companionModePressed) {
 			newCompanion.setCompanionClass();
@@ -1202,36 +1210,6 @@ public class Player extends BasicMovingEntity {
 	}
 
 	/**
-	 * Transitions the player to a sliding state
-	 */               
-	protected void transitionToSlide() {
-		if (getCurrentMana() >= 30) {
-			addMana(-30);
-			if (facing != onWall && changeBounds(SLIDE_WIDTH, SLIDE_HEIGHT)) {
-				strafeActive = false;
-				setState(EntityState.SLIDING);
-				actionTimer = slideDuration;
-				velX = facing * slideSpeed;
-			}
-		}
-	}
-
-	/**
-	 * Transitions the player to a dashing state
-	 */
-	protected void transitionToDash() {
-		if (getCurrentMana() >= 50) {
-			addMana(-50);
-			if (facing != onWall) {
-				strafeActive = false;
-				setState(EntityState.DASHING);
-				actionTimer = dashDuration;
-				velX = facing * dashSpeed;
-			}
-		}
-	}
-
-	/**
 	 * Transitions the player to a crouching state
 	 */
 	protected void transitionToCrouch() {
@@ -1388,8 +1366,8 @@ public class Player extends BasicMovingEntity {
 		boolean jump = playerInput.getJumpPressed();
 		boolean up = playerInput.getUpPressed();
 		boolean down = playerInput.getDownPressed();
-		boolean dash = playerInput.getDashPressed();
-		boolean slide = playerInput.getSlidePressed();
+		boolean dash = false;//playerInput.getDashPressed();
+		boolean slide = false;//playerInput.getSlidePressed();
 
 		jumpAvailable = ableToJump();
 
@@ -1523,10 +1501,6 @@ public class Player extends BasicMovingEntity {
 			velY = jumpSpeed;
 			return;
 		}
-		if (dash || slide) {
-			transitionToSlide();
-			return;
-		}
 	}
 
 	/**
@@ -1556,16 +1530,9 @@ public class Player extends BasicMovingEntity {
 			velY = jumpSpeed;
 			return;
 		}
-		if (dash /*&& getSkillUnlocked("Dash")*/) {
-			transitionToDash();
-			return;
-		}
-		if (slide) {
-			transitionToSlide();
-			return;
-		}
 		if (down) {
 			transitionToCrouch();
+			return;
 		}
 	}
 
@@ -1606,14 +1573,6 @@ public class Player extends BasicMovingEntity {
 			setState(EntityState.JUMPING);
 			return;
 		}
-		if (dash && getSkillUnlocked("Dash")) {
-			transitionToDash();
-			return;
-		}
-		if (slide) {
-			transitionToSlide();
-			return;
-		}
 		if (down) {
 			transitionToCrouch();
 			return;
@@ -1652,10 +1611,6 @@ public class Player extends BasicMovingEntity {
 		}
 		if (dash && airDashAvailable && getSkillUnlocked("Dash")) {
 			transitionToAirDash(left, right, up, down);
-			return;
-		}
-		if (down) {
-			transitionToAirCrouch();
 			return;
 		}
 		if (onGround) { // We hit the ground

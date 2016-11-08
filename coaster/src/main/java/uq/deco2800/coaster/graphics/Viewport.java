@@ -5,8 +5,8 @@ import uq.deco2800.coaster.game.world.Chunk;
 //This is the class that controls the "camera" of the game. You can move the camera, position it onto a certain tile,
 //and much more.
 public class Viewport {
-	private static final int VIEWPORT_WIDTH = 64; //Remember to keep this aspect ratio 16:9 for maximum compatibility
-	private static final int VIEWPORT_HEIGHT = 36;
+	private static final int VIEWPORT_WIDTH = 42; //Remember to keep this aspect ratio 16:9 for maximum compatibility
+	private static final int VIEWPORT_HEIGHT = 24;
 	//These units are in tiles
 	//The viewport render will "snap" to tiles if you try to pan in a map smaller than the screen res, but that's fine
 	//(you shouldn't be able to pan in those maps anyway)

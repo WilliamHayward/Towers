@@ -170,17 +170,20 @@ public class SpriteCache {
 		loadStandardSprite(SpriteList.MAP, "sprites/map.png", 160, 160, 1, 1);
 
 		// Player Sprites
-		loadStandardSprite(SpriteList.KNIGHT_STANDING, "sprites/knight-standing-headless.png", 26, 43, 2, 500);
-		loadStandardSprite(SpriteList.KNIGHT_WALKING, "sprites/knight-walking-headless.png", 27, 43, 2, 75);
-		loadStandardSprite(SpriteList.KNIGHT_JUMPING, "sprites/knight-jumping-headless.png", 30, 43, 1, 1);
+		loadStandardSprite(SpriteList.KNIGHT_STANDING, "sprites/player-blue-standing.png", 110, 156, 1, 0);
+		
+		loadStandardSprite(SpriteList.KNIGHT_WALKING, "sprites/player-blue-walking.png", 110, 156,
+				2, 200); //TODO: CLipping issues between the two frames
+		
+		loadStandardSprite(SpriteList.KNIGHT_JUMPING, "sprites/player-blue-jumping.png", 110, 156, 1, 1);
+		loadStandardSprite(SpriteList.KNIGHT_CROUCH, "sprites/player-blue-crouching.png", 113, 117, 1, 1); //TODO: The helmet changes size. Investigate!
 		loadStandardSprite(SpriteList.KNIGHT_WALLSLIDE, "sprites/knight-wallslide.png", 29, 43, 1, 1);
 		loadStandardSprite(SpriteList.KNIGHT_DASH, "sprites/knight-dash.png", 32, 42, 1, 1);
 		loadStandardSprite(SpriteList.KNIGHT_SLIDE, "sprites/knight-slide.png", 37, 37, 1, 1);
 		loadStandardSprite(SpriteList.KNIGHT_ARM, "sprites/knight-walking-arm.png", 11, 10, 1, 1);
 		loadStandardSprite(SpriteList.KNIGHT_HEAD, "sprites/knight-head.png", 23, 15, 1, 1);
-		loadStandardSprite(SpriteList.KNIGHT_CROUCH, "sprites/knight-crouch.png", 26, 37, 1, 1);
 		loadStandardSprite(SpriteList.KNIGHT_SPRINT, "sprites/knight-sprint-headless.png", 29, 43, 4, 75);
-		loadStandardSprite(SpriteList.KNIGHT_KNOCK_BACK, "sprites/knight-knockback.png", 32, 42, 1, 1);
+		loadStandardSprite(SpriteList.KNIGHT_KNOCK_BACK, "sprites/player-blue-hit.png", 110, 156, 1, 1);
 
 		loadStandardSprite(SpriteList.PARTICLE3, "sprites/particle3.png", 250, 250, 1, 1);
 		loadStandardSprite(SpriteList.PARTICLE_HEADSHOT, "sprites/particleHeadshot.png", 250, 250, 1, 1);
