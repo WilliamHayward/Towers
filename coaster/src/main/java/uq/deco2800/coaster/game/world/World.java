@@ -14,9 +14,6 @@ import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.*;
 import uq.deco2800.coaster.game.entities.npcs.mounts.Mount;
 import uq.deco2800.coaster.game.entities.npcs.companions.CompanionNPC;
-import uq.deco2800.coaster.game.entities.puzzle.RoomDoor;
-import uq.deco2800.coaster.game.entities.puzzle.TerrainEntity;
-import uq.deco2800.coaster.game.entities.puzzle.Totem;
 import uq.deco2800.coaster.game.items.ItemRegistry;
 import uq.deco2800.coaster.game.mechanics.Difficulty;
 import uq.deco2800.coaster.game.preservation.ExportableEntity;
@@ -69,9 +66,7 @@ public class World {
 	private List<Entity> npcEntities = new ArrayList<>(); // list of npc entities
 	private List<Entity> mountEntities = new ArrayList<>(); // list of npc entities
 	private List<Decoration> decorationEntities = new ArrayList<>(); // list of decoration entities
-	private List<CommerceNPC> storeEntities = new ArrayList<>(); // list of store entities
 	private List<ItemEntity> itemEntities = new ArrayList<>(); // list of power up entities
-	private List<TerrainEntity> terrainEntities = new ArrayList<>(); // list of terrain entities (e.g. moving platforms)
 	private List<Entity> newEntities = new ArrayList<>(); // list of new entities to be added
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
@@ -468,10 +463,6 @@ public class World {
 		return playerEntities;
 	}
 
-	public List<TerrainEntity> getTerrainEntities() {
-		return terrainEntities;
-	}
-
 	/**
 	 * Returns the frames per second of the game
 	 *
@@ -479,15 +470,6 @@ public class World {
 	 */
 	public long getFps() {
 		return framesPerSecond;
-	}
-
-	/**
-	 * Returns a list of Store Entities
-	 *
-	 * @return list of Store Entities
-	 */
-	List<CommerceNPC> getStoreEntities() {
-		return storeEntities;
 	}
 
 	/**
@@ -572,91 +554,12 @@ public class World {
 	}
 
 	/**
-	 * Generates mobs at random and places them within the vicinity of the given
-	 * player.
-	 */
-	void npcGenerator(Player player, int spawnRate, boolean randomSpawn, int mobX, BiomeType biomeType) {
-		if (isNpcGenEnabled() && randomGen.nextInt(npcSpawnChance) == 0) {
-
-			// checks if a mob should be positioned randomly
-			if (randomSpawn) {
-				// X position of mob placement between -CHUNK_WIDTH and
-				// -CHUNK_WIDTH / 2 or CHUNK_WIDTH / 2 and
-				// CHUNK_WIDTH
-				mobX = (int) player.getX() + randomGen.nextInt(Chunk.CHUNK_WIDTH)
-						+ (Chunk.CHUNK_WIDTH / 2) * (randomGen.nextBoolean() ? 1 : -3);
-			}
-
-			// checks if a biome has been specified, otherwise specify one based
-			// off of position
-			if (biomeType == null) {
-				biomeType = Chunk.getBiomeTypeOfX(mobX);
-			}
-
-			// if number mobs exceeds limit, prevent generation
-			if (getNumMobsInChunk(mobX) >= NUM_MOBS_PER_CHUNK) {
-				return;
-			}
-
-			BaseNPC mob;
-			if (spawnRate == 0) {
-				mob = new RatNPC();
-			} else {
-				switch (biomeType) {
-					case SNOW:
-						mob = new IceSpiritNPC();
-						break;
-					case PLAIN:
-						if (spawnRate < 99) {
-							mob = new RhinoNPC();
-						} else {
-							mob = new SpaceSlimeNPC();
-						}
-						break;
-					case DESERT:
-						if (spawnRate < 5) {
-							mob = new GhostShipNPC();
-						} else if (spawnRate < 25) {
-							mob = new MeleeEnemyNPC();
-						} else {
-							mob = new EyeballNPC();
-						}
-						break;
-					case ROCK:
-						if (spawnRate < 20) {
-							mob = new RangedEnemyNPC();
-						} else if (spawnRate < 60){
-							mob= new GrenadierNPC();
-						}else {
-							mob = new SkeletonNPC();
-						}
-						break;
-					case FOREST:
-						mob = new BatNPC();
-						break;
-					default:
-						mob = new MeleeEnemyNPC();
-						break;
-				}
-			}
-			if (!(mob instanceof GhostShipNPC) && (new Random()).nextFloat() < 0.03) {
-				mob.setBoss();
-			}
-			this.addEntity(mob);
-			mob.setPosition(mobX, -10);
-			if (mob instanceof SpaceSlimeNPC) {
-				((SpaceSlimeNPC) mob).spawnMob();
-			}
-		}
-	}
-
-
-	/**
 	 * Loads chunk around player when the entity is near empty
 	 */
 	public void loadAroundPlayer(Player player) {
 		while (isNearEmpty(player) != 0 && chunkGenerationEnabled) {
 			loadChunk(player.getNearestChunkX(), isNearEmpty(player));
+			chunkGenerationEnabled = false;
 		}
 	}
 
@@ -709,7 +612,7 @@ public class World {
 		if (random.nextFloat() > 0.99) {
 			// Select a random mob in the viewport to hit
 			List<Entity> viewportEntities = getEntitiesInViewport(
-					e -> e instanceof BaseNPC && !(e instanceof CompanionNPC) && !(e instanceof DuckKingNPC));
+					e -> e instanceof BaseNPC && !(e instanceof CompanionNPC));
 			if (viewportEntities.size() == 0) {
 				return;
 			}
@@ -727,9 +630,6 @@ public class World {
 				gs.setRenderingLightning(lightning);
 				SoundCache.play("lightning");
 				BaseNPC npc = (BaseNPC) entity;
-				if (!(npc instanceof GhostShipNPC)) {
-					npc.receiveDamageForce((int) (npc.getMaxHealth() * 0.2));
-				}
 			}
 		}
 	}
@@ -747,15 +647,11 @@ public class World {
 				npcEntities.add(entity);
 			} else if (entity instanceof Decoration) {
 				decorationEntities.add((Decoration) entity);
-			} else if (entity instanceof CommerceNPC) {
-				storeEntities.add((CommerceNPC) entity);
 			} else if (entity instanceof ItemEntity) {
 				itemEntities.add((ItemEntity) entity);
 			} else if (entity instanceof Mount) {
 				mountEntities.add(entity);
-			} else if (entity instanceof TerrainEntity) {
-				terrainEntities.add((TerrainEntity) entity);
-			}
+			} 
 		}
 		newEntities.clear();
 	}
@@ -773,14 +669,10 @@ public class World {
 				npcEntities.remove(entity);
 			} else if (entity instanceof Decoration) {
 				decorationEntities.remove(entity);
-			} else if (entity instanceof CommerceNPC) {
-				storeEntities.remove(entity);
 			} else if (entity instanceof ItemEntity) {
 				itemEntities.remove(entity);
 			} else if (entity instanceof Mount) {
 				mountEntities.remove(entity);
-			} else if (entity instanceof TerrainEntity) {
-				terrainEntities.remove(entity);
 			}
 		}
 		deleteEntities.clear();
@@ -794,15 +686,9 @@ public class World {
 
 	private void processEntities(long ms) {
 		Player player = getFirstPlayer();
-		for (TerrainEntity platform : terrainEntities) {
-			platform.entityLoop(ms);
-		}
 		for (Entity entity : allEntities) {
 			if (!inRoom && player == null || (entity.getX() > (player.getX() - entityRenderDistance)
 					&& entity.getX() < (player.getX() + entityRenderDistance))) {
-				if (entity instanceof TerrainEntity) {
-					continue;
-				}
 				entity.entityLoop(ms);
 			}
 		}
@@ -1200,63 +1086,6 @@ public class World {
 	}
 
 	/**
-	 * This is called when the player presses the Enter Room key. It will handle
-	 * the relevant action.
-	 */
-	public static void handleEnterRoom() {
-		World world = World.getInstance();
-		// Change to a room
-		if (world instanceof RoomWorld) {
-			Player player = world.getFirstPlayer();
-			for (Entity entity : player.getNearbyEntities(2)) {
-				if (entity instanceof RoomDoor) {
-					useDoor((RoomWorld) world, player, (RoomDoor) entity);
-					break;
-				}
-			}
-		} else {
-			Player player = world.getFirstPlayer();
-			if (player.getOnMountStatus()) {
-				return;
-			}
-			for (Entity entity : player.getNearbyEntities(2)) {
-				if (entity instanceof Totem) {
-					world.setRoom(true);
-					world.deleteEntity(entity);
-					break;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Try make the player leave through the door in the given world
-	 *
-	 * @param world  the room the door and player are in
-	 * @param player the player using the door
-	 * @param door   the door being used
-	 */
-	private static void useDoor(RoomWorld world, Player player, RoomDoor door) {
-		if (!door.isLocked() || !player.getInventory().itemExists("puzzle_key")) {
-			if (!door.isLocked()) {
-				// Remove all keys from player before returning to world
-				while (player.getInventory().itemExists("puzzle_key")) {
-					player.getInventory().removeItem(1, "puzzle_key");
-				}
-				world.getParentWorld().setRoom(false);
-			}
-		} else {
-			door.setLocked(false);
-			player.getInventory().removeItem(1, "puzzle_key");
-			// add experience points is broken, rip
-			for (int i = 0; i < 100; i++) {
-				player.addExperiencePoint(10);
-			}
-			player.getInventory().addItem(1000, "ammo");
-		}
-	}
-
-	/**
 	 * Clears every entity list in the current world
 	 */
 	private void clearEntities() {
@@ -1266,45 +1095,8 @@ public class World {
 		npcEntities.clear();
 		mountEntities.clear();
 		playerEntities.clear();
-		storeEntities.clear();
 		itemEntities.clear();
 		newEntities.clear();
-		terrainEntities.clear();
 		deleteEntities.clear();
-	}
-
-	/**
-	 * Will handle entering or leaving a room.
-	 *
-	 * @param inRoom true if changing to a room, false if leaving a room
-	 */
-	private void setRoom(boolean inRoom) {
-		this.inRoom = inRoom;
-		Player firstPlayer = getFirstPlayer();
-		if (inRoom) {
-			if (firstPlayer != null && firstPlayer.getInventory().itemExists("duck_king_key")) {
-				room = new BossRoom();
-				firstPlayer.getInventory().removeItem(1, "duck_king_key");
-			} else {
-				room = new PuzzleRoom();
-			}
-			room.populateRoom();
-			room.setParentWorld(this);
-			if (firstPlayer != null) {
-				firstPlayer.setWorld(room);
-				room.setTempPlayerX(firstPlayer.getX());
-				room.setTempPlayerY(firstPlayer.getY());
-				room.addEntity(firstPlayer);
-				firstPlayer.setX(room.getStartingX());
-				firstPlayer.setY(room.getStartingY());
-			}
-		} else {
-			if (firstPlayer != null && room != null) {
-				firstPlayer.setWorld(room.getParentWorld());
-				firstPlayer.setX(room.getTempPlayerX());
-				firstPlayer.setY(room.getTempPlayerY() - 1);
-			}
-			room = null;
-		}
 	}
 }

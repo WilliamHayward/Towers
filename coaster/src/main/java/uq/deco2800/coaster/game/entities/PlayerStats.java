@@ -8,8 +8,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uq.deco2800.coaster.game.achievements.AchievementType;
-import uq.deco2800.coaster.game.achievements.Achievements;
 import uq.deco2800.coaster.game.entities.skills.ActivateSkill;
 import uq.deco2800.coaster.game.entities.skills.Passive;
 import uq.deco2800.coaster.game.entities.skills.StatType;
@@ -22,8 +20,7 @@ public class PlayerStats {
 	private List<Passive> defenseSkills = new ArrayList<Passive>();
 	private List<Passive> attackSkills = new ArrayList<Passive>();
 	private List<Passive> activeAbilities; // to be changed to Active
-	private Achievements achievements;
-
+	
 	// subclass once it's done
 	// Attack
 	private int baseDamage;
@@ -68,24 +65,8 @@ public class PlayerStats {
 		this.coinCount = 0;
 		this.playerLevel = 1;
 		this.skillPoints = 0;
-
-		achievements = new Achievements();
 	}
-
-	/**
-	 * Attempt to unlock all achievements using current Player Stat values.
-	 * Typically used when loading Player Stats
-	 */
-	public void unlockAll() {
-		achievements.unlock(AchievementType.KILLS, killCount);
-		achievements.unlock(AchievementType.LEVELS, playerLevel);
-		achievements.unlock(AchievementType.PICKUPS, pickupCount);
-		achievements.unlock(AchievementType.COINS, coinCount);
-		for (String bossID : bossTypesKilled) {
-			achievements.unlock(AchievementType.BOSS, bossID);
-		}
-	}
-
+	
 	/**
 	 * This method resets the maximum mana points the player has
 	 *
@@ -336,7 +317,6 @@ public class PlayerStats {
 	 */
 	public void addPickUpCount() {
 		pickupCount++;
-		achievements.unlockWithPopUp(AchievementType.PICKUPS, pickupCount);
 	}
 
 	/**
@@ -346,7 +326,6 @@ public class PlayerStats {
 	 */
 	public void addCoinCount(int coinValue) {
 		coinCount += coinValue;
-		achievements.unlockWithPopUp(AchievementType.COINS, coinCount);
 	}
 
 	/**
@@ -356,7 +335,6 @@ public class PlayerStats {
 	 */
 	public void addKillCount(int kills) {
 		this.killCount += kills;
-		achievements.unlockWithPopUp(AchievementType.KILLS, killCount);
 	}
 
 	/**
@@ -377,7 +355,6 @@ public class PlayerStats {
 	public void addBossKill(String bossID) {
 		bossKillCount++;
 		bossTypesKilled.add(bossID);
-		achievements.unlockWithPopUp(AchievementType.BOSS, bossID);
 		unlockBossKillAchievement();
 	}
 
@@ -418,7 +395,6 @@ public class PlayerStats {
 		playerLevel += 1;
 		experiencePoints = 0;
 		this.skillPoints += ((this.playerLevel / 5) + 3);
-		achievements.unlockWithPopUp(AchievementType.LEVELS, playerLevel);
 		levelBenefits(playerLevel);
 	}
 
@@ -471,9 +447,5 @@ public class PlayerStats {
 
 	public void setActivateSkill(ActivateSkill skills) {
 		this.skills = skills;
-	}
-
-	public Achievements getAchievements() {
-		return achievements;
 	}
 }

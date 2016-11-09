@@ -6,7 +6,6 @@ import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.npcs.DuckKingNPC;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
@@ -47,9 +46,7 @@ public class GrenadeBullet extends Projectile {
 			}
 			List<Entity> entities = this.getNearbyEntities(radius);
 			for (Entity entity : entities) {//BOOM!
-				if (entity instanceof DuckKingNPC) {
-					// Do nothing because the duck king takes no grenade damage
-				} else if (entity instanceof BaseNPC) {
+				if (entity instanceof BaseNPC) {
 					((BaseNPC) entity).receiveDamage((int) damage, this);
 				} else if (entity instanceof Player) {
 					((Player) entity).addHealth(-(int) damage, this.owner);

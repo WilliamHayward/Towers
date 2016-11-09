@@ -30,7 +30,7 @@ public class TerrainDestruction {
 	 *
 	 * @param blockXPosition The x coordinate of the block to damage
 	 * @param blockYPosition The y coordinate of the block to damage
-	 * @param damage The hit points to subtract from the block
+	 * @param damage The hit points to subtract from the blockTilesTiles
 	 * @param checkDestructible check the block is destructible or not
 	 */
 	public static void damageBlock(int blockXPosition, int blockYPosition, int damage, boolean checkDestructible,

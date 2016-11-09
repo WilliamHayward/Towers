@@ -6,11 +6,8 @@ import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.core.input.GameAction;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
-import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.npcs.*;
 import uq.deco2800.coaster.game.entities.npcs.mounts.*;
-import uq.deco2800.coaster.game.entities.puzzle.Lever;
 import uq.deco2800.coaster.game.items.ItemDrop;
 import uq.deco2800.coaster.game.items.ItemRegistry;
 import uq.deco2800.coaster.game.mechanics.Difficulty;
@@ -24,8 +21,6 @@ import uq.deco2800.coaster.game.world.Waveform;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Renderer;
 import uq.deco2800.coaster.graphics.notifications.Toaster;
-import uq.deco2800.coaster.graphics.screens.controllers.*;
-
 import java.io.File;
 import java.util.Random;
 
@@ -46,9 +41,6 @@ public class Engine extends AnimationTimer {
 
 	private String currentMenuName;
 
-	private PassiveInfoPanelController passiveController;
-	private SkillTreeController skillTreeController;
-
 	private boolean isGameOver;
 
 	public void setGraphicsOutput(Renderer renderer) {
@@ -60,40 +52,6 @@ public class Engine extends AnimationTimer {
 	 */
 	public Renderer getRenderer() {
 		return renderer;
-	}
-
-	public void setSkillTreeController(SkillTreeController controller) {
-		this.skillTreeController = controller;
-	}
-
-	public void setSkillTreeContent(int skillPoints) {
-		skillTreeController.skillPointLabel.setText(Integer.toString(skillPoints));
-	}
-
-	/**
-	 * Receive passiveInfoPanelController in order to modify its internal
-	 * elements.
-	 *
-	 * @param controller
-	 */
-	public void setPassiveController(PassiveInfoPanelController controller) {
-		this.passiveController = controller;
-
-	}
-
-
-	public void setPassiveContent(int identifier, String name, String description, boolean levelLabel, int level) {
-		if (levelLabel) {
-			passiveController.skillName.setText(name);
-			passiveController.skillDescription.setText(description);
-			passiveController.levelLabel.setText("Level");
-			passiveController.skillLevel.setText(Integer.toString(level));
-		} else {
-			passiveController.skillName.setText(name);
-			passiveController.skillDescription.setText(description);
-			passiveController.levelLabel.setText("");
-			passiveController.skillLevel.setText("Unlock");
-		}
 	}
 
 	public boolean getPassiveInfo() {
@@ -170,7 +128,6 @@ public class Engine extends AnimationTimer {
 			inMenu = !inMenu;
 			currentMenuName = inventoryScreenId;
 			renderer.toggleScreen(inventoryScreenId);
-			((InventoryController) FXMLControllerRegister.get(InventoryController.class)).updateSprites();
 		}
 
 		// Store Button only works when standing next to store NPC
@@ -181,40 +138,6 @@ public class Engine extends AnimationTimer {
 				&& (!inMenu || renderer.isActiveScreen(storeScreenId) || renderer.isActiveScreen(bankScreenId))) {
 
 			Player player = world.getFirstPlayer();
-			for (Entity entity : player.getNearbyEntities(2)) {
-				if (entity instanceof CommerceNPC) {
-					CommerceNPC tradingNPC = (CommerceNPC) entity;
-					player.setTalking(true);
-					// Select whether the store or bank should be displayed
-					switch (tradingNPC.getTraderType()) {
-						case STORE:
-							inMenu = !inMenu;
-							player.getCommerce().setNearestStore(tradingNPC);
-
-							((StoreController) FXMLControllerRegister.get(StoreController.class)).updateNearestStore();
-
-							currentMenuName = storeScreenId;
-							renderer.toggleScreen(storeScreenId);
-							break;
-						case BANK:
-							inMenu = !inMenu;
-
-							((BankController) FXMLControllerRegister.get(BankController.class)).updateView();
-							currentMenuName = bankScreenId;
-							renderer.toggleScreen(bankScreenId);
-							break;
-						default:
-							break;
-					}
-				}
-			}
-		}
-
-		if (InputManager.justPressed(GameAction.ENTER_ROOM) && !isPaused && !inMenu) {
-			World.handleEnterRoom();
-			world.getFirstPlayer().getNearbyEntities(1).stream().filter(entity -> entity instanceof Lever)
-					.forEach(entity -> ((Lever) entity).flip());
-			world = World.getInstance();
 		}
 
 		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
@@ -238,73 +161,6 @@ public class Engine extends AnimationTimer {
 		if (renderer.getViewport() != null) {
 			// Add NPCs
 			if (InputManager.justPressed(GameAction.ADD_NPC)) {
-				int tileX = (int) InputManager.getMouseTileX();
-				int tileY = (int) InputManager.getMouseTileY();
-
-				String npcType = System.getenv().get("DEBUG_NPC");
-				BaseNPC debugNPC;
-
-				if (npcType != null) {
-					switch (npcType) {
-						case "BatNPC":
-							debugNPC = new BatNPC();
-							break;
-						case "MeleeEnemyNPC":
-							debugNPC = new MeleeEnemyNPC();
-							break;
-						case "RangedEnemyNPC":
-							debugNPC = new RangedEnemyNPC();
-							break;
-						case "RhinoNPC":
-							debugNPC = new RhinoNPC();
-							break;
-						case "TreasureNPC":
-							debugNPC = new TreasureNPC();
-							break;
-						case "EyeballNPC":
-							debugNPC = new EyeballNPC();
-							break;
-						case "GolemNPC":
-							debugNPC = new GolemNPC();
-							break;
-						case "GhostShipNPC":
-							debugNPC = new GhostShipNPC();
-							break;
-						case "SkeletonNPC":
-							debugNPC = new SkeletonNPC();
-							break;
-						case "WormNPC":
-							debugNPC = new WormNPC();
-							break;
-						case "GrenadierNPC":
-							debugNPC = new GrenadierNPC();
-							break;
-						case "RatNPC":
-							debugNPC = new RatNPC();
-							break;
-						case "SpaceSlimeNPC":
-							debugNPC = new SpaceSlimeNPC();
-							break;
-						case "IceSpiritNPC":
-							debugNPC = new IceSpiritNPC();
-							break;
-						case "ExplosionBunnyNPC":
-							debugNPC = new ExplosionBunnyNPC();
-							break;
-						default:
-							debugNPC = new BatNPC();
-							break;
-					}
-				} else {
-					debugNPC = new SpaceSlimeNPC();
-				}
-
-				debugNPC.setPosition(tileX, tileY);
-				world.addEntity(debugNPC);
-
-				if (debugNPC instanceof SpaceSlimeNPC) {
-					((SpaceSlimeNPC) debugNPC).spawnMob();
-				}
 			}
 
 			if (InputManager.justPressed(GameAction.ADD_MOUNT)) {
@@ -560,10 +416,7 @@ public class Engine extends AnimationTimer {
 
 	public void initWorld(World world) {
 		Player player = new Player();
-		if (world.getTutorialMode()) {
-			player.initTutorial();
-		}
-		((InventoryController) FXMLControllerRegister.get(InventoryController.class)).setInventory(player);
+		
 		player.setBlocksOtherEntities(true);
 
 		world.resetWorld();
@@ -603,11 +456,8 @@ public class Engine extends AnimationTimer {
 			world.addCaveWaveform(new Waveform(4, 32));
 
 			// get starting X position, chosen randomly from between -CHUNK_WIDTH and +CHUNK_WIDTH
-			Random random = new Random();
-			int startingX = random.nextInt(Chunk.CHUNK_WIDTH * 2) - Chunk.CHUNK_WIDTH;
-			Chunk startingChunk = new Chunk(startingX, World.getMapSeed());
-			int inChunkX = Math.abs(startingChunk.getX() - Chunk.MIDDLE_CHUNK_POS) + startingX;
-			int startingY = startingChunk.getTopBlockFromChunk(inChunkX);
+			int startingX = Chunk.CHUNK_WIDTH / 2;
+			int startingY = Chunk.CHUNK_HEIGHT / 3;
 
 			// set the player to the given starting positions, making sure he spawns slightly above ground.
 			player.setPosition(startingX, startingY - player.getHeight());

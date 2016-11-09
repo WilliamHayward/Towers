@@ -12,7 +12,6 @@ import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.commerce.PlayerCommerce;
 import uq.deco2800.coaster.game.debug.Debug;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.npcs.DuckKingNPC;
 import uq.deco2800.coaster.game.entities.npcs.companions.CompanionNPC;
 import uq.deco2800.coaster.game.entities.npcs.mounts.Mount;
 import uq.deco2800.coaster.game.entities.npcs.mounts.PlayerMountActions;
@@ -20,14 +19,12 @@ import uq.deco2800.coaster.game.entities.particles.Particle;
 import uq.deco2800.coaster.game.entities.skills.*;
 import uq.deco2800.coaster.game.entities.weapons.LazorParticle;
 import uq.deco2800.coaster.game.entities.weapons.PortalBullet;
-import uq.deco2800.coaster.game.entities.weapons.ProjectileType;
 import uq.deco2800.coaster.game.inventory.Inventory;
 import uq.deco2800.coaster.game.items.Armour;
 import uq.deco2800.coaster.game.items.ItemRegistry;
 import uq.deco2800.coaster.game.items.Weapon;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.tutorial.PlayerInstruction;
 import uq.deco2800.coaster.game.world.Chunk;
 import uq.deco2800.coaster.game.world.MiniMap;
 import uq.deco2800.coaster.game.world.RoomWorld;
@@ -36,8 +33,6 @@ import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.Window;
 import uq.deco2800.coaster.graphics.notifications.IngameText;
 import uq.deco2800.coaster.graphics.notifications.Toaster;
-import uq.deco2800.coaster.graphics.screens.controllers.SkillTreeController;
-import uq.deco2800.coaster.graphics.sprites.AngledSpriteRelation;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 import uq.deco2800.coaster.graphics.sprites.SpriteRelation;
@@ -48,8 +43,6 @@ import static uq.deco2800.coaster.core.input.InputManager.justPressed;
 
 
 public class Player extends BasicMovingEntity {
-
-	Logger logger = LoggerFactory.getLogger(SkillTreeController.class);
 
 	protected static final float EPSILON = 0.00001f;
 
@@ -85,7 +78,6 @@ public class Player extends BasicMovingEntity {
 	GameInput playerInput = new GameInput();
 	PlayerStats stats = new PlayerStats();
 	Inventory inv = new Inventory();
-	PlayerInstruction tutorial;// = new PlayerInstruction(this);
 
 	protected static final int TARGET_NPC_KILL_COUNT = 100; // Need to kill 100
 	// mobs for the boss
@@ -137,7 +129,7 @@ public class Player extends BasicMovingEntity {
 	protected static final float BASE_JUMP_SPEED = -20f;
 	protected static final float BASE_MOVE_SPEED = 10f;
 	
-	static float scale = 4f;
+	static float scale = 1f;
 
 	protected static final float BASE_WIDTH = 1f * scale;
 	protected static final float BASE_HEIGHT = 1.41f * scale;
@@ -328,10 +320,6 @@ public class Player extends BasicMovingEntity {
 
 		this.commerce = new PlayerCommerce();
 
-	}
-
-	public void initTutorial() {
-		tutorial = new PlayerInstruction(this);
 	}
 
 	public void clear() {
@@ -578,19 +566,6 @@ public class Player extends BasicMovingEntity {
 		boolean specialAttackPressed = InputManager.getActionState(GameAction.SPECIAL_ATTACK);
 		playerAttack(ms, basicAttackPressed, specialAttackPressed);
 
-		List<Boolean> skillKeys = new ArrayList<>();
-		skillKeys.add(0, justPressed(GameAction.SKILL_KEY_Q));
-		skillKeys.add(1, justPressed(GameAction.SKILL_KEY_E));
-		skillKeys.add(2, justPressed(GameAction.SKILL_KEY_R));
-
-		skillKeys.add(3, justPressed(GameAction.SKILL_KEY_W));
-
-		// Blake
-		boolean companionModePressed = justPressed(GameAction.CHANGE_MODE);
-		boolean companionUpgradePressed = justPressed(GameAction.UPGRADE_COMPANION);
-		// callum
-		skillState(skillKeys);
-		//updateRenderAngle();
 		if (strafeActive) {
 			if (InputManager.getDiffX(posX) > 0) {
 				renderFacing = 1;
@@ -605,49 +580,6 @@ public class Player extends BasicMovingEntity {
 
 		playerInput.updateGameInput();
 		moveStateEntity(ms);
-
-		// change weapons
-		weaponChange(Arrays.asList(justPressed(GameAction.WEAPON_ONE), justPressed(GameAction.WEAPON_TWO),
-				justPressed(GameAction.WEAPON_THREE), justPressed(GameAction.WEAPON_FOUR),
-				justPressed(GameAction.WEAPON_FIVE), justPressed(GameAction.WEAPON_SIX),
-				justPressed(GameAction.WEAPON_SEVEN), justPressed(GameAction.WEAPON_EIGHT),
-				justPressed(GameAction.WEAPON_NINE)));
-
-		// add sprites for currently equipped weapons
-		/*if (equippedWeapon.getProjectileType() == ProjectileType.MELEE) {
-			commonSpriteSet.put(BodyPart.VOID, new AngledSpriteRelation(equippedWeapon.getSprite(), this,
-					weaponRenderAngle, 0f, 0f, 0f, 0f, 0f, 0f));
-		} else {
-			commonSpriteSet.put(BodyPart.VOID, new AngledSpriteRelation(equippedWeapon.getSprite(), this,
-					weaponRenderAngle, 0.40f, 0.6f, 1.0f, 1.0f, 0.2f, 0.090f));
-		}*/
-		// Companion Stuff
-		if (companionModePressed) {
-			newCompanion.setCompanionClass();
-			if (!hasCompanion) {
-				hasCompanion = true;
-			}
-		}
-
-
-		if (companionUpgradePressed && this.getCommerce().getGold() > 300) {
-			this.getCommerce().reduceGold(300);
-			newCompanion.upgradeCompanion();
-
-		}
-
-		if (justPressed(GameAction.ACTIVATE_MOUNT)) {
-			PlayerMountActions.toggleMount(this);
-		}
-
-
-		if (world.getTutorialMode() && !tutorial.checkCompletion()) {
-			if (tutorial.tutorialPassed() || justPressed(GameAction.SKIP_TUTORIAL)) {
-				tutorial.nextCommand();
-			} else {
-				tutorial.resendInstruction();
-			}
-		}
 	}
 
 	/**
@@ -783,7 +715,6 @@ public class Player extends BasicMovingEntity {
 		updateBootsArmour();
 		// Skill Controlling
 		tickSpells(ms);
-		Window.getEngine().setSkillTreeContent(stats.getSkillPoints());
 		applyPassiveSkillEffects(allSkills.getAllActiveSkills());
 		updateHealing();
 		if (stunned) {
@@ -1002,7 +933,6 @@ public class Player extends BasicMovingEntity {
 			debugString += "# of Mobs: " + world.getNpcEntities().size() + "\n";
 			debugString += "# of Decorations: " + world.getDecorationEntities().size() + "\n";
 			debugString += "# of loaded Chunks: " + world.getTiles().getWidth() / Chunk.CHUNK_WIDTH + "\n";
-			debugString += "Current Biome: " + Chunk.getBiomeTypeOfX((int) posX) + "\n\n";
 			debugString += "HP: " + getCurrentHealth() + "\n";
 			debugString += "XP: " + stats.getExperiencePoints() + "\n";
 			debugString += "Gold: " + this.commerce.getGold() + "\n";
@@ -1107,66 +1037,7 @@ public class Player extends BasicMovingEntity {
 				break;
 		}
 		if (basicAttack) {
-			int criticalHit = new Random().nextInt(200) - 100;
-			int criticalHitPercentage = criticalHit + this.stats.getCritChance();
-			int additionalDamage = this.stats.getCritDamage();
-			float armourDamageBonus = 1;
-			float armourCritBonus = 1;
-			if (equippedHead != null) {
-
-				armourDamageBonus += equippedHead.getDamageMulti() - 1;
-				armourCritBonus += equippedHead.getCritDamageMulti() - 1;
-			}
-			if (equippedChest != null) {
-				armourDamageBonus += equippedChest.getDamageMulti() - 1;
-				armourCritBonus += equippedChest.getCritDamageMulti() - 1;
-
-			}
-			float prjXVel = getProjectileVelocity()[0];
-			float prjYVel = getProjectileVelocity()[1];
-			// ammo check
-			int ammoCount;
-			int shotCount;
-			boolean explosive = false;
-			boolean melee = false;
-			if ((equippedWeapon.getProjectileType() == ProjectileType.GRENADE)
-					|| (equippedWeapon.getProjectileType() == ProjectileType.ROCKET)) {
-				ammoCount = inv.getAmount("ex_ammo");
-				explosive = true;
-				shotCount = ammoCount / equippedWeapon.getAmmoDeduction();
-			} else if (equippedWeapon.getProjectileType() == ProjectileType.MELEE) {
-				melee = true;
-				shotCount = 1;
-			} else {
-				ammoCount = inv.getAmount("ammo");
-				shotCount = ammoCount / equippedWeapon.getAmmoDeduction();
-			}
-
-			if (this.firingRateTracker <= 0 && criticalHitPercentage < 50 && shotCount >= 1) {
-				equippedWeapon.basicAttack(this, prjXVel, prjYVel, this.bulletSpeed,
-						(int) armourDamageBonus * this.genericBulletDamage);
-				this.firingRateTracker = (stats.getFiringRate() + equippedWeapon.getFiringRate()) / 2;
-				if (explosive) {
-					inv.removeItem(equippedWeapon.getAmmoDeduction(), "ex_ammo");
-				} else if (!melee) {
-					inv.removeItem(equippedWeapon.getAmmoDeduction(), "ammo");
-				}
-			} else if (this.firingRateTracker == 0 && criticalHitPercentage > 0 && shotCount >= 1) {
-				equippedWeapon.basicAttack(this, prjXVel, prjYVel, this.bulletSpeed,
-
-						((int) armourDamageBonus * this.genericBulletDamage)
-								+ ((int) armourCritBonus * additionalDamage));
-
-				this.firingRateTracker = (stats.getFiringRate() + equippedWeapon.getFiringRate()) / 2;
-				if (explosive) {
-					inv.removeItem(equippedWeapon.getAmmoDeduction(), "ex_ammo");
-				} else if (!melee) {
-					inv.removeItem(equippedWeapon.getAmmoDeduction(), "ammo");
-				}
-			} else {
-				this.firingRateTracker -= ms;
-			}
-		} else {
+			System.out.println("Basic Attack");		} else {
 			this.firingRateTracker -= ms;
 		}
 	}
@@ -1828,30 +1699,7 @@ public class Player extends BasicMovingEntity {
 		//TODO Fill box with playerName, make width suit playerName length
 
 	}
-
-	/**
-	 * Currently controls abilities (will be activated by pressing Q W E R)
-	 * <p>
-	 * This method determines which skill is activated by the player and check
-	 * if the player could perform the skill or not
-	 * <p>
-	 *
-	 * @param skillKeys:keys that can activate spells
-	 */
-	protected void skillState(List<Boolean> skillKeys) {
-		for (int i = 0; i < 4; i++) {
-			if (skillKeys.get(i)) {
-				if (spells.get(i) == null) {
-					continue; // spell not equipped, do nothing
-				}
-				if ((Math.abs(getCooldown(i)) < EPSILON) && !(usingSpells.get(i))
-						&& getCurrentMana() >= spells.get(i).getManaCost()) {
-					activateSpell(i);
-				}
-			}
-		}
-	}
-
+	
 	public void addSpell(int spellIndex, Active activeSpell) {
 		setUsingSpell(spellIndex, false);
 		spells.set(spellIndex, activeSpell);
@@ -2131,14 +1979,6 @@ public class Player extends BasicMovingEntity {
 				return;
 			} else if (entity instanceof BaseNPC) {
 				if (!this.invincible) {
-					if (entity instanceof DuckKingNPC) {
-						DuckKingNPC duckKingNPC = (DuckKingNPC) entity;
-						EntityState duckState = duckKingNPC.getCurrentState();
-						if (duckState == EntityState.ATTACKING || duckState == EntityState.STRIKING
-								|| duckState == EntityState.SPRINTING) {
-							this.addHealth((int) (-5 * world.getDifficulty()), duckKingNPC);
-						}
-					}
 					if (getCurrentState() != EntityState.DEAD) {
 						int knockBackDir = (int) Math.signum(entity.getVelX());
 						transitionToKnockBack(knockBackDir);

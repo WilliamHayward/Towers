@@ -2,11 +2,9 @@ package uq.deco2800.coaster.game.items;
 
 import java.util.Random;
 
-import uq.deco2800.coaster.game.entities.CoinDrop;
 import uq.deco2800.coaster.game.entities.ItemEntity;
 import uq.deco2800.coaster.game.entities.PowerUp;
 import uq.deco2800.coaster.game.entities.QuantityDrop;
-import uq.deco2800.coaster.game.entities.WeaponDrop;
 import uq.deco2800.coaster.game.world.World;
 
 /**
@@ -34,12 +32,6 @@ public class ItemDrop {
 		switch (drop.getType()) {
 			case POWERUP:
 				powerupDrop(drop, xPos, yPos);
-				break;
-			case COIN:
-				dropCoin(drop, xPos, yPos);
-				break;
-			case WEAPON:
-				dropWeapon(drop, xPos, yPos);
 				break;
 			case AMMO:
 //				dropAmmo(drop, xPos, yPos);
@@ -72,23 +64,6 @@ public class ItemDrop {
 		world.addEntity(newdrop);
 
 	}
-
-	private static void dropCoin(Item drop, float xPos, float yPos) {
-		CoinDrop coinDrop = new CoinDrop(drop, 1);
-		coinDrop.setPosition(xPos, yPos);
-		world.addEntity(coinDrop);
-	}
-
-
-	private static void dropWeapon(Item drop, float xPos, float yPos) {
-		Integer gunID = random.nextInt(6) + 1;
-		String idString = gunID.toString();
-		Item weapon = ItemRegistry.getItem("Gun" + idString);
-		WeaponDrop weaponDrop = new WeaponDrop(weapon);
-		weaponDrop.setPosition(xPos, yPos);
-		world.addEntity(weaponDrop);
-	}
-
 
 
 	private static void dropQuantityItem(Item drop, float xPos, float yPos) {

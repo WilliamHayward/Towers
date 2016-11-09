@@ -9,7 +9,7 @@ import uq.deco2800.coaster.game.tiles.TileInfo;
  */
 @SuppressWarnings("unchecked")
 public class WorldTiles {
-	private ArrayDeque tiles;
+	private ArrayDeque<Tile> tiles;
 	private int offset = 0;
 	private int chunkHeight = Chunk.CHUNK_HEIGHT;
 

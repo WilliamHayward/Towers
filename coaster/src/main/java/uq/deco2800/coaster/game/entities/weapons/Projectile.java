@@ -11,7 +11,6 @@ import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.npcs.DuckKingNPC;
 import uq.deco2800.coaster.game.entities.npcs.mounts.Mount;
 import uq.deco2800.coaster.game.entities.particles.ParticleSource;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
@@ -86,9 +85,7 @@ public abstract class Projectile extends Entity {
 		for (int i = 0; i < entities.size(); i++) {
 			Entity entity = entities.get(i);
 			BodyPart location = hitLocations.get(i);
-			if (handleDuckKing(entity, location)) {
-				return;
-			}
+			
 			if (location == BodyPart.HEAD) {
 				Toaster.lightToast("Headshot");
 			}
@@ -159,24 +156,5 @@ public abstract class Projectile extends Entity {
 			hitbox.setPos(this.bounds, this.facing);
 			hitboxes.add(hitbox);
 		}		
-	}
-
-	/**
-	 * Check if the target is the duck king, if so reflect the damage
-	 * @param entity the target being hit
-	 * @param hitLocation the location hit
-	 * @return if the target should not take damage
-	 */
-	boolean handleDuckKing(Entity entity, BodyPart hitLocation) {
-		if (entity instanceof DuckKingNPC) {
-			if (hitLocation == BodyPart.SHIELD) {
-				((DuckKingNPC) entity).hitDuckKingWithProjectile();
-			} else {
-				this.setVelocity(-1 * velX, -1 * velY);
-				this.setPosition(posX + velX * 0.1F, posY + velY * 0.1F);
-			}
-			return true;
-		}
-		return false;
 	}
 }

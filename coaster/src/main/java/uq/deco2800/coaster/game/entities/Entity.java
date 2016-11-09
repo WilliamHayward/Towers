@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.entities.npcs.AttackableNPC;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.entities.particles.Particle;
-import uq.deco2800.coaster.game.entities.puzzle.TerrainEntity;
 import uq.deco2800.coaster.game.entities.weapons.Projectile;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
@@ -852,19 +851,12 @@ public abstract class Entity {
 					break;
 				}
 			}
-			TerrainEntity collidedTerrainEntity = checkTerrainEntities(bounds, Side.BOTTOM);
-			if (collidedTerrainEntity != null) {
-				insertInCollidedTerrain(collidedTerrain, hitDirections, collidedTerrainEntity.bounds);
-			}
+			
 		} else if (velY < 0) { // moving up -> check the top edge for terrain/terrain entities
 			for (int testX = leftX; testX <= rightX; testX++) {
 				if (checkTileCollision(hitbox, collidedTerrain, hitDirections, testX, topY, Side.TOP)) {
 					break;
 				}
-			}
-			TerrainEntity collidedTerrainEntity = checkTerrainEntities(bounds, Side.TOP);
-			if (collidedTerrainEntity != null) {
-				insertInCollidedTerrain(collidedTerrain, hitDirections, collidedTerrainEntity.bounds);
 			}
 		}
 
@@ -880,10 +872,7 @@ public abstract class Entity {
 					break;
 				}
 			}
-			TerrainEntity collidedTerrainEntity = checkTerrainEntities(bounds, Side.RIGHT);
-			if (collidedTerrainEntity != null) {
-				insertInCollidedTerrain(collidedTerrain, hitDirections, collidedTerrainEntity.bounds);
-			}
+			
 		} else if (velX < 0) {  // moving left -> check the left edge for terrain/terrain entities
 			facing = -1;
 			for (int testY = bottomY; testY >= topY; testY--) {
@@ -892,10 +881,7 @@ public abstract class Entity {
 					break;
 				}
 			}
-			TerrainEntity collidedTerrainEntity = checkTerrainEntities(bounds, Side.LEFT);
-			if (collidedTerrainEntity != null) {
-				insertInCollidedTerrain(collidedTerrain, hitDirections, collidedTerrainEntity.bounds);
-			}
+			
 		}
 		checkEntityCollisions(hitbox, collidedEntities, hitLocations);
 
@@ -1016,28 +1002,6 @@ public abstract class Entity {
 		}
 	}
 
-
-	/**
-	 * Checks for collisions with terrainEntities and resolves them as we would for regular ol tiles<br>
-	 * Also informs the terrain entity about the collision, so that it can apply its affects on the next tick
-	 *
-	 * @param hitbox our hitbox that we're processing to check for collisions
-	 * @param side   the side on which we're looking for collisions/resolve them
-	 * @return the terrain entity with which we've collided, otherwise null
-	 */
-
-
-	private TerrainEntity checkTerrainEntities(AABB hitbox, Side side) {
-		for (TerrainEntity platform : world.getTerrainEntities()) {
-			if (platform.collidesWith(this, side) && hitbox.collides(platform) != BodyPart.VOID) {
-				resolveCollision(hitbox, platform.bounds, side);
-				platform.addToList(this);
-				return platform;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Checks if we've collided with any entities <br>
 	 * If we have, records the entity and the BodyPart with which we collided in the lists
@@ -1078,7 +1042,6 @@ public abstract class Entity {
 				break;
 			}
 		}
-		checkTerrainEntities(bounds, Side.RIGHT);
 	}
 
 
@@ -1098,7 +1061,6 @@ public abstract class Entity {
 				break;
 			}
 		}
-		checkTerrainEntities(bounds, Side.LEFT);
 	}
 
 

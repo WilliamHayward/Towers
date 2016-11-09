@@ -1,7 +1,5 @@
 package uq.deco2800.coaster.game.commerce;
 
-import uq.deco2800.coaster.game.entities.npcs.CommerceNPC;
-
 /**
  * A class to contain all Commerce related properties and functions which are to be available/attached to the player.
  *
@@ -71,15 +69,6 @@ public class PlayerCommerce {
 	 */
 	public void setNearestStore(Store nearestStore) {
 		this.nearestStore = nearestStore;
-	}
-
-	/**
-	 * Updates the players nearest store.
-	 *
-	 * @param storeNPC the nearest store NPC.
-	 */
-	public void setNearestStore(CommerceNPC storeNPC) {
-		setNearestStore(storeNPC.getStore());
 	}
 
 	/**

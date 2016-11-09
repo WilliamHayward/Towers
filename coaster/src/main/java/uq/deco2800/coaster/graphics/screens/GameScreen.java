@@ -22,6 +22,7 @@ import uq.deco2800.coaster.game.entities.weapons.ProjectileType;
 import uq.deco2800.coaster.game.inventory.Inventory;
 import uq.deco2800.coaster.game.items.Weapon;
 import uq.deco2800.coaster.game.mechanics.TimeOfDay;
+import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
 import uq.deco2800.coaster.game.weather.Lightning;
 import uq.deco2800.coaster.game.world.*;
@@ -151,59 +152,38 @@ public class GameScreen extends Screen {
 
 	public void render(long ms, boolean renderBackground) {
 		World world = World.getInstance();
-		if (world instanceof BossRoom) {
-			drawBossRoomBackground((BossRoom) world);
-		} else {
-			//Background
-			dayAndNightCycle(ms, renderBackground);
+		
+		//Background
+		dayAndNightCycle(ms, renderBackground);
 
-			//Render tiles
-			renderTerrain(World.getInstance().getTiles());
-		}
-
+		//Render tiles
+		renderTerrain(World.getInstance().getTiles());
+	
 		//Render entities
 		renderEntities(World.getInstance().getAllEntities(), ms);
 
 		//render texts
 		renderTexts(World.getInstance().getIngameTexts(), ms);
 
-		if (!(world instanceof BossRoom)) {
-			//Render minimap
-			renderMap();
-		}
+		//Render minimap
+		renderMap();
 
 		//Draw crosshair on screen
 		gc.drawImage(crosshair.getFrame(), InputManager.getMousePixelX() - crosshair.getWidth() / 2,
 				InputManager.getMousePixelY() - crosshair.getHeight() / 2);
+		int cursorSize = TileInfo.BLOCK_WIDTH;
+		gc.fillText("X: " + InputManager.getMouseTileX(), 0, 50);
+		gc.fillText("Y: " + InputManager.getMouseTileY(), 0, 100);
+		int cursorX = (int) (InputManager.getMouseTileX() * cursorSize + viewport.getLeftBorder());
+		int cursorY = (int) (InputManager.getMouseTileY() * cursorSize + viewport.getTop());
+
+		//cursorX = (int) (InputManager.getMousePixelX() / cursorSize) * cursorSize;
+		//cursorY = (int) (InputManager.getMousePixelY() / cursorSize) * cursorSize;
+		gc.fillRect(cursorX - cursorSize / 2, cursorY - cursorSize / 2, cursorSize, cursorSize);
 
 		if (currentLightningRenderTime > 0) {
 			renderLightning(ms);
 		}
-	}
-
-	/**
-	 * Will draw the background for the boss room. Has a lot of magic numbers,
-	 * sorry.
-	 *
-	 * @param world
-	 */
-
-	private void drawBossRoomBackground(BossRoom world) {
-		gc.setFill(new Color((float) 88 / 255, (float) 171 / 255, 1, 1));
-		gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-		float tileSize = viewport.getTileSideLength();
-		int topBorder = viewport.getTopBorder();
-		int top = (int) Math.floor(viewport.getTop());
-		float subTileShiftY = (viewport.getTop() - top) * tileSize;
-		float y = (14 - top) * tileSize + topBorder - subTileShiftY;
-
-		Sprite background = world.getBackground();
-		float ratio = y / 255;
-		int width = (int) (background.getWidth() * ratio);
-		int height = (int) (background.getHeight() * ratio);
-
-		gc.drawImage(background.getFrame(), 0, 0, width, height);
-		gc.drawImage(background.getFrame(), width, 0, width, height);
 	}
 
 	/**
@@ -565,7 +545,7 @@ public class GameScreen extends Screen {
 		gc.restore();
 	}
 
-	private void renderTerrain(WorldTiles tiles) {
+	private void renderTerrain(WorldTiles worldTiles) {
 
 		float tileSize = viewport.getTileSideLength();
 		int leftBorder = viewport.getLeftBorder();
@@ -583,12 +563,12 @@ public class GameScreen extends Screen {
 		//fog calculations
 		for (int x = left - extraFogSpace; x <= right + extraFogSpace; x++) {
 			for (int y = top - extraFogSpace; y <= bottom + extraFogSpace; y++) {
-				if (!tiles.test(x, y)) {
+				if (!worldTiles.test(x, y)) {
 					// check for invalid lookups
 					continue;
 				}
 				if (World.getInstance().getLightingState()) {
-					calculateFog(x, y, tiles);
+					calculateFog(x, y, worldTiles);
 				}
 			}
 		}
@@ -621,12 +601,12 @@ public class GameScreen extends Screen {
 			for (int y = top - padding; y <= bottom + padding; y++) {
 				//We still want to iterate over "negative" tiles even if we don't render so we can center the map
 				boolean invalidTile = false;
-				if (!tiles.test(x, y)) {
+				if (!worldTiles.test(x, y)) {
 					invalidTile = true;
 				}
 
 				if (!invalidTile) {
-					Sprite sprite = tiles.get(x, y).getSprite();
+					Sprite sprite = worldTiles.get(x, y).getSprite();
 					float xPos = (x - left) * tileSize + leftBorder;
 					float yPos = (y - top) * tileSize + topBorder;
 					gc.drawImage(sprite.getFrame(), xPos - subTileShiftX, yPos - subTileShiftY, tileSize, tileSize);
@@ -635,9 +615,9 @@ public class GameScreen extends Screen {
 
 					int totalLightLevel;
 					if (!invalidTile) {
-						totalLightLevel = tiles.get(x, y).getFogAndLight();
-						if (lightSources.contains(tiles.get(x, y).getTileType().getType())) {
-							totalLightLevel = tiles.get(x, y).getLightLevel();
+						totalLightLevel = worldTiles.get(x, y).getFogAndLight();
+						if (lightSources.contains(worldTiles.get(x, y).getTileType().getType())) {
+							totalLightLevel = worldTiles.get(x, y).getLightLevel();
 						}
 					} else {
 						totalLightLevel = World.getInstance().getGlobalLightLevel();
@@ -646,7 +626,7 @@ public class GameScreen extends Screen {
 					if (totalLightLevel == 0) {
 						continue;
 					}
-					if (needToRenderShadows) {
+					if (needToRenderShadows && false) {
 						for (int i = 0; i < firstTileSize; i++) {
 							for (int j = 0; j < firstTileSize; j++) {
 								int arrayLocation = (int) ((i) + (firstTileSize * j));

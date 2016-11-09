@@ -38,9 +38,7 @@ public class FireProjectile extends Projectile{
 		for (int i = 0; i < entities.size(); i++) {
 			Entity entity = entities.get(i);
 			BodyPart location = hitLocations.get(i);
-			if (handleDuckKing(entity, location)) {
-				return;
-			}
+			
 			float multiplier = location.getMultiplier();
 			if (entity instanceof BaseNPC) {
 				((BaseNPC) entity).receiveDamage((int) (damage * multiplier), this.owner);

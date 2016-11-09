@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javafx.scene.input.KeyCode;
 import uq.deco2800.coaster.graphics.notifications.Toaster;
-import uq.deco2800.coaster.graphics.screens.controllers.ControlScreenController;
 
 /**
  * A class used to hold the active 'keyboard key' to 'game action' mappings. To
@@ -27,7 +26,6 @@ public class ControlsKeyMap {
 	//the map of the keys to actions used by the game
 	private static Map<KeyCode, GameAction> keymap = new HashMap<>();
 	//the  controller used to handle button remapping for the controls menu
-	private static ControlScreenController controller;
 
 	private ControlsKeyMap() {
 
@@ -163,7 +161,6 @@ public class ControlsKeyMap {
 			registerKey(KeyCode.UNDEFINED, actionOne);
 		}
 		swapKeys(keyTwo, aKeyOne);
-		controller.refreshPressed();
 	}
 
 	/**
@@ -215,7 +212,6 @@ public class ControlsKeyMap {
 			Toaster.toast("Both keys not currently in use.");
 
 		}
-		controller.refreshPressed();
 	}
 
 	/**
@@ -226,7 +222,6 @@ public class ControlsKeyMap {
 	public static void importControlScheme(ControlScheme controlScheme) {
 		clearAllMappings();
 		ControlSchemeManager.loadControlScheme(controlScheme, keymap);
-		controller.refreshPressed();
 		logger.info("Loaded control scheme " + controlScheme.toString());
 	}
 
@@ -260,7 +255,6 @@ public class ControlsKeyMap {
 		try {
 			keymap = (new ObjectMapper()).readValue(file, new TypeReference<Map<KeyCode, GameAction>>() {
 			});
-			controller.refreshPressed();
 			logger.info("Loaded control mapping");
 			Toaster.toast("Controls loaded successfully.");
 		} catch (IOException exception) {
@@ -287,14 +281,4 @@ public class ControlsKeyMap {
 	public static boolean mappingContains(KeyCode code, GameAction action) {
 		return getGameAction(code) == action;
 	}
-
-	/**
-	 * Register the ControlScreen controller
-	 *
-	 * @param c the controller to register
-	 */
-	public static void registerControlScreenController(ControlScreenController c) {
-		controller = c;
-	}
-
 }

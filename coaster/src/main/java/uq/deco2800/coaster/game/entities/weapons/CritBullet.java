@@ -29,9 +29,7 @@ public class CritBullet extends Projectile {
 		for (int i = 0; i < entities.size(); i++) {
 			Entity entity = entities.get(i);
 			BodyPart location = hitLocations.get(i);
-			if (handleDuckKing(entity, location)) {
-				return;
-			}
+			
 			if (location == BodyPart.HEAD) {
 				Toaster.lightToast("Headshot");
 				createHeadshotParticles();

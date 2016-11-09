@@ -1,8 +1,6 @@
 package uq.deco2800.coaster.game.entities;
 
 import java.util.List;
-import java.util.Random;
-
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
@@ -17,7 +15,6 @@ public class GenericExplosion extends Entity{
 	private float y;
 	private int radius;
 	private float currentRadius;
-	private Random random;
 
 	/**
 	 * Generates an explosion at a given position
@@ -32,7 +29,6 @@ public class GenericExplosion extends Entity{
 		setPosition(x,y);
 		this.radius = radius;
 		this.currentRadius = 1;
-		this.random = new Random();
 
 		this.setSprite(new Sprite(SpriteList.EXPLOSION));
 	}

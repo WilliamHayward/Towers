@@ -75,7 +75,6 @@ public class Viewport {
 	public float getTileCoordY(int y) {
 		int adjustedY = y - borderTop;
 		return (adjustedY / tileSideLength) + top;
-
 	}
 
 	/**
