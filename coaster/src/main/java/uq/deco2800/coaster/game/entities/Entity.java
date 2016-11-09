@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.entities.npcs.AttackableNPC;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.particles.Particle;
 import uq.deco2800.coaster.game.entities.weapons.Projectile;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
@@ -1017,7 +1016,7 @@ public abstract class Entity {
 			return;
 		}
 		for (Entity entity : world.getAllEntities()) {
-			if (entity == this || entity == null || entity instanceof Decoration || entity instanceof Particle) {
+			if (entity == this || entity == null || entity instanceof Decoration) {
 				continue;
 			}
 			if (entity.doesItBlockOtherEntities() && collisionFilter.test(entity)) {
@@ -1114,7 +1113,7 @@ public abstract class Entity {
 			firstTick = false;
 		} else {
 			// don't apply physics to decorations or particles. They don't deserve it
-			if (!(this instanceof Decoration || this instanceof Particle)) {
+			if (!(this instanceof Decoration)) {
 				updatePhysics(ms);
 			}
 		}

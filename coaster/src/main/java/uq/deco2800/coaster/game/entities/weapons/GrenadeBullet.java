@@ -8,7 +8,6 @@ import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
@@ -21,8 +20,6 @@ public class GrenadeBullet extends Projectile {
 	private long deathTime = 0; //time of death, used for animating the explosion
 	private float deathPosX;//used to animate
 	private float deathPosY;
-	private int blockDamage;
-	
 	public GrenadeBullet(Entity owner, float velX, float velY, int speed, int time, int damage, int radius, SpriteList sprite, boolean grav) {
 		super(owner, velX, velY, speed, damage);
 		bounds = new AABB(posX, posY, 0.5f, 0.5f); //Default grenade size
@@ -30,7 +27,6 @@ public class GrenadeBullet extends Projectile {
 		this.time = time;
 		this.radius = radius;
 		enableGravity = grav;
-		blockDamage = damage;
 		//Possible change collision so that the player can get hurt by it
 		setCollisionFilter(e -> e != owner && e.isHurtByProjectiles());
 		initFiringPosition();
@@ -87,7 +83,6 @@ public class GrenadeBullet extends Projectile {
 		setSprite(new Sprite(SpriteList.EXPLOSION));
 		if (this.deathTime == 10) {//if the grenade has been dead for 10 ticks
 			this.kill(null);
-			TerrainDestruction.damageCircle((int) posX, (int) posY, radius, this.blockDamage);
 		}
 
 	}

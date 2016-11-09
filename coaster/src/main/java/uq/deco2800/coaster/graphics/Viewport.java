@@ -1,6 +1,8 @@
 package uq.deco2800.coaster.graphics;
 
+import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.game.world.Chunk;
+import uq.deco2800.coaster.game.world.World;
 
 //This is the class that controls the "camera" of the game. You can move the camera, position it onto a certain tile,
 //and much more.
@@ -56,25 +58,29 @@ public class Viewport {
 	//Takes a tile coordinate input and returns the pixel coordinate.
 	public int getPixelCoordX(float x) {
 		float pixel = (x - left) * tileSideLength;
-		pixel += borderLeft;
+		//pixel += borderLeft;
 		return (int) pixel;
 	}
 
 	public int getPixelCoordY(float y) {
 		float pixel = (y - top) * tileSideLength;
-		pixel += borderTop;
+		//pixel += borderTop;
 		return (int) pixel;
 	}
 
 	//Takes a pixel coordinate and converts it to tile coordinates.
 	public float getTileCoordX(int x) {
-		int adjustedX = x - borderLeft;
-		return (adjustedX / tileSideLength) + left;
+		
+		int adjustedX = (int) (x + left * tileSideLength); //- borderLeft;
+		return (adjustedX / tileSideLength);
 	}
 
 	public float getTileCoordY(int y) {
-		int adjustedY = y - borderTop;
-		return (adjustedY / tileSideLength) + top;
+		int adjustedY = (int) (y + top * tileSideLength); //- borderLeft;
+		return (adjustedY / tileSideLength);
+		
+		//int adjustedY = y - borderTop;
+		//return (adjustedY / tileSideLength) + top;
 	}
 
 	/**
@@ -102,6 +108,12 @@ public class Viewport {
 
 	public void centerOnX(float x) {
 		left = x - (VIEWPORT_WIDTH / 2.0f);
+		if (left < 0) {
+			left = 0;
+		}
+		if (left + VIEWPORT_WIDTH > World.getInstance().getTiles().getWidth()) {
+			left = World.getInstance().getTiles().getWidth() - VIEWPORT_WIDTH;
+		}
 	}
 
 	public void centerOnY(float y) {

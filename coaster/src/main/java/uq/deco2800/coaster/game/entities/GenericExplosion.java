@@ -3,7 +3,6 @@ package uq.deco2800.coaster.game.entities;
 import java.util.List;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
@@ -43,7 +42,6 @@ public class GenericExplosion extends Entity{
 			setPosition(x-currentRadius,y-currentRadius);
 			currentRadius++;
 		} else {
-			TerrainDestruction.damageCircle((int) x - radius,(int) y - radius, radius, 100);
 			this.delete();
 		}
 	};

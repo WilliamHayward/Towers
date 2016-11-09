@@ -3,7 +3,6 @@ package uq.deco2800.coaster.game.entities.weapons;
 import java.util.List;
 
 import uq.deco2800.coaster.core.sound.SoundCache;
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
@@ -30,10 +29,6 @@ public class CritBullet extends Projectile {
 			Entity entity = entities.get(i);
 			BodyPart location = hitLocations.get(i);
 			
-			if (location == BodyPart.HEAD) {
-				Toaster.lightToast("Headshot");
-				createHeadshotParticles();
-			}
 			float multiplier = location.getMultiplier();
 			if (entity instanceof BaseNPC) {
 				((BaseNPC) entity).receiveDamage((int) (damage * multiplier), this.owner);

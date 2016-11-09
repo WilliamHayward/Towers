@@ -3,36 +3,22 @@ package uq.deco2800.coaster.game.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import org.apache.commons.lang3.mutable.MutableDouble;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.core.input.GameAction;
 import uq.deco2800.coaster.core.input.GameInput;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
-import uq.deco2800.coaster.game.commerce.PlayerCommerce;
 import uq.deco2800.coaster.game.debug.Debug;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.npcs.companions.CompanionNPC;
-import uq.deco2800.coaster.game.entities.npcs.mounts.Mount;
-import uq.deco2800.coaster.game.entities.npcs.mounts.PlayerMountActions;
-import uq.deco2800.coaster.game.entities.particles.Particle;
-import uq.deco2800.coaster.game.entities.skills.*;
 import uq.deco2800.coaster.game.entities.weapons.LazorParticle;
 import uq.deco2800.coaster.game.entities.weapons.PortalBullet;
-import uq.deco2800.coaster.game.inventory.Inventory;
-import uq.deco2800.coaster.game.items.Armour;
-import uq.deco2800.coaster.game.items.ItemRegistry;
-import uq.deco2800.coaster.game.items.Weapon;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
+import uq.deco2800.coaster.game.tiles.TileInfo;
+import uq.deco2800.coaster.game.tiles.Tiles;
 import uq.deco2800.coaster.game.world.Chunk;
 import uq.deco2800.coaster.game.world.MiniMap;
-import uq.deco2800.coaster.game.world.RoomWorld;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Viewport;
-import uq.deco2800.coaster.graphics.Window;
-import uq.deco2800.coaster.graphics.notifications.IngameText;
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 import uq.deco2800.coaster.graphics.sprites.SpriteRelation;
@@ -77,7 +63,6 @@ public class Player extends BasicMovingEntity {
 
 	GameInput playerInput = new GameInput();
 	PlayerStats stats = new PlayerStats();
-	Inventory inv = new Inventory();
 
 	protected static final int TARGET_NPC_KILL_COUNT = 100; // Need to kill 100
 	// mobs for the boss
@@ -116,15 +101,8 @@ public class Player extends BasicMovingEntity {
 
 	// Mount CPS
 	private boolean onMount = false;
-	private Mount mount = null;
 	private boolean talking = false;
 
-
-	// Companion stuff
-	private boolean hasCompanion = false;
-	private boolean existingCompanion = false;
-	CompanionNPC newCompanion = new CompanionNPC(this);
-	// End of Companion Stuff
 
 	protected static final float BASE_JUMP_SPEED = -20f;
 	protected static final float BASE_MOVE_SPEED = 10f;
@@ -140,8 +118,6 @@ public class Player extends BasicMovingEntity {
 	protected int healing;
 	protected int healTickCount = 0;
 
-	// Commerce
-	private PlayerCommerce commerce;
 
 	// Spell cooldown timers to be displayed on the screen.
 	// These times are not implemented into spell logic at the moment
@@ -151,18 +127,11 @@ public class Player extends BasicMovingEntity {
 
 	// weapons + armour
 	protected ArrayList<String> activeWeapons = new ArrayList<>();
-	private Armour equippedHead;
-	private Armour equippedChest;
-	private Armour equippedPants;
-	private Armour equippedBoots;
-
-	protected Weapon equippedWeapon;
-
+	
 	// Barney - Portals
 	private PortalBullet portal1;
 	private PortalBullet portal2;
 
-	private List<Active> spells = new ArrayList<>(4);
 	private List<Integer> spellPhases = new ArrayList<>();
 	private List<Integer> currentSpellPhase = new ArrayList<>();
 	private List<ArrayList<Integer>> spellLoopIterations = new ArrayList<>();
@@ -172,8 +141,6 @@ public class Player extends BasicMovingEntity {
 	private List<Integer> currentSpellLoopTiming = new ArrayList<>();
 	private List<Boolean> usingSpells = new ArrayList<>();
 
-	private List<Passive> passiveSkill = new ArrayList<Passive>();
-	private ActivateSkill allSkills = new ActivateSkill(stats);
 	private List<PlayerBuff> buffList = new ArrayList<PlayerBuff>();
 	Iterator<PlayerBuff> iter = buffList.iterator();
 
@@ -242,7 +209,6 @@ public class Player extends BasicMovingEntity {
 			spellLoopTimings.add(i, new ArrayList<>());
 			spellPhases.add(i, 0);
 			usingSpells.add(false);
-			spells.add(i, null);
 			currentSpellPhase.add(i, 0);
 			currentSpellLoopTiming.add(i, 0);
 			currentSpellLoopIteration.add(i, 0);
@@ -256,25 +222,7 @@ public class Player extends BasicMovingEntity {
 		// dud implementation of the obtaining weapons
 		// Subject to change with inventory and weapon drop progression
 
-		activeWeapons.add(ItemRegistry.getItem("Gun1").getID());
-		activeWeapons.add(ItemRegistry.getItem("Melee1").getID());
-		activeWeapons.add(ItemRegistry.getItem("Gun2").getID());
-		activeWeapons.add(ItemRegistry.getItem("Gun3").getID());
-		activeWeapons.add(ItemRegistry.getItem("Gun4").getID());
-		activeWeapons.add(ItemRegistry.getItem("Gun5").getID());
-		activeWeapons.add(ItemRegistry.getItem("Gun7").getID());
-		activeWeapons.add(ItemRegistry.getItem("Gun8").getID());
-		activeWeapons.add(ItemRegistry.getItem("Gun9").getID());
-
-		// Represents the currently equipped weapon.
-		equippedWeapon = (Weapon) ItemRegistry.getItem("Gun1");
-		equippedHead = null;
-		equippedChest = null;
-		equippedPants = null;
-		equippedBoots = null;
-
 		// adjust firing Rate - currently average of player stats and native gun
-		this.firingRateTracker = (stats.getFiringRate() + equippedWeapon.getFiringRate()) / 2;
 		this.moveSpeed = BASE_MOVE_SPEED;
 		this.jumpSpeed = BASE_JUMP_SPEED;
 
@@ -315,167 +263,13 @@ public class Player extends BasicMovingEntity {
 		this.firingRateTracker = stats.getFiringRate();
 		this.bulletSpeed = 60;
 		this.genericBulletDamage = stats.getDamage();
-		this.accuracy = equippedWeapon.getAccuracy() + 5;
-		this.stats.setActivateSkill(allSkills);
-
-		this.commerce = new PlayerCommerce();
-
 	}
 
 	public void clear() {
 		playerInput = new GameInput();
 		stats = new PlayerStats();
-		inv = new Inventory();
-		allSkills = new ActivateSkill(stats);
 		firstTick = true;
 	}
-
-	/**
-	 * Returns the players commerce object which provides an interface to
-	 * Commerce related functionality.
-	 *
-	 * @return the players PlayerCommerce instance.
-	 */
-	public PlayerCommerce getCommerce() {
-		return commerce;
-	}
-
-	/**
-	 * Method to update the list of active weapons in the player's inventory
-	 */
-	public void updateWeapons() {
-		for (int i = 0; i < 4; i++) {
-			String id = inv.getItemID("Active Inventory", i);
-			activeWeapons.set(i, id);
-		}
-	}
-
-	/**
-	 * Method to update boots armour hit boxes for the player
-	 */
-	public void updateBootsArmour() {
-		String id = inv.getItemID("Passive Inventory", 3);
-		int rank;
-		if (id == "emptyslot") {
-			if (equippedBoots != null) {
-				rank = equippedBoots.getRank();
-				if (rank == 1) {
-					removeHitbox(BodyPart.FOOT_ARMOUR_WEAK);
-				} else if (rank == 2) {
-					removeHitbox(BodyPart.FOOT_ARMOUR_MED);
-				} else {
-					removeHitbox(BodyPart.FOOT_ARMOUR_STRONG);
-				}
-			}
-			equippedBoots = null;
-		} else if ((equippedBoots == null) || (id != equippedBoots.getID())) {
-			equippedBoots = (Armour) ItemRegistry.getItem(id);
-			rank = equippedBoots.getRank();
-			if (rank == 1) {
-				//commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_WEAK, 0.8f, 0.65f, 0.0f, 0.0f));
-			} else if (rank == 2) {
-				//commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_MED, 0.8f, 1f, 0.2f, 0.7f));
-			} else {
-				//commonHitboxes.add(defineHitbox(BodyPart.FOOT_ARMOUR_STRONG, 0.8f, 0.65f, 0.0f, 0.0f));
-			}
-		}
-	}
-
-	/**
-	 * Method to update pants armour hit boxes for the player
-	 */
-	public void updatePantsArmour() {
-		String id = inv.getItemID("Passive Inventory", 2);
-		int rank;
-		if (id == "emptyslot") {
-			if (equippedPants != null) {
-				rank = equippedPants.getRank();
-				if (rank == 1) {
-					removeHitbox(BodyPart.LEG_ARMOUR_WEAK);
-				} else if (rank == 2) {
-					removeHitbox(BodyPart.LEG_ARMOUR_MED);
-				} else {
-					removeHitbox(BodyPart.LEG_ARMOUR_STRONG);
-				}
-			}
-			equippedPants = null;
-		} else if ((equippedPants == null) || (id != equippedPants.getID())) {
-			equippedPants = (Armour) ItemRegistry.getItem(id);
-			rank = equippedPants.getRank();
-			if (rank == 1) {
-				//commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_WEAK, 0.9f, 1.5f, 0.3f, 0.8f));
-			} else if (rank == 2) {
-				//commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_MED, 0.9f, 1.5f, 0.3f, 0.9f));
-			} else {
-				//commonHitboxes.add(defineHitbox(BodyPart.LEG_ARMOUR_STRONG, 0.9f, 1.5f, 0.3f, 0.8f));
-			}
-		}
-	}
-
-	/**
-	 * Method to update armour hit boxes for the player
-	 */
-	public void updateChestArmour() {
-		String id = inv.getItemID("Passive Inventory", 1);
-		int rank;
-
-		if (id == "emptyslot") {
-			if (equippedChest != null) {
-				rank = equippedChest.getRank();
-				if (rank == 1) {
-					removeHitbox(BodyPart.BODY_ARMOUR_WEAK);
-				} else if (rank == 2) {
-					removeHitbox(BodyPart.BODY_ARMOUR_MED);
-				} else {
-					removeHitbox(BodyPart.BODY_ARMOUR_STRONG);
-				}
-			}
-			equippedChest = null;
-		} else if ((equippedChest == null) || (id != equippedChest.getID())) {
-			equippedChest = (Armour) ItemRegistry.getItem(id);
-			rank = equippedChest.getRank();
-			if (rank == 1) {
-				//commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_WEAK, 0.8f, 1f, 0.2f, 0.7f));
-			} else if (rank == 2) {
-				//commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_MED, 0.8f, 1f, 0.2f, 0.7f));
-			} else {
-				commonHitboxes.add(defineHitbox(BodyPart.BODY_ARMOUR_STRONG, 0.8f, 1f, 0.2f, 0.7f));
-			}
-		}
-	}
-
-	/**
-	 * Method to update armour hit boxes for the player
-	 */
-	public void updateHeadArmour() {
-		String id = inv.getItemID("Passive Inventory", 0);
-		int rank;
-
-		if (id == "emptyslot") {
-			if (equippedHead != null) {
-				rank = equippedHead.getRank();
-				if (rank == 1) {
-					removeHitbox(BodyPart.HEAD_ARMOUR_WEAK);
-				} else if (rank == 2) {
-					removeHitbox(BodyPart.HEAD_ARMOUR_MED);
-				} else {
-					removeHitbox(BodyPart.HEAD_ARMOUR_STRONG);
-				}
-			}
-			equippedHead = null;
-		} else if ((equippedHead == null) || (id != equippedHead.getID())) {
-			equippedHead = (Armour) ItemRegistry.getItem(id);
-			rank = equippedHead.getRank();
-			if (rank == 1) {
-				//commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_WEAK, 0.8f, 0.65f, 0.0f, 0.0f));
-			} else if (rank == 2) {
-				//commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_MED, 0.8f, 0.65f, 0.0f, 0.0f));
-			} else {
-				//commonHitboxes.add(defineHitbox(BodyPart.HEAD_ARMOUR_STRONG, 0.8f, 0.65f, 0.0f, 0.0f));
-			}
-		}
-	}
-
 
 	public void setHealing(int healing) {
 		this.healing = healing;
@@ -502,45 +296,7 @@ public class Player extends BasicMovingEntity {
 		buffList.add(playerBuff);
 	}
 
-	/**
-	 * Getter method for obtaining the player's current chest armour. Used in
-	 * tests.
-	 *
-	 * @return player's currently equipped chest armour
-	 */
-	public Armour getEquippedChest() {
-		return equippedChest;
-	}
-
-	/**
-	 * Getter method for obtaining the player's current head armour. Used in
-	 * tests.
-	 *
-	 * @return player's currently equipped chest armour
-	 */
-	public Armour getEquippedHead() {
-		return equippedHead;
-	}
-
-	/**
-	 * Getter method for obtaining the player's current weapon Used in tests and
-	 * weapon HUD screen
-	 *
-	 * @return player's currently equipped weapon
-	 */
-	public Weapon getEquippedWeapon() {
-		return equippedWeapon;
-	}
-
-	/**
-	 * Getter method for obtaining the player's Inventory. Used to manage items
-	 *
-	 * @return player's current Inventory
-	 */
-	public Inventory getInventory() {
-		return inv;
-	}
-
+	
 	/**
 	 * Getter method for obtaining the player's currently active weapons Used in
 	 * tests
@@ -583,41 +339,6 @@ public class Player extends BasicMovingEntity {
 	}
 
 	/**
-	 * Returns true if player is on a mount
-	 */
-	public boolean getOnMountStatus() {
-		return this.onMount;
-	}
-
-	/**
-	 * Sets player mount status
-	 */
-	public void setOnMountStatus(boolean status) {
-		this.onMount = status;
-	}
-
-	/**
-	 * Get player mount
-	 */
-	public Mount getMount() {
-		return this.mount;
-	}
-
-	/**
-	 * Sets player mount
-	 */
-	public void setMount(Mount mount) {
-		this.mount = mount;
-	}
-
-	/**
-	 * Registers player with mount
-	 */
-	public void saveRider(Mount mount, Player player) {
-		mount.registerRider(player);
-	}
-
-	/**
 	 * Applies passive healing effects
 	 */
 	private void updateHealing() {
@@ -637,8 +358,6 @@ public class Player extends BasicMovingEntity {
 	private void dashParticleEffects() {
 		if (currentState == EntityState.DASHING || currentState == EntityState.AIR_DASHING) {
 			for (float y = getY(); y < getY() + getHeight(); y += 0.2) {
-				Particle particle = new Particle(0, 0, getX() + (0.5f * getWidth()), y, 302, 10, true, false);
-				world.addEntity(particle);
 			}
 		}
 	}
@@ -708,14 +427,7 @@ public class Player extends BasicMovingEntity {
 		}
 		addMana(1);
 		stateUpdate(ms);
-		adjustCooldowns(ms);
-		updateChestArmour();
-		updateHeadArmour();
-		updatePantsArmour();
-		updateBootsArmour();
 		// Skill Controlling
-		tickSpells(ms);
-		applyPassiveSkillEffects(allSkills.getAllActiveSkills());
 		updateHealing();
 		if (stunned) {
 			return;
@@ -737,17 +449,6 @@ public class Player extends BasicMovingEntity {
 
 		updateBuffs(ms);
 
-		if (hasCompanion) {
-			addCompanion();
-		} else {
-			removeCompanion();
-		}
-
-		// CPS
-		if (onMount) {
-			PlayerMountActions.positionPlayer(this);
-		}
-
 		updatePortals();
 
 		MiniMap.updateVisited(this);
@@ -760,42 +461,25 @@ public class Player extends BasicMovingEntity {
 	 * @require newbuff.getStat() = String
 	 */
 	private void applyBuffEffect(PlayerBuff newBuff) {
-		IngameText ingameText;
 		SoundCache.play("PowerUp");
 		switch (newBuff.getStat()) {
 
 			case "health":
-				ingameText = new IngameText("+ HP", 0, 0, 2000, IngameText.textType.STATIC, 0, 1, 0, 1);
-				world.setPlayerText(ingameText);
-
+		
 				addHealth((int) newBuff.getModifier());
 				break;
 			case "mana":
 				addMana((int) newBuff.getModifier());
 
-				ingameText = new IngameText("+ MP", 0, 0, 2000, IngameText.textType.STATIC, 0, 0, 1, 1);
-
-				world.setPlayerText(ingameText);
-
 				break;
 			case "shield":
 				setShielded(true);
 
-				ingameText = new IngameText("GUARD", 0, 0, 2000, IngameText.textType.STATIC, 1, 1, 0, 1);
-
-				world.setPlayerText(ingameText);
-
 				break;
 			case "weapon":
 				increaseBaseDamage(getBaseDamage());
-
-				ingameText = new IngameText("+ DMG", 0, 0, 2000, IngameText.textType.STATIC, 0, 0, 0, 1);
-
-				world.setPlayerText(ingameText);
 				break;
 			case "speed":
-				ingameText = new IngameText("+ SPD", 0, 0, 2000, IngameText.textType.STATIC, 0, 0, 0, 1);
-				world.setPlayerText(ingameText);
 
 				moveSpeed *= newBuff.getModifier();
 				if (moveSpeed > 30) {
@@ -806,7 +490,6 @@ public class Player extends BasicMovingEntity {
 				MiniMap.visitChunk();
 				break;
 			default:
-				Toaster.toast("This is a unfortunate event...");
 		}
 	}
 
@@ -836,65 +519,7 @@ public class Player extends BasicMovingEntity {
 			}
 		}
 	}
-
-	private void applyPassiveSkillEffects(List<Passive> skills) {
-		if (getSkillUnlocked("Healing")) {
-			healingActivated = true;
-		}
-		if (getSkillUnlocked("Health boost")) {
-			this.maxHealth = stats.getMaxHealth();
-		}
-		if (getSkillUnlocked("Mana boost")) {
-			this.maxMana = stats.getMana();
-		}
-	}
-
-	private void addCompanion() {
-		if (!existingCompanion && hasCompanion) {
-			newCompanion.setPosition(this.getX() + 10f, this.getY() - 15);
-			world.addEntity(newCompanion);
-			existingCompanion = true;
-		}
-	}
-
-	/***
-	 * Remove NPC companion
-	 */
-	private void removeCompanion() {
-		existingCompanion = false;
-		hasCompanion = false;
-	}
-
-	/***
-	 * Setter method for companion
-	 *
-
-	 * @param value Boolean value as to whether the companion should be spawned
-	 *            in world or not
-	 */
-	public void setCompanion(boolean value) {
-		this.hasCompanion = value;
-
-	}
-
-	/***
-	 * Getter method for hasCompanion
-	 *
-	 * @return Boolean value of has Companion
-	 */
-	public boolean getCompanionStatus() {
-		return this.hasCompanion;
-	}
-
-	/***
-	 * Getter method for companion
-	 *
-	 * @return Returns player's instance of Companion
-	 */
-	public CompanionNPC getCompanionNPC() {
-		return newCompanion;
-	}
-
+	
 	/**
 	 * Tick handler for special attack
 	 *
@@ -928,30 +553,18 @@ public class Player extends BasicMovingEntity {
 			debugString += "# of Entities: " + world.getAllEntities().size() + "\n";
 			debugString += "# of Players: " + world.getPlayerEntities().size() + "\n";
 
-			debugString += "Current Seed: " + World.getMapSeed() + "\n";
-
 			debugString += "# of Mobs: " + world.getNpcEntities().size() + "\n";
 			debugString += "# of Decorations: " + world.getDecorationEntities().size() + "\n";
 			debugString += "# of loaded Chunks: " + world.getTiles().getWidth() / Chunk.CHUNK_WIDTH + "\n";
 			debugString += "HP: " + getCurrentHealth() + "\n";
 			debugString += "XP: " + stats.getExperiencePoints() + "\n";
-			debugString += "Gold: " + this.commerce.getGold() + "\n";
 			debugString += "X: " + String.format("%.2f", posX) + ", Y: " + String.format("%.2f", posY) + "\n";
 			debugString += "velX: " + String.format("%.2f", velX) + ", velY: " + String.format("%.2f", velY) + "\n";
-			if (getOnMountStatus()) {
-				Mount mount = getMount();
-				debugString += "MeasuredMountVelX: " + String.format("%.2f", 1000 * mount.getMeasuredVelX())
-						+ ", MeasuredMountVelY: " + String.format("%.2f", 1000 * mount.getMeasuredVelY()) + "\n";
-			}
-			debugString += "Current Weapon: " + equippedWeapon.getName() + "\n";
-			debugString += "AmmoCount:" + inv.getAmount("ammo") + "\n";
 			debugString += "Player State: " + currentState + "\n";
 
 			debugString += "Move speed: " + moveSpeed + '\n';
 
 			debugString += "Move speed: " + moveSpeed + "\n";
-			debugString += "Crit chance: " + stats.getCritChance() + "\n";
-			debugString += "Crit damage: " + stats.getCritDamage() + "\n";
 
 			debug.addToDebugString(debugString);
 		}
@@ -970,46 +583,7 @@ public class Player extends BasicMovingEntity {
 			specialAttackFireTimer = 0;
 		}
 	}
-
-	/**
-	 * Tick handler for spells
-	 */
-	private void tickSpells(long ms) {
-		if (!spells.isEmpty()) {
-			for (int i = 0; i < spells.size(); i++) {
-				// check each spell 1-4 to see if it's currently running
-				if (usingSpells.get(i)) {
-					// if reached end of phase and still not stopped manually, stopEffect the spell
-					if (currentSpellPhase.get(i) > spellPhases.get(i)) {
-						usingSpells.set(i, false);
-					} else {
-						// if the current loop tick has waited too long, move on to the next iteration
-						if (currentSpellLoopTiming.get(i) > spellLoopTimings.get(i).get(currentSpellPhase.get(i))
-								|| currentSpellLoopTiming.get(i) == 0) {
-							// timing of 0 indicates first iteration
-							// execute the current phase of the spell
-							spells.get(i).getSpell().phase1(currentSpellPhase.get(i));
-							// set timing to current tick duration
-							currentSpellLoopTiming.set(i, (int) ms);
-							// add 1 to number of iterations for the current phase loop
-							currentSpellLoopIteration.set(i, currentSpellLoopIteration.get(i) + 1);
-						} else {
-							// add tick duration to current loop tick timing
-							currentSpellLoopTiming.set(i, currentSpellLoopTiming.get(i) + (int) ms);
-						}
-						// if the loop has run its iterations, move on to the next phase
-						if (currentSpellLoopIteration.get(i) >= spellLoopIterations.get(i)
-								.get(currentSpellPhase.get(i))) {
-							currentSpellPhase.set(i, currentSpellPhase.get(i) + 1);
-							currentSpellLoopIteration.set(i, 0);
-							currentSpellLoopTiming.set(i, 0);
-						}
-					}
-				}
-			}
-		}
-	}
-
+	
 	/**
 	 * Method to handle player's attack and to have a look at the attack type.
 	 * <p>
@@ -1037,7 +611,8 @@ public class Player extends BasicMovingEntity {
 				break;
 		}
 		if (basicAttack) {
-			System.out.println("Basic Attack");		} else {
+			World.getInstance().getTiles().set( (int) InputManager.getMouseTileX(), (int) InputManager.getMouseTileY(), TileInfo.get(Tiles.BANK));
+		} else {
 			this.firingRateTracker -= ms;
 		}
 	}
@@ -1198,27 +773,6 @@ public class Player extends BasicMovingEntity {
 		knockBackLastRenderTime = 0L;
 		velX = knockBackDir * knockBackSpeedX;
 		velY = knockBackSpeedY;
-	}
-
-	/**
-	 * Returns true if the Player has unlocked a skill with the input name
-	 *
-	 * @return true if the Player has unlocked a skill with the input name
-	 */
-	protected boolean getSkillUnlocked(String skillName) {
-		passiveSkill = allSkills.getMovementSkills();
-		passiveSkill.addAll(allSkills.getAttackSkills());
-		passiveSkill.addAll(allSkills.getDefenseSkills());
-		for (Passive p : passiveSkill) {
-			if (p.getName().equals(skillName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public List<Passive> getAllPassiveSkills() {
-		return this.allSkills.getAllActiveSkills();
 	}
 
 	/**
@@ -1420,21 +974,13 @@ public class Player extends BasicMovingEntity {
 	 * cause collision problems)
 	 */
 	protected void entityMove(boolean left, boolean right, boolean down, boolean jump, boolean dash, boolean slide) {
-		boolean sprintLeft = InputManager.getDoublePressed(GameAction.MOVE_LEFT);
-		boolean sprintRight = InputManager.getDoublePressed(GameAction.MOVE_RIGHT);
 		if (left == right) {
 			setState(EntityState.STANDING);
 			return;
 		} else {
 			velX = inputDir * moveSpeed;
 		}
-		if (inputDir != 0 && (sprintLeft || sprintRight) /*&& getSkillUnlocked("Sprint")*/ && getCurrentMana() >= 2) {
-			addMana(-2);
-			velX = inputDir * (moveSpeed * 2);
-			setState(EntityState.SPRINTING);
-		} else {
-			setState(EntityState.MOVING);
-		}
+		
 		if (jump && jumpAvailable) {
 			SoundCache.play("jump");
 			setState(EntityState.JUMPING);
@@ -1468,22 +1014,11 @@ public class Player extends BasicMovingEntity {
 			setState(EntityState.JUMPING);
 			// particleFX
 			for (float x = getX(); x < getX() + getWidth(); x += 0.2) {
-				Particle particle = new Particle(0, 0, x, getY() + (getHeight()), 301, 10, true, false);
-				world.addEntity(particle);
 			}
 			velY = jumpSpeed;
 			doubleJumpAvailable = false;
 		}
-		if ((inputDir == onWall) && (velY > 0) && (inputDir != 0)) {
-			setState(EntityState.WALL_SLIDING);
-			strafeActive = false;
-			setFallModifier(wallSlidingFallModifier);
-			setTerminalVelModifier(wallSlidingTerminalModifier);
-		}
-		if (dash && airDashAvailable && getSkillUnlocked("Dash")) {
-			transitionToAirDash(left, right, up, down);
-			return;
-		}
+		
 		if (onGround) { // We hit the ground
 			transitionOnLanding();
 			return;
@@ -1508,7 +1043,7 @@ public class Player extends BasicMovingEntity {
 			setTerminalVelModifier(1f);
 			strafeActive = true;
 		}
-		if (jump && jumpAvailable && !(world instanceof RoomWorld)) {
+		if (jump && jumpAvailable) {
 			setFallModifier(1f);
 			setTerminalVelModifier(1f);
 			setState(EntityState.JUMPING);
@@ -1700,44 +1235,6 @@ public class Player extends BasicMovingEntity {
 
 	}
 	
-	public void addSpell(int spellIndex, Active activeSpell) {
-		setUsingSpell(spellIndex, false);
-		spells.set(spellIndex, activeSpell);
-		// refresh timing loop stuff
-		activeSpell.getSpell().phaseSetup();
-	}
-
-	/**
-	 * Runs through the processes to start using a spell
-	 */
-	private void activateSpell(int spellIndex) {
-		spells.get(spellIndex).getSpell().phaseSetup();
-		addMana(-(spells.get(spellIndex).getManaCost()));
-		currentSpellPhase.set(spellIndex, 0);
-		currentSpellLoopIteration.set(spellIndex, 0);
-		currentSpellLoopTiming.set(spellIndex, 0);
-		setCooldown(spells.get(spellIndex).getCooldown(), spellIndex);
-		setUsingSpell(spellIndex, true);
-	}
-
-	/**
-	 * Reduce cool down times if they are currently active
-	 */
-	private void adjustCooldowns(double ms) {
-		double seconds = ms / 1000;
-		for (int i = 0; i < spells.size(); i++) {
-			if (cooldowns.get(i) > 0) {
-				cooldowns.set(i, cooldowns.get(i) - seconds);
-			} else {
-				cooldowns.set(i, 0d);
-			}
-		}
-	}
-
-	public List<Active> getActiveSkill() {
-		return spells;
-	}
-
 	/**
 	 * @param value
 	 * @param cooldownIndex
@@ -1765,68 +1262,7 @@ public class Player extends BasicMovingEntity {
 		return stats.getDamage();
 	}
 
-	/**
-	 * Updates renderFacing to face towards the cursor Updates the arm and head
-	 * additional sprites to point to the cursor.
-	 */
-	private void updateRenderAngle() {
-		if (Window.getEngine() != null && Window.getEngine().getRenderer() != null
-				&& Window.getEngine().getRenderer().getViewport() != null) {
-			if (strafeActive) {
-				if (InputManager.getDiffX(posX) > 0) {
-					renderFacing = 1;
-				} else {
-					renderFacing = -1;
-				}
-
-				if (inputDir == 0) {
-					facing = renderFacing;
-				}
-			}
-			// For player, both the head and arm should be pointing at the
-			// mouse.
-			if (additionalSprites != null) {
-				if (additionalSprites.containsKey(BodyPart.ARM)) {
-					additionalSprites.get(BodyPart.ARM).setTarget(InputManager.getMouseTileX(),
-							InputManager.getMouseTileY());
-				}
-				if (additionalSprites.containsKey(BodyPart.HEAD)) {
-					additionalSprites.get(BodyPart.HEAD).setTarget(InputManager.getMouseTileX(),
-							InputManager.getMouseTileY());
-				}
-				if (additionalSprites.containsKey(BodyPart.VOID)) {
-					additionalSprites.get(BodyPart.VOID).setTarget(InputManager.getMouseTileX(),
-							InputManager.getMouseTileY());
-				}
-			}
-		}
-	}
-
-	/**
-	 * returns the x and y velocity for a projectile that is aimed at the mouse
-	 *
-	 * @return float[0] = xvel, float[1] = yvel
-	 */
-	private float[] getProjectileVelocity() {
-		// Barney Whiteman
-		/*
-		 * Angle between player and mouse with accuracy built in
-		 *
-		 * aim is a random number between -accuracy and +accuracy and then
-		 * converted into radians
-		 */
-		float prjXVel = 0f;
-		float prjYVel = 0f;
-		if (viewport != null) {
-			double aim = (Math.PI / 180) * ((Math.random() * accuracy * 2) - accuracy);
-			aimAngle = (Math.atan2(InputManager.getDiffY(posY + this.getHeight() / 2),
-					InputManager.getDiffX(posX + this.getWidth() / 2))) + aim;
-			prjXVel = (float) (Math.cos(aimAngle));
-			prjYVel = (float) (Math.sin(aimAngle));
-		}
-		return new float[]{prjXVel, prjYVel};
-	}
-
+	
 	/**
 	 * This method adds player's experience points to the player's stats
 	 *
@@ -1835,16 +1271,12 @@ public class Player extends BasicMovingEntity {
 	public void addExperiencePoint(int points) {
 		stats.addExperiencePoints(points);
 		if (stats.getExperiencePoints() == 20 * stats.getPlayerLevel()) {
-			IngameText ingameText = new IngameText("LEVEL UP", 0, 0, 2000, IngameText.textType.STATIC, 1, 0, 1, 1);
-			world.setPlayerText(ingameText);
 			stats.levelUp();
 			this.genericBulletDamage = stats.getDamage();
-			stats.addSkillPoints((20 * stats.getPlayerLevel()) / 10);
 		} else if (stats.getExperiencePoints() > 20 * stats.getPlayerLevel()) {
 			stats.addExperiencePoints(-20 * stats.getPlayerLevel());
 			stats.levelUp();
 			this.genericBulletDamage = stats.getDamage();
-			stats.addSkillPoints((20 * stats.getPlayerLevel()) / 10);
 		}
 	}
 
@@ -1855,15 +1287,6 @@ public class Player extends BasicMovingEntity {
 	 */
 	public void increaseAccuracy(int increase) {
 		stats.addFiringAccuracy(increase);
-	}
-
-	/**
-	 * Increase FireRate in player stat screen
-	 *
-	 * @param increase Value to increase FireRate by.
-	 */
-	public void increaseFireRate(int increase) {
-		stats.addFiringRate(increase);
 	}
 
 	public void increaseBaseDamage(int increase) {
@@ -1884,34 +1307,6 @@ public class Player extends BasicMovingEntity {
 
 	public void setUsingSpell(int index, boolean status) {
 		usingSpells.set(index, status);
-	}
-
-	/**
-	 * Add attack related skill to skill list
-	 *
-	 * @param skill skill to be added
-	 */
-	public void addAttackSkills(SkillList skill) {
-		this.allSkills.addAttackSkill(skill);
-		stats.setBaseDamage(stats.calculateDamage());
-	}
-
-	/**
-	 * Add defense related skill to skill list
-	 *
-	 * @param skill skill to be added
-	 */
-	public void addDefenseSkill(SkillList skill) {
-		this.allSkills.addDefenseSkill(skill);
-	}
-
-	/**
-	 * Add movement related skill
-	 *
-	 * @param skill skill to be added
-	 */
-	public void addMovementSkill(SkillList skill) {
-		this.allSkills.addMovementSkill(skill);
 	}
 
 	/**
@@ -1975,9 +1370,7 @@ public class Player extends BasicMovingEntity {
 			return;
 		}
 		for (Entity entity : entities) {
-			if (entity instanceof CompanionNPC) {
-				return;
-			} else if (entity instanceof BaseNPC) {
+			if (entity instanceof BaseNPC) {
 				if (!this.invincible) {
 					if (getCurrentState() != EntityState.DEAD) {
 						int knockBackDir = (int) Math.signum(entity.getVelX());
@@ -2008,9 +1401,6 @@ public class Player extends BasicMovingEntity {
 		velX = 0;
 
 		if (isCheckPointReached() && checkPointsEnabled) {
-			Window.getEngine().load("tmp/flagSave.json");
-			Toaster.ejectAllToast();
-			Toaster.toast("You died! Check point loaded.");
 			return;
 		}
 		setState(EntityState.DEAD);
@@ -2024,8 +1414,6 @@ public class Player extends BasicMovingEntity {
 	@Override
 	public void addHealth(int health) {
 		if (health < 0 && !invincible) {
-			IngameText ingameText = new IngameText("" + health, 0, 0, 2000, IngameText.textType.STATIC, 1, 0, 0, 1);
-			world.setPlayerText(ingameText);
 			SoundCache.play("damaged");
 		}
 		if (currentState == EntityState.KNOCK_BACK || knockBackTimer > 0) {
@@ -2055,15 +1443,6 @@ public class Player extends BasicMovingEntity {
 	 */
 	protected boolean updateSkills() {
 		return this.experiencePoints != 0 && this.experiencePoints % 100 == 0;
-	}
-
-	/**
-	 * This method check which active skills are activated by the player
-	 *
-	 * @return a list of player's activated skills
-	 */
-	public List<Skill> skillCheck() {
-		return new ArrayList<>();
 	}
 
 	/**
@@ -2118,10 +1497,6 @@ public class Player extends BasicMovingEntity {
 	 */
 	public float getWallJumpDuration() {
 		return wallJumpDuration;
-	}
-
-	public ActivateSkill getActivateSkillClass() {
-		return allSkills;
 	}
 
 	/**
@@ -2294,12 +1669,8 @@ public class Player extends BasicMovingEntity {
 	protected void weaponChange(List<Boolean> weaponChange) {
 		for (int i = 0; i < weaponChange.size(); i++) {
 			if (weaponChange.get(i) && activeWeapons.size() > i - 1) {
-				if (ItemRegistry.getItem(activeWeapons.get(i)) instanceof Weapon) {
-					equippedWeapon = (Weapon) ItemRegistry.getItem(activeWeapons.get(i));
-				}
 			}
 		}
-		this.accuracy = equippedWeapon.getAccuracy() + 5;
 	}
 
 	public void setViewDistance(int viewDistance) {

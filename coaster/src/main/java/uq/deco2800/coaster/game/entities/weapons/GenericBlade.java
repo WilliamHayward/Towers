@@ -7,7 +7,6 @@ import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
-import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
 
@@ -30,12 +29,8 @@ public class GenericBlade extends Melee {
 	protected void onEntityCollide(List<Entity> entities, List<BodyPart> hitLocations) {
 		for (Entity entity : entities) {
 			if (entity instanceof BaseNPC && !(this.owner instanceof BaseNPC)) {
-				if (((Player) owner).getEquippedWeapon().getSoilerAdder()) {
-					TerrainDestruction.placeEnemyBlock(owner, (int) this.getX(), (int) this.getY(),
-							this.getVelX(), this.getVelY());
-				} else {
-					((BaseNPC) entity).receiveDamage((int) damage, this.owner);
-				}
+				
+				((BaseNPC) entity).receiveDamage((int) damage, this.owner);
 			} else if (entity instanceof Player) {
 				((Player) entity).addHealth(-(int) damage, this.owner);
 			}

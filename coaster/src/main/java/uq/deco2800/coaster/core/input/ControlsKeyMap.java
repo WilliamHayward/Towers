@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import javafx.scene.input.KeyCode;
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 
 /**
  * A class used to hold the active 'keyboard key' to 'game action' mappings. To
@@ -172,10 +171,8 @@ public class ControlsKeyMap {
 	 */
 	public static void swapKeys(KeyCode key1, KeyCode key2) {
 		if (key1.equals(KeyCode.ESCAPE) || key2.equals(KeyCode.ESCAPE)) {
-			Toaster.darkToast("ESCAPE cannot be changed. No changes made.");
 
 		} else if (key1.equals(key2)) {
-			Toaster.darkToast("No changes made.");
 
 		} else if (keymap.containsKey(key1) && keymap.containsKey(key2)) {
 
@@ -188,7 +185,6 @@ public class ControlsKeyMap {
 			registerKey(key1, action2);
 			registerKey(key2, action1);
 
-			Toaster.darkToast("Controls swapped for " + action2.toString() + " and " + action1.toString() + ".");
 
 		} else if (!keymap.containsKey(key1) && keymap.containsKey(key2)) {
 
@@ -197,7 +193,6 @@ public class ControlsKeyMap {
 			deleteAllKeyCodesFor(action2);
 			registerKey(key1, action2);
 
-			Toaster.darkToast(action2.toString() + " mapped to " + key1.toString() + ".");
 
 		} else if (keymap.containsKey(key1) && !keymap.containsKey(key2)) {
 
@@ -206,10 +201,8 @@ public class ControlsKeyMap {
 			deleteAllKeyCodesFor(action1);
 			registerKey(key2, action1);
 
-			Toaster.darkToast(action1.toString() + " mapped to " + key2.toString() + ".");
 		} else {
 
-			Toaster.toast("Both keys not currently in use.");
 
 		}
 	}
@@ -239,10 +232,8 @@ public class ControlsKeyMap {
 			fw.write(jsonText);
 			fw.close();
 			logger.info("Saved control mapping");
-			Toaster.toast("Controls saved.");
 		} catch (IOException exception) {
 			logger.error("Save mapping failed", exception);
-			Toaster.toast("Save failed. IO error.");
 		}
 	}
 
@@ -256,10 +247,8 @@ public class ControlsKeyMap {
 			keymap = (new ObjectMapper()).readValue(file, new TypeReference<Map<KeyCode, GameAction>>() {
 			});
 			logger.info("Loaded control mapping");
-			Toaster.toast("Controls loaded successfully.");
 		} catch (IOException exception) {
 			logger.error("Load mapping failed", exception);
-			Toaster.toast("Load failed. IO error.");
 			return;
 		}
 	}

@@ -3,14 +3,11 @@ package uq.deco2800.coaster.game.entities.weapons;
 import java.util.List;
 
 import uq.deco2800.coaster.core.sound.SoundCache;
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.particles.ParticleSource;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
@@ -76,7 +73,6 @@ public class PortalBullet extends Projectile {
 			this.collides = true;
 			this.count = 0;
 			if(!this.collides && this.hit){
-				Toaster.toast("Press B to enter the portal!");
 			}
 		this.collides = true;
 		this.count = 0;
@@ -128,7 +124,6 @@ public class PortalBullet extends Projectile {
 		setPosition(bounds.left(), bounds.top());
 		
 		// if things are still colliding we say fuck it and nuke the terrain
-		TerrainDestruction.damageRectangle((int) posX, (int) posY, 1, 100);
 		
 		hit = true;
 		//Set its size and sprite
@@ -148,11 +143,7 @@ public class PortalBullet extends Projectile {
 	
 	public void teleport(boolean teleportedTo) {
 		this.justTeleportedTo = teleportedTo;
-		if(this.portalType) {
-			ParticleSource.addParticleSource(posX + 0.5f, posY + 1f, 298, 20, 5, true, false);
-		} else {
-			ParticleSource.addParticleSource(posX + 0.5f, posY + 1f, 299, 20, 5, true, false);
-		}
+		
 		
 	}
 	

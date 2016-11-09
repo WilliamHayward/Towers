@@ -10,14 +10,11 @@ import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.EntityState;
-import uq.deco2800.coaster.game.entities.ItemEntity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.StateEntity;
-import uq.deco2800.coaster.game.items.ItemDrop;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.tiles.TileInfo;
-import uq.deco2800.coaster.graphics.notifications.IngameText;
 import uq.deco2800.coaster.graphics.Viewport;
 
 /**
@@ -125,12 +122,8 @@ public abstract class BaseNPC extends StateEntity {
 		Player player = this.world.getPlayerEntities().get(0);
 		int xpGained = this.maxHealth / 10;
 		player.addExperiencePoint(xpGained);
-		IngameText ingameText = new IngameText("+" + xpGained + " XP", player.getX(), player.getY(), 2000,
-				IngameText.textType.DYNAMIC, 1, 0, 1, 1);
-		world.addIngameText(ingameText);
 		player.addKillCount(1);
 
-		ItemDrop.randomDrop(this.getX(), this.getY());
 	}
 
 	/**
@@ -194,9 +187,6 @@ public abstract class BaseNPC extends StateEntity {
 	 * @return Damage taken by the NPC.
 	 */
 	public int receiveDamage(int damage, Entity cause) {
-		IngameText ingameText = new IngameText("-" + Integer.toString(damage), getX(), getY(), 500,
-				IngameText.textType.DYNAMIC, 1, 0, 0, 1);
-		world.addIngameText(ingameText);
 		/*
 		 * Default implementation. NPCs will generally override this to account
 		 * for armor, shields etc.
@@ -548,30 +538,7 @@ public abstract class BaseNPC extends StateEntity {
 			}
 		}
 	}
-
-	/***
-	 * Function that determines the direction of the target ItemEntity relative
-	 * to BaseNPC calling it
-	 *
-	 * @param target ItemEntity which you want to find the direction of
-	 * @param invert Determination of whether to inverse the boolean.
-	 */
-	public void determineFacingDirectionItemEntity(ItemEntity target, boolean invert) {
-		if (this.posX < target.getX()) {
-			if (invert) {
-				setFacing(-1); // left
-			} else {
-				setFacing(1); // right
-			}
-		} else {
-			if (invert) {
-				setFacing(1); // right
-			} else {
-				setFacing(-1); // left
-			}
-		}
-	}
-
+	
 	/**
 	 * Sets up the firing factors in order to utilize ranged attacks on a target
 	 * entity.

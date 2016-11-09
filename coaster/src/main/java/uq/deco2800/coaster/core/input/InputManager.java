@@ -13,7 +13,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import uq.deco2800.coaster.core.sound.SoundCache;
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 import uq.deco2800.coaster.graphics.Viewport;
 
 /**
@@ -114,6 +113,22 @@ public class InputManager implements EventHandler<InputEvent> {
 		}
 	}
 
+	/**
+	 * Returns the mousex value corresponding to the left edge
+	 * of the tile the mouse is over
+	 */
+	public static int getCurrentTilePixelX() {
+		return viewport.getPixelCoordX((int) InputManager.getMouseTileX());
+	}
+
+	/**
+	 * Returns the mousey value corresponding to the top edge
+	 * of the tile the mouse is over
+	 */
+	public static int getCurrentTilePixelY() {
+		return viewport.getPixelCoordY((int) InputManager.getMouseTileY());
+	}
+	
 	/**
 	 * Returns mousex value in either Pixel coordinates
 	 *
@@ -234,11 +249,6 @@ public class InputManager implements EventHandler<InputEvent> {
 		// redirects next key press to display action
 		if (queryNextKey) {
 			queryNextKey = false;
-			if (ControlsKeyMap.getGameAction(keyCode) != null) {
-				Toaster.toast(keyCode.toString() + " is mapped to " + ControlsKeyMap.getGameAction(keyCode).toString());
-			} else {
-				Toaster.toast(keyCode.toString() + " is not currently used.");
-			}
 			return;
 		}
 	}
@@ -266,7 +276,6 @@ public class InputManager implements EventHandler<InputEvent> {
 	public static void flagToSwap() {
 		swapNextActions = true;
 		logger.info("Swapping keys");
-		Toaster.toast("Press two keys to swap...");
 	}
 
 	/**
@@ -289,7 +298,6 @@ public class InputManager implements EventHandler<InputEvent> {
 		if (redirectNextKey) {
 			redirectNextKey = false;
 			logger.info("Cancelling remap");
-			Toaster.toast("Cancelled remapping.");
 		}
 	}
 

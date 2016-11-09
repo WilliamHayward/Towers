@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uq.deco2800.coaster.game.entities.Entity;
-import uq.deco2800.coaster.game.entities.ItemEntity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 
@@ -54,7 +53,6 @@ public class MiniMap {
 		List<Entity> entities = new ArrayList<>();
 		for (Entity entity : allEntities) {
 			if(entity instanceof BaseNPC || 
-					entity instanceof ItemEntity || 
 					entity instanceof Player) {
 				entities.add(entity);
 			}

@@ -33,8 +33,6 @@ public class CommandDispatch {
 		commands.add(new HealthCommands(HealthCommands.CommandType.HEALTH));
 		commands.add(new MoveCommand());
 		commands.add(new ScottyCommand());
-		commands.add(new CommerceCommand());
-		commands.add(new ItemCommand());
 		commands.add(new QuitCommands(QuitCommands.CommandType.EXIT));
 		commands.add(new QuitCommands(QuitCommands.CommandType.QUIT));
 	}

@@ -3,14 +3,12 @@ package uq.deco2800.coaster.game.entities.weapons;
 import java.util.ArrayList;
 import java.util.List;
 
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
@@ -106,10 +104,6 @@ public class CustomBullet extends Projectile {
 			Entity entity = entities.get(i);
 			BodyPart location = hitLocations.get(i);
 			
-			if (location == BodyPart.HEAD) {
-				Toaster.lightToast("Headshot");
-				createHeadshotParticles();
-			}
 			float multiplier = location.getMultiplier();
 			if (entity instanceof BaseNPC && !(owner instanceof BaseNPC)){
 				((BaseNPC) entity).receiveDamage((int) (damage * multiplier), this.owner);
@@ -129,7 +123,6 @@ public class CustomBullet extends Projectile {
 	@Override
 	protected void onTerrainCollide(int tileX, int tileY, Side side) {
 		this.kill(null);
-		TerrainDestruction.damageBlock(tileX, tileY, (int)this.damage);
 	}
 
 	/**

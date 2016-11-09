@@ -6,16 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.npcs.mounts.Mount;
-import uq.deco2800.coaster.game.entities.particles.ParticleSource;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
 import uq.deco2800.coaster.graphics.sprites.AngledSpriteRelation;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
@@ -56,19 +52,10 @@ public abstract class Projectile extends Entity {
 		initPosY = owner.getBounds().posY() + (velY / speed) - this.bounds.getHalfHeight() + owner.getMeasuredVelY()*owner.getTick();
 		
 		if((owner.getClass()).equals(Player.class)){
-			if(((Player) owner).getOnMountStatus()){
-				Mount mount =((Player)owner).getMount();
-				initPosX = owner.getBounds().posX() + (velX / speed) - this.bounds.getHalfWidth() + mount.getMeasuredVelX()*owner.getTick();
-				initPosY = owner.getBounds().posY() + (velY / speed) - this.bounds.getHalfHeight() + mount.getMeasuredVelY()*owner.getTick();;
-			}
+			
 
 		}
 		setPosition(initPosX, initPosY);
-	}
-
-	/* Particle effect on headshots */
-	protected void createHeadshotParticles() {
-		ParticleSource.addParticleSource(posX, posY, 297, 20, 5, true, false);
 	}
 
 	@Override
@@ -87,7 +74,6 @@ public abstract class Projectile extends Entity {
 			BodyPart location = hitLocations.get(i);
 			
 			if (location == BodyPart.HEAD) {
-				Toaster.lightToast("Headshot");
 			}
 			float multiplier = location.getMultiplier();
 			if (entity instanceof BaseNPC) {
@@ -103,13 +89,8 @@ public abstract class Projectile extends Entity {
 			return;
 		}
 		if (owner instanceof Player) {
-			if (((Player) owner).getEquippedWeapon().getSoilerAdder()) {
-				TerrainDestruction.placeBlock(owner, tileX, tileY, side);
-			} else {
-				TerrainDestruction.damageBlock(tileX, tileY, (int)damage);
-			}
+			
 		} else {
-			TerrainDestruction.damageBlock(tileX, tileY, (int)damage);
 		}
 		this.kill(null);
 	}

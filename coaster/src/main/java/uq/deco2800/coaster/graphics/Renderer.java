@@ -7,7 +7,6 @@ import javafx.scene.Node;
 import javafx.stage.Stage;
 import uq.deco2800.coaster.core.Engine;
 import uq.deco2800.coaster.game.entities.Entity;
-import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.game.world.WorldTiles;
 import uq.deco2800.coaster.graphics.screens.Screen;
@@ -53,9 +52,7 @@ public class Renderer {
 		if (World.getInstance().getPlayerEntities().size() > 0) {
 
 			Entity playerEntity = World.getInstance().getFirstPlayer();
-			if (((Player) playerEntity).getOnMountStatus()) {
-				playerEntity = ((Player) playerEntity).getMount();
-			}
+			
 			WorldTiles tiles = World.getInstance().getTiles();
 			if (tiles.getHeight() > viewport.getHeight()) {
 				viewport.centerOnY(playerEntity.getY() + playerEntity.getHeight() / 2);

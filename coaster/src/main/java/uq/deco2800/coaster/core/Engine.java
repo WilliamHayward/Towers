@@ -7,22 +7,13 @@ import uq.deco2800.coaster.core.input.GameAction;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.npcs.mounts.*;
-import uq.deco2800.coaster.game.items.ItemDrop;
-import uq.deco2800.coaster.game.items.ItemRegistry;
-import uq.deco2800.coaster.game.mechanics.Difficulty;
-import uq.deco2800.coaster.game.preservation.ExportableWorld;
-import uq.deco2800.coaster.game.preservation.Preservation;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
 import uq.deco2800.coaster.game.world.Chunk;
 import uq.deco2800.coaster.game.world.MiniMap;
-import uq.deco2800.coaster.game.world.Waveform;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Renderer;
-import uq.deco2800.coaster.graphics.notifications.Toaster;
 import java.io.File;
-import java.util.Random;
 
 
 //The main game loop class. The function handle(long now) is called every tick.
@@ -33,10 +24,8 @@ public class Engine extends AnimationTimer {
 	private long lastTime;
 
 	private boolean skillTreeOn = false;
-	private boolean isTutorial = false;
 	private boolean isPaused = false;
 	private boolean inMenu = false;
-	private boolean isMultiplayer = false;
 	private boolean passiveInfo = false;
 
 	private String currentMenuName;
@@ -114,12 +103,10 @@ public class Engine extends AnimationTimer {
 		}
 		if (InputManager.justPressed(GameAction.VOLUME_UP)) {
 			SoundCache.setVolume(SoundCache.getVolume() + SoundCache.VOLUME_STEP);
-			Toaster.toast("Volume: " + Integer.toString((int) (SoundCache.getVolume() * 100)) + "%");
 		}
 
 		if (InputManager.justPressed(GameAction.VOLUME_DOWN)) {
 			SoundCache.setVolume(SoundCache.getVolume() - SoundCache.VOLUME_STEP);
-			Toaster.toast("Volume: " + Integer.toString((int) (SoundCache.getVolume() * 100)) + "%");
 		}
 
 		String inventoryScreenId = "Inventory";
@@ -137,7 +124,7 @@ public class Engine extends AnimationTimer {
 
 				&& (!inMenu || renderer.isActiveScreen(storeScreenId) || renderer.isActiveScreen(bankScreenId))) {
 
-			Player player = world.getFirstPlayer();
+			world.getFirstPlayer();
 		}
 
 		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
@@ -164,46 +151,8 @@ public class Engine extends AnimationTimer {
 			}
 
 			if (InputManager.justPressed(GameAction.ADD_MOUNT)) {
-				int tileX = (int) InputManager.getMouseTileX();
-				int tileY = (int) InputManager.getMouseTileY();
-
-
-				ItemDrop.drop(ItemRegistry.getItem("ex_ammo"), tileX + 7, tileY - 5);
-
-				ItemDrop.drop(ItemRegistry.getItem("ex_ammo"), tileX + 7, tileY - 5);
-
-
-				Mount testMount = null;
-				Random rn = new Random();
-				switch (rn.nextInt(7)) {
-					case 0:
-						testMount = new JumpingMount();
-						break;
-					case 1:
-						testMount = new BatMount();
-						break;
-					case 2:
-						testMount = new RhinoMount();
-						break;
-					case 3:
-						testMount = new ElephantMount();
-						break;
-					case 4:
-						testMount = new TurtleMount();
-						break;
-					case 5:
-						testMount = new BirdMount();
-						break;
-					case 6:
-						testMount = new DogMount();
-						break;
-					default:
-						testMount = new Mount();
-						break;
-				}
-				testMount.setPosition(tileX + 10, tileY);
-				world.addEntity(testMount);
-
+				InputManager.getMouseTileX();
+				InputManager.getMouseTileY();
 			}
 
 			// Add tiles
@@ -222,16 +171,12 @@ public class Engine extends AnimationTimer {
 		}
 
 		if (InputManager.getActionState(GameAction.PRINT_TILE)) {
-			double tileX = InputManager.getMouseTileX();
-			double tileY = InputManager.getMouseTileY();
-			Toaster.toast("X co-ordinate " + tileX);
-			Toaster.toast("Y co-ordinate " + tileY);
+			InputManager.getMouseTileX();
+			InputManager.getMouseTileY();
 		}
 
 		if (InputManager.getActionState(GameAction.ENABLE_CHECKPOINTS)) {
 			((Player) World.getInstance().getFirstPlayer()).setCheckPointsEnabled(true);
-			Toaster.ejectAllToast();
-			Toaster.toast("Check points auto loading enabled");
 		}
 
 		//SoundCache.getInstance();
@@ -288,7 +233,6 @@ public class Engine extends AnimationTimer {
 		// Toggle Hitboxes
 		if (InputManager.justPressed(GameAction.SHOW_HITBOXES)) {
 			world.toggleHitboxes();
-			Toaster.toast("Visible hitboxes " + Boolean.toString(world.renderHitboxes()));
 		}
 	}
 
@@ -299,23 +243,11 @@ public class Engine extends AnimationTimer {
 		isPaused = !isPaused;
 		renderer.toggleScreen("Pause Menu");
 	}
-
-	/**
-	 * Toggles the tutorial menu on/off - method to access with controller
-	 */
-	public void toggleTutorialMenu() {
-		if (renderer.isActiveScreen("Weapon Screen")) {
-			toggleWeaponMenu();
-		}
-		isTutorial = !isTutorial;
-		renderer.toggleScreen("Tutorial Screen");
-	}
-
+	
 	/**
 	 * Toggles the weapon menu on/off - method to access with controller
 	 */
 	public void toggleWeaponMenu() {
-		isTutorial = !isTutorial;
 		renderer.toggleScreen("Weapon Screen");
 	}
 
@@ -323,7 +255,6 @@ public class Engine extends AnimationTimer {
 	 * Toggles the skills menu on/off - method to access with controller
 	 */
 	public void toggleSkillsMenu() {
-		isTutorial = !isTutorial;
 		renderer.toggleScreen("Skills Screen");
 	}
 
@@ -331,7 +262,6 @@ public class Engine extends AnimationTimer {
 	 * Toggles the commerce menu on/off - method to access with controller
 	 */
 	public void toggleCommerceMenu() {
-		isTutorial = !isTutorial;
 		renderer.toggleScreen("Commerce Screen");
 	}
 
@@ -339,54 +269,9 @@ public class Engine extends AnimationTimer {
 	 * Toggles the items menu on/off - method to access with controller
 	 */
 	public void toggleItemMenu() {
-		isTutorial = !isTutorial;
 		renderer.toggleScreen("Item Screen");
 	}
-
-	/**
-	 * Save the game state - public method to access with controller
-	 */
-	public void save() {
-		save("tmp/save.json");
-	}
-
-	/**
-	 * Save the game state - public method to access with controller
-	 */
-	public void save(String file) {
-		Toaster.toast("Saving...");
-		Preservation.save(file);
-		Toaster.toast("Saved.");
-	}
-
-
-	/**
-	 * load game state - public method to access with controller.
-	 */
-	public void load() {
-		load("tmp/save.json");
-	}
-
-	/**
-	 * load game state
-	 */
-	public void load(String file) {
-		World world = World.getInstance();
-		Toaster.toast("Attempting to load...");
-		ExportableWorld load = Preservation.load(file);
-		if (load.entities != null) {
-			world.loadEntities(load.entities);
-		}
-		if (load.playerEntities != null) {
-			if (load.playerEntities.size() == 1) {
-				world.loadPlayer(load.playerEntities.get(0));
-			} else {
-				logger.debug("Can't load non singular number of players at the moment.");
-			}
-		}
-		Toaster.toast("Loaded.");
-	}
-
+	
 	/**
 	 * Initialize engine variables
 	 *
@@ -428,11 +313,8 @@ public class Engine extends AnimationTimer {
 			world.setBuildingGenEnabled(false);
 			world.setTotemGenEnabled(false);
 			world.setTerrainDestruction(false);
-			world.setLightning(false);
-			world.setRandomSeedEnabled(false);
 			player.setPosition(50, 100);
 			player.setBlocksOtherEntities(true);
-			world.setTiles(world.getTutorialWorld());
 
 		} else {
 			world.setDecoGenEnabled(true);
@@ -440,24 +322,11 @@ public class Engine extends AnimationTimer {
 			world.setBuildingGenEnabled(true);
 			world.setTotemGenEnabled(true);
 			world.setTerrainDestruction(true);
-			world.setLightning(true);
-			world.setRandomSeedEnabled(true);
 			world.setLightGenEnabled(true);
-
-			// add terrain waveforms
-			world.addTerrainWaveform(new Waveform(40, 80)); // mountainous waveform
-			world.addTerrainWaveform(new Waveform(200, 10)); // bumpy waveform
-			world.addTerrainWaveform(new Waveform(8, 120)); // hill waveform
-			world.addTerrainWaveform(new Waveform(10, 30)); // flat waveform
-
-			// add cave waveforms
-			world.addCaveWaveform(new Waveform(16, 8));
-			world.addCaveWaveform(new Waveform(8, 16));
-			world.addCaveWaveform(new Waveform(4, 32));
 
 			// get starting X position, chosen randomly from between -CHUNK_WIDTH and +CHUNK_WIDTH
 			int startingX = Chunk.CHUNK_WIDTH / 2;
-			int startingY = Chunk.CHUNK_HEIGHT / 3;
+			int startingY = Chunk.CHUNK_HEIGHT / 2 - 1;
 
 			// set the player to the given starting positions, making sure he spawns slightly above ground.
 			player.setPosition(startingX, startingY - player.getHeight());
@@ -476,15 +345,6 @@ public class Engine extends AnimationTimer {
 	public boolean saveExists() {
 		File save = new File("tmp/save.json");
 		return (save.exists() && !save.isDirectory());
-	}
-
-	/**
-	 * Wrapper method for world.setDifficulty
-	 *
-	 * @param option One of the Difficulty enum values represent scale factor.
-	 */
-	public void setDifficulty(Difficulty option) {
-		World.getInstance().setDifficulty(option);
 	}
 
 	/**

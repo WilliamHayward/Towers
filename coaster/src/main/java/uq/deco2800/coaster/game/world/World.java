@@ -2,34 +2,16 @@ package uq.deco2800.coaster.game.world;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uq.deco2800.coaster.core.Engine;
-import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.debug.Debug;
-import uq.deco2800.coaster.game.entities.BasicMovingEntity;
 import uq.deco2800.coaster.game.entities.Decoration;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.EntityState;
-import uq.deco2800.coaster.game.entities.ItemEntity;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.*;
-import uq.deco2800.coaster.game.entities.npcs.mounts.Mount;
-import uq.deco2800.coaster.game.entities.npcs.companions.CompanionNPC;
-import uq.deco2800.coaster.game.items.ItemRegistry;
-import uq.deco2800.coaster.game.mechanics.Difficulty;
-import uq.deco2800.coaster.game.preservation.ExportableEntity;
-import uq.deco2800.coaster.game.preservation.ExportableItem;
-import uq.deco2800.coaster.game.preservation.ExportableMovingEntity;
-import uq.deco2800.coaster.game.preservation.ExportablePlayer;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
-import uq.deco2800.coaster.game.weather.Lightning;
-import uq.deco2800.coaster.graphics.Renderer;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.Window;
-import uq.deco2800.coaster.graphics.notifications.IngameText;
-import uq.deco2800.coaster.graphics.screens.GameScreen;
-import uq.deco2800.coaster.graphics.screens.Screen;
-import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.singularity.clients.coaster.CoasterClient;
 import uq.deco2800.singularity.common.representations.User;
 
@@ -66,14 +48,9 @@ public class World {
 	private List<Entity> npcEntities = new ArrayList<>(); // list of npc entities
 	private List<Entity> mountEntities = new ArrayList<>(); // list of npc entities
 	private List<Decoration> decorationEntities = new ArrayList<>(); // list of decoration entities
-	private List<ItemEntity> itemEntities = new ArrayList<>(); // list of power up entities
 	private List<Entity> newEntities = new ArrayList<>(); // list of new entities to be added
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
-	private List<IngameText> ingameTexts = new ArrayList<>(); // list of IngameText to be added
-	private IngameText playerText; // IngameText to be declared
-	private List<Waveform> terrainWaveforms = new ArrayList<>(); // list of waveforms that make up the world terrain
-	private List<Waveform> caveWaveforms = new ArrayList<>(); // list of waveforms that make up the cave terrain
 	private boolean isGameOver = false; // Property that keeps track of whether this world's game has ended.
 	private boolean terrainDestructionEnabled = true; // boolean that states whether terrain destruction is allowed or not
 	private boolean chunkGenerationEnabled = true; // boolean that states whether chunk generation is allowed or not
@@ -93,9 +70,6 @@ public class World {
 	private User user;
 	// Rooms
 	private boolean inRoom = false;
-	private RoomWorld room = null;
-	private boolean lightningEnabled = true;
-
 	//lighting
 	private int globalLightLevel = 100;
 
@@ -103,7 +77,7 @@ public class World {
 	 * Returns the singleton instance of World
 	 */
 	public static World getInstance() {
-		return world.inRoom ? world.room : world;
+		return world;
 	}
 
 	/**
@@ -141,77 +115,7 @@ public class World {
 	public int getGlobalLightLevel() {
 		return globalLightLevel;
 	}
-
-	/**
-	 * Adds a waveform to the terrain waveform list
-	 */
-	public void addTerrainWaveform(Waveform waveform) {
-		terrainWaveforms.add(waveform);
-	}
-
-	/**
-	 * Gets the terrain waveform list
-	 */
-	List<Waveform> getTerrainWaveforms() {
-		return terrainWaveforms;
-	}
-
-	/**
-	 * Gets the cave waveform list
-	 */
-	List<Waveform> getCaveWaveforms() {
-		return caveWaveforms;
-	}
-
-	/**
-	 * Adds a waveform to the cave waveform list
-	 */
-	public void addCaveWaveform(Waveform waveform) {
-		caveWaveforms.add(waveform);
-	}
-
-	/**
-	 * Sets chunk generation to either disabled or enabled
-	 */
-	void setChunkGenerationEnabled(boolean chunkGenerationEnabled) {
-		this.chunkGenerationEnabled = chunkGenerationEnabled;
-	}
-
-	/**
-	 * Gets whether chunk generation is enabled or disabled
-	 */
-	public boolean isChunkGenerationEnabled() {
-		return chunkGenerationEnabled;
-	}
-
-	/**
-	 * Gets whether random seed is enabled or disabled
-	 */
-	public boolean isRandomSeedEnabled() {
-		return randomSeedEnabled;
-	}
-
-	/**
-	 * Sets random seed generator to either disabled or enabled
-	 */
-	public void setRandomSeedEnabled(boolean randomSeedEnabled) {
-		this.randomSeedEnabled = randomSeedEnabled;
-	}
-
-	/**
-	 * Gets the current map seed
-	 */
-	public static int getMapSeed() {
-		return mapSeed;
-	}
-
-	/**
-	 * Sets the map seed
-	 */
-	static void setMapSeed(int mapSeed) {
-		World.mapSeed = mapSeed;
-	}
-
+	
 	/**
 	 * Replaces the current tiles in the world with a new tile set.
 	 *
@@ -240,16 +144,8 @@ public class World {
 	 * Reset the world back to its empty state. Clears all entities and states.
 	 */
 	public void resetWorld() {
-		if (this instanceof RoomWorld) {
-			((RoomWorld) this).getParentWorld().resetWorld();
-		}
-		if (randomSeedEnabled) {
-			randomGen.setSeed(System.currentTimeMillis());
-			setMapSeed(randomGen.nextInt(1000000000)); //1000000000 produces nice terrain at that cap
-		}
 		// Firstly make sure to exit the room
 		inRoom = false;
-		room = null;
 		clearEntities();
 		isGameOver = false;
 		skillTreeScreen = false;
@@ -263,12 +159,8 @@ public class World {
 	 * Reset the world to a state for use in testing
 	 */
 	public void debugReset() {
-		if (this instanceof RoomWorld) {
-			((RoomWorld) this).getParentWorld().debugReset();
-		}
 		// Firstly make sure to exit the room
 		inRoom = false;
-		room = null;
 		clearEntities();
 		isGameOver = false;
 		skillTreeScreen = false;
@@ -307,30 +199,7 @@ public class World {
 		npcSpawnChance = 0;
 		chunkGenerationEnabled = false;
 	}
-
-	/**
-	 * Sets the world difficulty
-	 *
-	 * @param option Difficulty option to set the world to
-	 */
-	public void setDifficulty(Difficulty option) {
-		switch (option) {
-			case EASY:
-				difficultyScale = 0.5;
-				break;
-			case HARD:
-				difficultyScale = 1.5;
-				break;
-			case INSANE:
-				difficultyScale = 2.0;
-				break;
-			case MEDIUM:
-				// default case
-			default:
-				difficultyScale = 1.0;
-		}
-	}
-
+	
 	/**
 	 * inverts boolean value renderHitboxes
 	 */
@@ -365,38 +234,6 @@ public class World {
 	 */
 	public void deleteEntity(Entity entity) {
 		deleteEntities.add(entity);
-	}
-
-	/**
-	 * add IngameText object to an List<IngameText>
-	 */
-	public void addIngameText(IngameText ingameText) {
-		ingameTexts.add(ingameText);
-	}
-
-	/**
-	 * gets List<IngameText>
-	 *
-	 * @return List<IngameText>
-	 */
-	public List<IngameText> getIngameTexts() {
-		return ingameTexts;
-	}
-
-	/**
-	 * sets player text, used for player status
-	 */
-	public void setPlayerText(IngameText ingameText) {
-		playerText = ingameText;
-	}
-
-	/**
-	 * returns player Text
-	 *
-	 * @return playerText
-	 */
-	public IngameText getPlayerText() {
-		return playerText;
 	}
 
 	/**
@@ -443,15 +280,6 @@ public class World {
 	 */
 	public List<Decoration> getDecorationEntities() {
 		return decorationEntities;
-	}
-
-	/**
-	 * Returns a list of Item Entities
-	 *
-	 * @return list of Item Entities
-	 */
-	public List<ItemEntity> getItemEntities() {
-		return itemEntities;
 	}
 
 	/**
@@ -579,60 +407,6 @@ public class World {
 			//}
 		}
 	}
-	
-	/**
-	 * This method is used to set lightning on and off
-	 */
-
-	public void setLightning(boolean input) {
-		this.lightningEnabled = input;
-	}
-
-	/**
-	 * Generate a lightning strike randomly near the player, hitting a random
-	 * mob and dealing 20% of their health.
-	 */
-	private void processLightning() {
-		// TODO: turn the mob into a skeleton for the few frames that the
-		// lightning strike is displayed?
-
-		Engine engine = Window.getEngine();
-		if (engine == null) {
-			return;
-		}
-
-		Renderer renderer = engine.getRenderer();
-		if (renderer == null) {
-			return;
-		}
-
-		Viewport viewport = renderer.getViewport();
-
-		Random random = new Random();
-		if (random.nextFloat() > 0.99) {
-			// Select a random mob in the viewport to hit
-			List<Entity> viewportEntities = getEntitiesInViewport(
-					e -> e instanceof BaseNPC && !(e instanceof CompanionNPC));
-			if (viewportEntities.size() == 0) {
-				return;
-			}
-
-			Entity entity = viewportEntities.get(random.nextInt(viewportEntities.size()));
-
-			// The lightning is spawned directly above the entity, +/- 5 tiles
-			// on the x-axis
-			float x = entity.getX() + (random.nextFloat() * 10 - 5);
-			Lightning lightning = new Lightning(x, viewport.getTop() - 5, entity.getX(), entity.getY());
-
-			Screen screen = Window.getEngine().getRenderer().getScreen("Game");
-			if (screen != null) {
-				GameScreen gs = (GameScreen) screen;
-				gs.setRenderingLightning(lightning);
-				SoundCache.play("lightning");
-				BaseNPC npc = (BaseNPC) entity;
-			}
-		}
-	}
 
 	/**
 	 * adds entities in list entities and playerEntities from that exists in
@@ -647,10 +421,6 @@ public class World {
 				npcEntities.add(entity);
 			} else if (entity instanceof Decoration) {
 				decorationEntities.add((Decoration) entity);
-			} else if (entity instanceof ItemEntity) {
-				itemEntities.add((ItemEntity) entity);
-			} else if (entity instanceof Mount) {
-				mountEntities.add(entity);
 			} 
 		}
 		newEntities.clear();
@@ -669,10 +439,6 @@ public class World {
 				npcEntities.remove(entity);
 			} else if (entity instanceof Decoration) {
 				decorationEntities.remove(entity);
-			} else if (entity instanceof ItemEntity) {
-				itemEntities.remove(entity);
-			} else if (entity instanceof Mount) {
-				mountEntities.remove(entity);
 			}
 		}
 		deleteEntities.clear();
@@ -701,81 +467,12 @@ public class World {
 		//npcGenerator(player, randomGen.nextInt(100), true, 0, null);
 		setGameOver(player.getCurrentState() == EntityState.DEAD);
 	}
-
-	/**
-	 * Updates the current player with the data loaded, it's important to note
-	 * that only the position and health is loaded currently.
-	 *
-	 * @param ep the ExportablePlayer to update information from
-	 */
-	public void loadPlayer(ExportablePlayer ep) {
-		// List WILL be len 1
-		if (this.playerEntities.isEmpty()) {
-			throw new IllegalStateException("No player to load over");
-		}
-		// Set new position
-		getFirstPlayer().setPosition(ep.posX, ep.posY);
-		// Fill up health to max
-		getFirstPlayer().addHealth(getFirstPlayer().getMaxHealth());
-		// Decrement health to current health in save
-		getFirstPlayer().addHealth(ep.currentHealth - getFirstPlayer().getMaxHealth());
-		// Set gold
-		getFirstPlayer().getCommerce().addGold(ep.currentGold);
-		allEntities.add(getFirstPlayer());
-		// TODO log changes
-	}
-
-	/**
-	 * replaces all current entities with the ExportableEntity (s) provided
-	 *
-	 * @param ee the exportable entities to be imported
-	 */
-	public void loadEntities(List<ExportableEntity> ee) {
-		allEntities = new ArrayList<>();
-		if (!ee.isEmpty()) {
-			ee.forEach(this::loadEntity);
-		}
-	}
-
-	/**
-	 * adds a single entity
-	 *
-	 * @param ee the ExportableEntity to be imported
-	 */
-	private void loadEntity(ExportableEntity ee) {
-		Entity e = new MeleeEnemyNPC();
-		if (ee instanceof ExportableItem) {
-			e = new ItemEntity(ItemRegistry.getItem(((ExportableItem) ee).itemReference));
-			((ItemEntity) e).setRemoveDelay(((ExportableItem) ee).removeDelay);
-		} else if (ee instanceof ExportableMovingEntity) {
-			try {
-				ExportableMovingEntity exportableMovingEntity = (ExportableMovingEntity) ee;
-				BasicMovingEntity bme = (BasicMovingEntity) e;
-				bme.addHealth(bme.getMaxHealth());
-				bme.addHealth(exportableMovingEntity.currentHealth - bme.getMaxHealth());
-				e = bme;
-			} catch (ClassCastException exception) {
-				return;
-				//fix errors
-			}
-		} else {
-			if (ee.decoration) {
-				e = new Decoration(new Sprite(ee.spriteID));
-			}
-			// else normal entity
-		}
-		e.setPosition(ee.posX, ee.posY);
-		allEntities.add(e);
-	}
-
+	
 	/**
 	 * Loads the next row of chunks relative to the players chunk location (aka
 	 * movement).
 	 */
 	private void loadChunk(int chunkLocation, int chunkPlacement) {
-		if (this instanceof RoomWorld) {
-			return;
-		}
 		int left = chunkLocation;
 
 		switch (chunkPlacement) {
@@ -1089,13 +786,11 @@ public class World {
 	 * Clears every entity list in the current world
 	 */
 	private void clearEntities() {
-		ingameTexts.clear();
 		allEntities.clear();
 		decorationEntities.clear();
 		npcEntities.clear();
 		mountEntities.clear();
 		playerEntities.clear();
-		itemEntities.clear();
 		newEntities.clear();
 		deleteEntities.clear();
 	}

@@ -6,7 +6,6 @@ import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.terraindestruction.TerrainDestruction;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
@@ -16,8 +15,6 @@ public abstract class Melee extends Entity {
 	protected double time;
 	private float initPosX;//initial position of projectile
 	private float initPosY;
-	private int weaponReach = 4; //default
-	
 	public Melee(Entity owner, int damage, SpriteList spriteID, int swingTime) {
 		setSprite(new Sprite(spriteID));
 		enableGravity = false;
@@ -68,7 +65,6 @@ public abstract class Melee extends Entity {
 				initPosY = owner.getBounds().posY() - bounds.getHeight() / 2;
 				setPosition(initPosX, initPosY);
 			}
-			TerrainDestruction.damageRectangle((int) initPosX, (int) initPosY, weaponReach, (int) damage);
 		} else {
 			this.delete();
 		}

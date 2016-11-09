@@ -6,10 +6,8 @@ import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.BasicMovingEntity;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.particles.Particle;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.tiles.Tile;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
 public class SuperBullet extends Projectile {
@@ -55,10 +53,6 @@ public class SuperBullet extends Projectile {
 	@Override
 	protected void tick(long ms) {
 		if (!hitTerrain) {
-			Particle particleUp = new Particle(0, -20, this.getX(), this.getY(), 301, 50, false, false);
-			Particle particleDown = new Particle(0, 20, this.getX(), this.getY(), 301, 50, false, false);
-			world.addEntity(particleUp);
-			world.addEntity(particleDown);
 		}
 		if (this.damage > 0) {
 			this.damage -= this.decay;
@@ -78,11 +72,11 @@ public class SuperBullet extends Projectile {
 					// check for invalid lookups
 					continue;
 				}
-				Tile currentTile = world.getTiles().get(x, y);
+				world.getTiles().get(x, y);
 				float deltaX = x - this.getX();
 				float deltaY = y - this.getY();
-				double distance = Math.sqrt((Math.pow(deltaX, 2)) + (Math.pow(deltaY, 2)));
-				int light = (int)(maxLight + 20*(distance/Math.sqrt(2*radius^2)));
+				Math.sqrt((Math.pow(deltaX, 2)) + (Math.pow(deltaY, 2)));
+				Math.sqrt(2*radius^2);
 				
 			}
 		}

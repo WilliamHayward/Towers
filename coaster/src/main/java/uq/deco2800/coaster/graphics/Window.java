@@ -17,7 +17,6 @@ import uq.deco2800.coaster.core.Settings;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.core.sound.SoundLoad;
-import uq.deco2800.coaster.game.mechanics.Difficulty;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.screens.*;
@@ -74,7 +73,6 @@ public class Window extends Application {
 		// Init JavaFX scene
 		Canvas gameScreenCanvas = new Canvas(resWidth, resHeight);
 		Canvas debugCanvas = new Canvas(resWidth, resHeight);
-		Canvas toasterCanvas = new Canvas(resWidth, resHeight);
 
 		Group root = new Group();
 
@@ -104,12 +102,13 @@ public class Window extends Application {
 		engine.setGraphicsOutput(renderer);
 
 		Screen gameScreen = new GameScreen(viewport, gameScreenCanvas);
+		Screen debugScreen = new DebugScreen(viewport, engine, debugCanvas);
 
 		// Add all screens to renderer
 		renderer.addScreen("Game", gameScreen);
+		renderer.addScreen("Debug", debugScreen);
 
 		getEngine().setTutorialMode(false);
-		getEngine().setDifficulty(Difficulty.EASY);
 		Window.initGame();
 		//renderer.enableScreen("Start Screen");
 
@@ -142,17 +141,6 @@ public class Window extends Application {
 		r.getScreen("Game").setVisible(true);
 		SoundCache.play("game");
 		engine.start();
-	}
-
-	/**
-	 * Function to control loading from the main menu
-	 */
-	public static void loadFromMenu() {
-		initGame();
-		World world = World.getInstance();
-		world.gameLoop(1);
-
-		engine.load();
 	}
 
 	/**
