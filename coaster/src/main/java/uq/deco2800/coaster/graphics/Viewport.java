@@ -1,6 +1,5 @@
 package uq.deco2800.coaster.graphics;
 
-import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.game.world.Chunk;
 import uq.deco2800.coaster.game.world.World;
 

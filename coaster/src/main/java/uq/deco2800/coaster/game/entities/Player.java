@@ -8,6 +8,8 @@ import uq.deco2800.coaster.core.input.GameInput;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.debug.Debug;
+import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
+import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.entities.weapons.LazorParticle;
 import uq.deco2800.coaster.game.entities.weapons.PortalBullet;
@@ -37,7 +39,7 @@ public class Player extends BasicMovingEntity {
 	// Need to hold the button for 2 seconds
 	protected static final long SPECIAL_ATTACK_FIRE_DURATION = 1000;
 	// The lazor fires for 1 second
-
+	
 	public int viewDistance = 1200; // view distance in pixels
 
 	protected float wallSlidingFallModifier = 0.5f;
@@ -67,7 +69,8 @@ public class Player extends BasicMovingEntity {
 	protected static final int TARGET_NPC_KILL_COUNT = 100; // Need to kill 100
 	// mobs for the boss
 	// spawn
-
+	
+	protected int turretTimer;
 	protected long actionTimer = -1L; // timer used for sliding, dashing and air
 	// dashing. 1000f = 1s
 	protected long wallJumpTimer = -1L; // Timer used to make wall jump motions
@@ -100,7 +103,6 @@ public class Player extends BasicMovingEntity {
 
 
 	// Mount CPS
-	private boolean onMount = false;
 	private boolean talking = false;
 
 
@@ -182,6 +184,7 @@ public class Player extends BasicMovingEntity {
 	 */
 	public Player() {
 		setCollisionFilter(e -> this.knockBackTimer < 0);
+		turretTimer = 0;
 
 		sprites.put(EntityState.STANDING, new Sprite(SpriteList.KNIGHT_STANDING));
 		sprites.put(EntityState.JUMPING, new Sprite(SpriteList.KNIGHT_JUMPING));
@@ -611,7 +614,16 @@ public class Player extends BasicMovingEntity {
 				break;
 		}
 		if (basicAttack) {
-			World.getInstance().getTiles().set( (int) InputManager.getMouseTileX(), (int) InputManager.getMouseTileY(), TileInfo.get(Tiles.BANK));
+			System.out.println("Placed");
+			Turret turret = new MachineGun(new Sprite(SpriteList.BANK));
+			float turretPosX = (float) InputManager.getMouseTileX();
+			float turretPosY = (float) InputManager.getMouseTileY();
+			turret.setPosition(turretPosX, turretPosY);
+			//turret.setPosition(this.getX(), this.getY());
+			System.out.println("Me: " + this.getX() + "," + this.getY());
+			System.out.println("It: " + turretPosX + ", " + turretPosY);
+			World.getInstance().addEntity(turret);
+			//World.getInstance().getTiles().set( (int) InputManager.getMouseTileX(), (int) InputManager.getMouseTileY(), TileInfo.get(Tiles.BANK));
 		} else {
 			this.firingRateTracker -= ms;
 		}
@@ -1224,7 +1236,6 @@ public class Player extends BasicMovingEntity {
 			*/
 
 		if (name != null && name.length() > 0) {
-
 			gc.setFill(new Color(0, 0, 0, 0.5));
 			gc.fillRect(playerLabelX, playerLabelY, 60, 20);
 			gc.setFill(new Color(1, 1, 1, 0.75));

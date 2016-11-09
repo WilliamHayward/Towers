@@ -1,8 +1,6 @@
 package uq.deco2800.coaster.game.entities;
 
 import javafx.scene.canvas.GraphicsContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.entities.npcs.AttackableNPC;
 import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.entities.weapons.Projectile;
@@ -21,7 +19,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public abstract class Entity {
-	private static final Logger logger = LoggerFactory.getLogger(Entity.class);
 
 	public static final float GRAVITY = 50f;
 	public static final float terminalVelocity = 50f; // Max falling speed

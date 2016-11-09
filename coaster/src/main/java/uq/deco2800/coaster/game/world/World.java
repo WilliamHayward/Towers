@@ -10,16 +10,11 @@ import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.npcs.*;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
-import uq.deco2800.coaster.graphics.Viewport;
-import uq.deco2800.coaster.graphics.Window;
 import uq.deco2800.singularity.clients.coaster.CoasterClient;
 import uq.deco2800.singularity.common.representations.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.function.Predicate;
-
 
 /**
  * A World class containing array for the underlying terrain as well as the list
@@ -32,7 +27,6 @@ public class World {
 	private static World world = new World(); // Singleton instance
 	private WorldTiles tiles; // World tiles
 
-	private Random randomGen = new Random(); // random number generator
 	private static int mapSeed = 123456789; // default seed, use Integer.MAX_VALUE for a flat world! :)
 	private long framesPerSecond; // Frames per second of the running game
 	static final int NUM_MOBS_PER_CHUNK = 50; // default number of mobs that can be generated in a chunk
@@ -54,7 +48,6 @@ public class World {
 	private boolean isGameOver = false; // Property that keeps track of whether this world's game has ended.
 	private boolean terrainDestructionEnabled = true; // boolean that states whether terrain destruction is allowed or not
 	private boolean chunkGenerationEnabled = true; // boolean that states whether chunk generation is allowed or not
-	private boolean randomSeedEnabled = false; // boolean that states whether a random seed is allowed or not
 	private boolean destructionShadowUpdate = false;
 	private boolean skillTreeScreen = false;
 
@@ -172,7 +165,6 @@ public class World {
 		isBuildingGenEnabled = false;
 		isTotemGenEnabled = false;
 		chunkGenerationEnabled = false;
-		randomSeedEnabled = false;
 		debug = new Debug();
 		MiniMap.setVisibility(false);
 		resetTiles();
@@ -361,26 +353,7 @@ public class World {
 
 		return mobCount;
 	}
-
-	/**
-	 * @return A list of entities within the viewport.
-	 */
-	private List<Entity> getEntitiesInViewport(Predicate<Entity> condition) {
-		List<Entity> viewportEntities = new ArrayList<>();
-
-		Viewport viewport = Window.getEngine().getRenderer().getViewport();
-		for (Entity e : allEntities) {
-			if (e.getX() > viewport.getLeft() && e.getX() < viewport.getLeft() + viewport.getWidth()
-					&& e.getY() > viewport.getTop() && e.getY() < viewport.getTop() + viewport.getHeight()) {
-				if (condition.test(e)) {
-					viewportEntities.add(e);
-				}
-			}
-		}
-
-		return viewportEntities;
-	}
-
+	
 	/**
 	 * Loads chunk around player when the entity is near empty
 	 */

@@ -27,12 +27,7 @@ public class GameInput {
 		leftPressed = InputManager.getActionState(GameAction.MOVE_LEFT);
 		rightPressed = InputManager.getActionState(GameAction.MOVE_RIGHT);
 		jumpPressed = InputManager.getActionState(GameAction.JUMP);
-		//Cieran Kent
-		upPressed = InputManager.getActionState(GameAction.MOVE_UP);
-		downPressed = InputManager.getActionState(GameAction.MOVE_DOWN);
-		dashPressed = InputManager.justPressed(GameAction.DASH);
-		slidePressed = InputManager.justPressed(GameAction.SLIDE);
-
+		downPressed = InputManager.getActionState(GameAction.CROUCH);
 		inputDir = inputDirection(leftPressed, rightPressed);
 
 		//Preparing for Button remapping2

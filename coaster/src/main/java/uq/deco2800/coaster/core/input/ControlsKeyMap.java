@@ -112,9 +112,6 @@ public class ControlsKeyMap {
 			case BASIC_ATTACK:
 				styledAction = "attack with your newly activated weapon.\n Holding down the left mouse button also works.";
 				break;
-			case SLIDE:
-				styledAction = "slide.";
-				break;
 			case WEAPON_ONE:
 				styledAction = "activate the primary weapon.";
 				break;
@@ -123,12 +120,6 @@ public class ControlsKeyMap {
 				break;
 			case SHOW_MAP:
 				styledAction = "show the minimap.\nDisable it with the same key.";
-				break;
-			case INVENTORY:
-				styledAction = "open inventory.\nClose it with the same key.";
-				break;
-			case SKILL_TREE_UI:
-				styledAction = "open the skill tree. \nAfter leveling up, choose what to improve here!\nClose it with the same key.";
 				break;
 			default:
 				styledAction = "UNDEFINED!";

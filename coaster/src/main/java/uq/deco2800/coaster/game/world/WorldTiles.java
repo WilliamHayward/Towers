@@ -7,7 +7,6 @@ import uq.deco2800.coaster.game.tiles.TileInfo;
 /**
  * This class holds all data relating to tiles in a world
  */
-@SuppressWarnings("unchecked")
 public class WorldTiles {
 	private ArrayDeque<Tile> tiles;
 	private int offset = 0;
@@ -17,7 +16,7 @@ public class WorldTiles {
 	 * Creates an empty world
 	 */
 	public WorldTiles() {
-		tiles = new ArrayDeque();
+		tiles = new ArrayDeque<>();
 	}
 
 	/**
@@ -28,7 +27,7 @@ public class WorldTiles {
 			throw new IllegalArgumentException("Invalid chunk width");
 		}
 
-		tiles = new ArrayDeque(width * height);
+		tiles = new ArrayDeque<>(width * height);
 		int numChunks = width / chunkWidth;
 		for (int i = 0; i < numChunks; i++) {
 			addBlockRight(chunkWidth, height);

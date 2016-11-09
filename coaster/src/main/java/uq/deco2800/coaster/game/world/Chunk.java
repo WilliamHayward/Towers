@@ -22,7 +22,8 @@ public class Chunk {
 	public Chunk(int startingX, int mapSeed) {
 		blocks = new WorldTiles(CHUNK_WIDTH, CHUNK_HEIGHT, CHUNK_WIDTH);
 
-		generateFlat(0, CHUNK_WIDTH, CHUNK_HEIGHT / 2, TileInfo.get(Tiles.DIRT), true);
+		generateFlat(0, CHUNK_WIDTH, CHUNK_HEIGHT / 2 + 5, TileInfo.get(Tiles.DIRT), true);
+		generateFlat(0, CHUNK_WIDTH, CHUNK_HEIGHT / 2 - 5, TileInfo.get(Tiles.DIRT), false);
 	}
 
 	/**

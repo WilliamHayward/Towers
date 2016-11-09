@@ -1,25 +1,25 @@
 package uq.deco2800.coaster.core;
 
 import javafx.animation.AnimationTimer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.core.input.GameAction;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.entities.Player;
+import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
 import uq.deco2800.coaster.game.world.Chunk;
 import uq.deco2800.coaster.game.world.MiniMap;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Renderer;
+import uq.deco2800.coaster.graphics.sprites.Sprite;
+import uq.deco2800.coaster.graphics.sprites.SpriteList;
+
 import java.io.File;
 
 
 //The main game loop class. The function handle(long now) is called every tick.
 public class Engine extends AnimationTimer {
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
-
 	private Renderer renderer;
 	private long lastTime;
 
@@ -27,9 +27,6 @@ public class Engine extends AnimationTimer {
 	private boolean isPaused = false;
 	private boolean inMenu = false;
 	private boolean passiveInfo = false;
-
-	private String currentMenuName;
-
 	private boolean isGameOver;
 
 	public void setGraphicsOutput(Renderer renderer) {
@@ -84,16 +81,6 @@ public class Engine extends AnimationTimer {
 		long thisTime = System.currentTimeMillis();
 		long ms = thisTime - lastTime;
 
-		if (InputManager.justPressed(GameAction.PAUSE) && !inMenu) {
-			togglePause();
-		}
-
-		// If a different menu screen is active - disable it
-		if (InputManager.justPressed(GameAction.PAUSE) && inMenu && currentMenuName != null) {
-			renderer.disableScreen(currentMenuName);
-			inMenu = false;
-		}
-
 		if (InputManager.justPressed(GameAction.MUTE)) {
 			if (SoundCache.getMute()) {
 				SoundCache.unmute();
@@ -109,34 +96,13 @@ public class Engine extends AnimationTimer {
 			SoundCache.setVolume(SoundCache.getVolume() - SoundCache.VOLUME_STEP);
 		}
 
-		String inventoryScreenId = "Inventory";
-		if (InputManager.justPressed(GameAction.INVENTORY) && !isPaused
-				&& (!inMenu || renderer.isActiveScreen(inventoryScreenId))) {
-			inMenu = !inMenu;
-			currentMenuName = inventoryScreenId;
-			renderer.toggleScreen(inventoryScreenId);
-		}
-
-		// Store Button only works when standing next to store NPC
-		String storeScreenId = "Store";
-		String bankScreenId = "Bank";
-		if (InputManager.justPressed(GameAction.TRADER_NPC) && !isPaused
-
-				&& (!inMenu || renderer.isActiveScreen(storeScreenId) || renderer.isActiveScreen(bankScreenId))) {
-
-			world.getFirstPlayer();
-		}
 
 		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
-			renderer.toggleScreen("Debug Console");
-		}
-
-		// Skill Tree key press
-		if (InputManager.justPressed(GameAction.SKILL_TREE_UI) && !isPaused && !passiveInfo
-				&& (!inMenu || renderer.isActiveScreen("Skill Tree"))) {
-			inMenu = !inMenu;
-			currentMenuName = "Skill Tree";
-			renderer.toggleScreen("Skill Tree");
+			//renderer.toggleScreen("Debug Console");
+			MachineGun gun = new MachineGun(new Sprite(SpriteList.AK));
+			
+			gun.setPosition(0, 0);
+			world.addEntity(gun);
 		}
 
 		if (world.isGameOver() && !isGameOver) {
@@ -146,15 +112,6 @@ public class Engine extends AnimationTimer {
 			renderer.toggleScreen("Game Over");
 		}
 		if (renderer.getViewport() != null) {
-			// Add NPCs
-			if (InputManager.justPressed(GameAction.ADD_NPC)) {
-			}
-
-			if (InputManager.justPressed(GameAction.ADD_MOUNT)) {
-				InputManager.getMouseTileX();
-				InputManager.getMouseTileY();
-			}
-
 			// Add tiles
 			if (InputManager.getActionState(GameAction.ADD_TILE)) {
 				int tileX = (int) InputManager.getMouseTileX();
@@ -169,18 +126,6 @@ public class Engine extends AnimationTimer {
 				world.getTiles().set(tileX, tileY, TileInfo.get(Tiles.AIR));
 			}
 		}
-
-		if (InputManager.getActionState(GameAction.PRINT_TILE)) {
-			InputManager.getMouseTileX();
-			InputManager.getMouseTileY();
-		}
-
-		if (InputManager.getActionState(GameAction.ENABLE_CHECKPOINTS)) {
-			((Player) World.getInstance().getFirstPlayer()).setCheckPointsEnabled(true);
-		}
-
-		//SoundCache.getInstance();
-		//SoundCache.tick(ms);
 
 		checkInputs();
 		// Prevents game from running will paused on in a menu
@@ -223,13 +168,6 @@ public class Engine extends AnimationTimer {
 			MiniMap.toggleVisibility();
 		}
 
-		// Change button mapping on the fly
-		if (InputManager.justPressed(GameAction.RE_MAP)) {
-			InputManager.flagToSwap();
-		}
-		if (InputManager.justPressed(GameAction.QUERY_KEY)) {
-			InputManager.queryKey();
-		}
 		// Toggle Hitboxes
 		if (InputManager.justPressed(GameAction.SHOW_HITBOXES)) {
 			world.toggleHitboxes();
