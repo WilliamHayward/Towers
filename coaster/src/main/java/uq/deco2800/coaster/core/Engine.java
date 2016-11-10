@@ -9,7 +9,6 @@ import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
 import uq.deco2800.coaster.game.world.Chunk;
-import uq.deco2800.coaster.game.world.MiniMap;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Renderer;
 import java.io.File;
@@ -158,11 +157,6 @@ public class Engine extends AnimationTimer {
 		if (InputManager.justPressed(GameAction.SHOW_DEBUG)) {
 			renderer.toggleScreen("Debug");
 			world.getDebug().clearAllDebugStrings(); // Clear slate
-		}
-
-		// Show/Hide Map
-		if (InputManager.justPressed(GameAction.SHOW_MAP)) {
-			MiniMap.toggleVisibility();
 		}
 
 		// Toggle Hitboxes

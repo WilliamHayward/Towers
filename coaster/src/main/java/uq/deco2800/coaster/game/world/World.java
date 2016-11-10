@@ -142,7 +142,6 @@ public class World {
 		skillTreeScreen = false;
 		renderHitboxes = false;
 		debug = new Debug();
-		MiniMap.setVisibility(false);
 		resetTiles();
 	}
 
@@ -164,7 +163,6 @@ public class World {
 		isTotemGenEnabled = false;
 		chunkGenerationEnabled = false;
 		debug = new Debug();
-		MiniMap.setVisibility(false);
 		resetTiles();
 	}
 

@@ -13,7 +13,6 @@ import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.world.Chunk;
-import uq.deco2800.coaster.game.world.MiniMap;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
@@ -417,8 +416,6 @@ public class Player extends BasicMovingEntity {
 		tickDebug();
 
 		updateBuffs(ms);
-
-		MiniMap.updateVisited(this);
 	}
 
 	/***
@@ -452,9 +449,6 @@ public class Player extends BasicMovingEntity {
 				if (moveSpeed > 30) {
 					moveSpeed = 30;
 				}
-				break;
-			case "map":
-				MiniMap.visitChunk();
 				break;
 			default:
 		}
