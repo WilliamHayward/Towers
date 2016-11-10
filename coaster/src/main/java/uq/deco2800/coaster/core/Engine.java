@@ -99,7 +99,7 @@ public class Engine extends AnimationTimer {
 
 		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
 			//renderer.toggleScreen("Debug Console");
-			MachineGun gun = new MachineGun(new Sprite(SpriteList.AK));
+			MachineGun gun = new MachineGun();
 			
 			gun.setPosition(0, 0);
 			world.addEntity(gun);

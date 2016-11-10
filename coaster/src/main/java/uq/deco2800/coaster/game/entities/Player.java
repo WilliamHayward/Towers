@@ -623,7 +623,7 @@ public class Player extends BasicMovingEntity {
 				return;
 			}
 			System.out.println("Placed");
-			Turret turret = new MachineGun(new Sprite(SpriteList.BANK));
+			Turret turret = new MachineGun();
 			float turretPosX = (float) InputManager.getMouseTileX();
 			float turretPosY = (float) InputManager.getMouseTileY();
 			turret.setPosition(turretPosX, turretPosY);
