@@ -70,6 +70,8 @@ public class Player extends BasicMovingEntity {
 	// mobs for the boss
 	// spawn
 	
+	private int cooldown = 0;
+	
 	protected int turretTimer;
 	protected long actionTimer = -1L; // timer used for sliding, dashing and air
 	// dashing. 1000f = 1s
@@ -321,7 +323,7 @@ public class Player extends BasicMovingEntity {
 	protected void stateUpdate(long ms) {
 
 		// Attacks
-		boolean basicAttackPressed = InputManager.getActionState(GameAction.BASIC_ATTACK);
+		boolean basicAttackPressed = InputManager.justReleased(GameAction.BASIC_ATTACK);
 		boolean specialAttackPressed = InputManager.getActionState(GameAction.SPECIAL_ATTACK);
 		playerAttack(ms, basicAttackPressed, specialAttackPressed);
 
@@ -425,6 +427,9 @@ public class Player extends BasicMovingEntity {
 	 */
 	@Override
 	protected void tick(long ms) {
+		if (cooldown > 0) {
+			cooldown--;
+		}
 		if (this.invincible) {
 			setSprite(sprites.get(EntityState.INVINCIBLE));
 		}
@@ -614,6 +619,9 @@ public class Player extends BasicMovingEntity {
 				break;
 		}
 		if (basicAttack) {
+			if (cooldown > 0) {
+				return;
+			}
 			System.out.println("Placed");
 			Turret turret = new MachineGun(new Sprite(SpriteList.BANK));
 			float turretPosX = (float) InputManager.getMouseTileX();
@@ -623,6 +631,7 @@ public class Player extends BasicMovingEntity {
 			System.out.println("Me: " + this.getX() + "," + this.getY());
 			System.out.println("It: " + turretPosX + ", " + turretPosY);
 			World.getInstance().addEntity(turret);
+			//cooldown = 20;
 			//World.getInstance().getTiles().set( (int) InputManager.getMouseTileX(), (int) InputManager.getMouseTileY(), TileInfo.get(Tiles.BANK));
 		} else {
 			this.firingRateTracker -= ms;
