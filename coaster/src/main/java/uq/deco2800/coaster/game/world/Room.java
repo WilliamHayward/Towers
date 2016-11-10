@@ -19,7 +19,7 @@ public class Room {
 	 * @param startingX starting x position of the chunk
 	 * @param mapSeed   map seed of the world
 	 */
-	public Room(int startingX, int mapSeed) {
+	public Room() {
 		blocks = new WorldTiles(WIDTH, HEIGHT, WIDTH);
 
 		generateFlat(0, WIDTH, HEIGHT / 2 + 5, TileInfo.get(Tiles.DIRT), true);

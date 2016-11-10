@@ -515,7 +515,6 @@ public class Player extends BasicMovingEntity {
 			debugString += "# of Players: " + world.getPlayerEntities().size() + "\n";
 
 			debugString += "# of Mobs: " + world.getNpcEntities().size() + "\n";
-			debugString += "# of Decorations: " + world.getDecorationEntities().size() + "\n";
 			debugString += "# of loaded Chunks: " + world.getTiles().getWidth() / Room.WIDTH + "\n";
 			debugString += "HP: " + getCurrentHealth() + "\n";
 			debugString += "XP: " + stats.getExperiencePoints() + "\n";

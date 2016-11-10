@@ -14,11 +14,11 @@ import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
 public class MachineGun extends Turret {
 	public MachineGun() {
-		Sprite sprite = new Sprite(SpriteList.PLACEHOLDER);
+		Sprite sprite = new Sprite(SpriteList.TURRET_BASE_MACHINE_GUN);
 		setSprite(sprite);
 		MutableDouble angle = new MutableDouble();
 		angle.setValue(0);
-		barrel = new AngledSpriteRelation(new Sprite(SpriteList.PARTICLE1), (Entity) this, angle, 1f, 0f, 5f, 2f, 0f, 1f);
+		barrel = new AngledSpriteRelation(new Sprite(SpriteList.BARREL_MACHINE_GUN), (Entity) this, angle, 1f, 0f, 2.5f, 1f, 0f, 0.5f);
 		setBlocksOtherEntities(false);
 
 		bounds = new AABB(posX, posY, sprite.getWidth() / 32, sprite.getHeight() / 32); // No collision for decoration
@@ -26,7 +26,7 @@ public class MachineGun extends Turret {
 		setCollisionFilter(e -> false);
 		cooldownLength = 150;
 		super.init();
-		this.setSize(2f, 2f);
+		this.setSize(2f, 1f);
 		name = "Machine Gun";
 	}
 	@Override

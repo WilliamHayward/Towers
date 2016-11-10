@@ -996,7 +996,7 @@ public abstract class Entity {
 			return;
 		}
 		for (Entity entity : world.getAllEntities()) {
-			if (entity == this || entity == null || entity instanceof Decoration) {
+			if (entity == this || entity == null) {
 				continue;
 			}
 			if (entity.doesItBlockOtherEntities() && collisionFilter.test(entity)) {
@@ -1087,10 +1087,7 @@ public abstract class Entity {
 			hardcoreCollisionResolution();
 			firstTick = false;
 		} else {
-			// don't apply physics to decorations or particles. They don't deserve it
-			if (!(this instanceof Decoration)) {
-				updatePhysics(ms);
-			}
+			updatePhysics(ms);
 		}
 		if (onGround || onCeiling) {
 			velY = 0;

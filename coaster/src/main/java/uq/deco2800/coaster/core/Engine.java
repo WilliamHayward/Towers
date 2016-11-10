@@ -100,13 +100,7 @@ public class Engine extends AnimationTimer {
 			gun.setPosition(0, 0);
 			world.addEntity(gun);
 		}
-
-		if (world.isGameOver() && !isGameOver) {
-			// Show Game Over Screen and button
-			inMenu = true;
-			isGameOver = true;
-			renderer.toggleScreen("Game Over");
-		}
+		
 		if (renderer.getViewport() != null) {
 			// Add tiles
 			if (InputManager.getActionState(GameAction.ADD_TILE)) {
@@ -132,19 +126,6 @@ public class Engine extends AnimationTimer {
 
 		InputManager.updateKeyStates();
 		lastTime = thisTime;
-		checkUi();
-	}
-	
-	/**
-	 * Sees if the state of skillTreeOn has changed and if so updates the
-	 * screen.
-	 */
-	private void checkUi() {
-		World world = World.getInstance();
-		if (world.getSkillTreeScreen() != skillTreeOn) {
-			renderer.swapScreens(0, 1);
-		}
-		skillTreeOn = world.getSkillTreeScreen();
 	}
 
 	/**
@@ -210,6 +191,7 @@ public class Engine extends AnimationTimer {
 		initGeneric();
 		initDefaults();
 		initWorld(World.getInstance());
+		World.getInstance().loadRoom();
 	}
 
 	private void initGeneric() {
@@ -236,30 +218,13 @@ public class Engine extends AnimationTimer {
 		world.resetWorld();
 		world.addEntity(player);
 
-		if (world.getTutorialMode()) {
-			world.setDecoGenEnabled(false);
-			world.setNpcGenEnabled(false);
-			world.setBuildingGenEnabled(false);
-			world.setTotemGenEnabled(false);
-			world.setTerrainDestruction(false);
-			player.setPosition(50, 100);
-			player.setBlocksOtherEntities(true);
+	
+		// get starting X position, chosen randomly from between -WIDTH and +WIDTH
+		int startingX = Room.WIDTH / 2;
+		int startingY = Room.HEIGHT / 2 - 1;
 
-		} else {
-			world.setDecoGenEnabled(true);
-			world.setNpcGenEnabled(true);
-			world.setBuildingGenEnabled(true);
-			world.setTotemGenEnabled(true);
-			world.setTerrainDestruction(true);
-			world.setLightGenEnabled(true);
-
-			// get starting X position, chosen randomly from between -WIDTH and +WIDTH
-			int startingX = Room.WIDTH / 2;
-			int startingY = Room.HEIGHT / 2 - 1;
-
-			// set the player to the given starting positions, making sure he spawns slightly above ground.
-			player.setPosition(startingX, startingY - player.getHeight());
-		}
+		// set the player to the given starting positions, making sure he spawns slightly above ground.
+		player.setPosition(startingX, startingY - player.getHeight());
 
 		setWorld(world);
 	}
@@ -276,10 +241,4 @@ public class Engine extends AnimationTimer {
 		return (save.exists() && !save.isDirectory());
 	}
 
-	/**
-	 * Sets tutorial mode
-	 */
-	public void setTutorialMode(boolean tutorialMode) {
-		World.getInstance().setTutorialMode(tutorialMode);
-	}
 }

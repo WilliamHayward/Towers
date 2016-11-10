@@ -108,7 +108,6 @@ public class Window extends Application {
 		renderer.addScreen("Game", gameScreen);
 		renderer.addScreen("Debug", debugScreen);
 
-		getEngine().setTutorialMode(false);
 		Window.initGame();
 		//renderer.enableScreen("Start Screen");
 
