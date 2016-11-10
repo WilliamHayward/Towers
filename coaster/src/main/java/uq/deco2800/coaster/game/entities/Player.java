@@ -12,7 +12,7 @@ import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
 import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.world.Chunk;
+import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
@@ -516,7 +516,7 @@ public class Player extends BasicMovingEntity {
 
 			debugString += "# of Mobs: " + world.getNpcEntities().size() + "\n";
 			debugString += "# of Decorations: " + world.getDecorationEntities().size() + "\n";
-			debugString += "# of loaded Chunks: " + world.getTiles().getWidth() / Chunk.CHUNK_WIDTH + "\n";
+			debugString += "# of loaded Chunks: " + world.getTiles().getWidth() / Room.WIDTH + "\n";
 			debugString += "HP: " + getCurrentHealth() + "\n";
 			debugString += "XP: " + stats.getExperiencePoints() + "\n";
 			debugString += "X: " + String.format("%.2f", posX) + ", Y: " + String.format("%.2f", posY) + "\n";

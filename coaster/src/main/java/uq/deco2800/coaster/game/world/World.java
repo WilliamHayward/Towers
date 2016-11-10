@@ -54,7 +54,7 @@ public class World {
 
 	private double difficultyScale = 1.0; // Double value to scale according to world's set difficulty
 
-	private int entityRenderDistance = Chunk.CHUNK_WIDTH; // default entity rendering distance
+	private int entityRenderDistance = Room.WIDTH; // default entity rendering distance
 
 	// Singularity
 	private CoasterClient client;
@@ -114,7 +114,7 @@ public class World {
 	 */
 	public void setTiles(WorldTiles tileTemplate) {
 		logger.info("tiles set");
-		if (tileTemplate.getWidth() % Chunk.CHUNK_WIDTH != 0 || tileTemplate.getHeight() != Chunk.CHUNK_HEIGHT) {
+		if (tileTemplate.getWidth() % Room.WIDTH != 0 || tileTemplate.getHeight() != Room.HEIGHT) {
 			throw new IllegalArgumentException("Invalid chunk dimensions (" +
 					tileTemplate.getWidth() + ", " + tileTemplate.getHeight() + ")");
 		}
@@ -321,11 +321,11 @@ public class World {
 	 * within a chunk lengths distance of border will return 0.
 	 */
 	private int isNearEmpty(Entity entity) {
-		if (!tiles.test(entity.getNearestChunkX() - Chunk.CHUNK_WIDTH, 0)) {
+		if (!tiles.test(entity.getNearestChunkX() - Room.WIDTH, 0)) {
 			return 1; // no chunks left
 		} else if (!tiles.test(entity.getNearestChunkX(), 0)) {
 			return 2; // no chunks underneath
-		} else if (!tiles.test(entity.getNearestChunkX() + Chunk.CHUNK_WIDTH, 0)) {
+		} else if (!tiles.test(entity.getNearestChunkX() + Room.WIDTH, 0)) {
 			return 3; // no chunks right
 		}
 		return 0; // not near any empty chunks
@@ -335,14 +335,14 @@ public class World {
 	 * Returns the number of mobs in the chunk specified by a position
 	 */
 	int getNumMobsInChunk(int x) {
-		int chunkPos = Chunk.CHUNK_WIDTH * (x / Chunk.CHUNK_WIDTH); // rounds to
+		int chunkPos = Room.WIDTH * (x / Room.WIDTH); // rounds to
 		// nearest
 		// chunk
 		int mobCount = 0;
 
 		for (Entity mob : npcEntities) {
 			// increments mob count if mob is within the specified chunk
-			if (mob.getX() >= chunkPos && mob.getX() < chunkPos + Chunk.CHUNK_WIDTH) {
+			if (mob.getX() >= chunkPos && mob.getX() < chunkPos + Room.WIDTH) {
 				mobCount++;
 			}
 		}
@@ -442,7 +442,7 @@ public class World {
 
 		switch (chunkPlacement) {
 			case 1: // empty chunk left
-				left -= Chunk.CHUNK_WIDTH; // rounded to nearest beginning of chunk
+				left -= Room.WIDTH; // rounded to nearest beginning of chunk
 				tiles.addChunkLeft();
 				break;
 
@@ -451,7 +451,7 @@ public class World {
 				break;
 
 			case 3: // empty chunk to right
-				left += Chunk.CHUNK_WIDTH; // rounded to nearest beginning of chunk
+				left += Room.WIDTH; // rounded to nearest beginning of chunk
 				tiles.addChunkRight();
 				break;
 
@@ -459,10 +459,10 @@ public class World {
 				break;
 		}
 
-		Chunk chunk = new Chunk(left, mapSeed);
+		Room chunk = new Room(left, mapSeed);
 
-		for (int x = left; x < left + Chunk.CHUNK_WIDTH; x++) {
-			for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
+		for (int x = left; x < left + Room.WIDTH; x++) {
+			for (int y = 0; y < Room.HEIGHT; y++) {
 				if (!tiles.test(x, y)) {
 					return;
 				}

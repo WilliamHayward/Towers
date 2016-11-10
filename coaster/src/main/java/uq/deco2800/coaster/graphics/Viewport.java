@@ -1,6 +1,6 @@
 package uq.deco2800.coaster.graphics;
 
-import uq.deco2800.coaster.game.world.Chunk;
+import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
 
 //This is the class that controls the "camera" of the game. You can move the camera, position it onto a certain tile,
@@ -118,8 +118,8 @@ public class Viewport {
 	public void centerOnY(float y) {
 		top = y - (VIEWPORT_HEIGHT / 2.0f);
 
-		if (top + VIEWPORT_HEIGHT > Chunk.CHUNK_HEIGHT) {
-			top = Chunk.CHUNK_HEIGHT - VIEWPORT_HEIGHT - 1;
+		if (top + VIEWPORT_HEIGHT > Room.HEIGHT) {
+			top = Room.HEIGHT - VIEWPORT_HEIGHT - 1;
 		}
 	}
 

@@ -8,7 +8,7 @@ import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
-import uq.deco2800.coaster.game.world.Chunk;
+import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Renderer;
 import java.io.File;
@@ -253,9 +253,9 @@ public class Engine extends AnimationTimer {
 			world.setTerrainDestruction(true);
 			world.setLightGenEnabled(true);
 
-			// get starting X position, chosen randomly from between -CHUNK_WIDTH and +CHUNK_WIDTH
-			int startingX = Chunk.CHUNK_WIDTH / 2;
-			int startingY = Chunk.CHUNK_HEIGHT / 2 - 1;
+			// get starting X position, chosen randomly from between -WIDTH and +WIDTH
+			int startingX = Room.WIDTH / 2;
+			int startingY = Room.HEIGHT / 2 - 1;
 
 			// set the player to the given starting positions, making sure he spawns slightly above ground.
 			player.setPosition(startingX, startingY - player.getHeight());

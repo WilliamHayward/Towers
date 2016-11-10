@@ -82,8 +82,8 @@ public class GameScreen extends Screen {
 		}
 
 		//display sprites and light level
-		for (int x = 0; x <= Chunk.CHUNK_WIDTH; x++) {
-			for (int y = 0; y <= Chunk.CHUNK_HEIGHT; y++) {
+		for (int x = 0; x <= Room.WIDTH; x++) {
+			for (int y = 0; y <= Room.HEIGHT; y++) {
 				//We still want to iterate over "negative" tiles even if we don't render so we can center the map
 				boolean invalidTile = false;
 				if (!worldTiles.test(x, y)) {

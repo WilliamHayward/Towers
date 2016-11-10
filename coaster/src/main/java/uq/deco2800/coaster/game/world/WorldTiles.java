@@ -10,7 +10,7 @@ import uq.deco2800.coaster.game.tiles.TileInfo;
 public class WorldTiles {
 	private ArrayDeque<Tile> tiles;
 	private int offset = 0;
-	private int chunkHeight = Chunk.CHUNK_HEIGHT;
+	private int chunkHeight = Room.HEIGHT;
 
 	/**
 	 * Creates an empty world
@@ -63,8 +63,8 @@ public class WorldTiles {
 	 * Create a chunk to the left, filled with default tiles
 	 */
 	public void addChunkLeft() {
-		offset += Chunk.CHUNK_WIDTH;
-		for (int i = 0; i < Chunk.CHUNK_HEIGHT * Chunk.CHUNK_WIDTH; i++) {
+		offset += Room.WIDTH;
+		for (int i = 0; i < Room.HEIGHT * Room.WIDTH; i++) {
 			tiles.addFirst(new Tile());
 			Tile tile = (Tile) tiles.getFirst();
 			tile.setVisited(false);
@@ -76,7 +76,7 @@ public class WorldTiles {
 	 * Create a chunk to the right, filled with default tiles
 	 */
 	public void addChunkRight() {
-		for (int i = 0; i < Chunk.CHUNK_HEIGHT * Chunk.CHUNK_WIDTH; i++) {
+		for (int i = 0; i < Room.HEIGHT * Room.WIDTH; i++) {
 			tiles.addLast(new Tile());
 			Tile tile = (Tile) tiles.getLast();
 			tile.setVisited(false);

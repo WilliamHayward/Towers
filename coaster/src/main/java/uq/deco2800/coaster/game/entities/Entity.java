@@ -5,7 +5,7 @@ import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.tiles.Tile;
 import uq.deco2800.coaster.game.tiles.TileInfo;
-import uq.deco2800.coaster.game.world.Chunk;
+import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
@@ -258,7 +258,7 @@ public abstract class Entity {
 	 * Returns the starting x coordinate of the chunk the player is standing on.
 	 */
 	public int getNearestChunkX() {
-		return Chunk.CHUNK_WIDTH * Math.round(posX / Chunk.CHUNK_WIDTH);
+		return Room.WIDTH * Math.round(posX / Room.WIDTH);
 	}
 
 	/**
