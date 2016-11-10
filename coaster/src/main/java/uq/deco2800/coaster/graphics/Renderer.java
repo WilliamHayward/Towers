@@ -65,39 +65,15 @@ public class Renderer {
 				viewport.centerOnX(tiles.getWidth() / 2);
 			}
 		}
+		
 		for (Screen screen : screens) {
 			if (screen.isVisible()) {
 				screen.render(ms, renderBackground);
 			}
 		}
 	}
-
-	public void renderMulti(long ms) {
-		if (World.getInstance().getPlayerEntities().size() > 0) {
-			World.getInstance().getTiles();
-			//Chunk.CHUNK_WIDTH
-			//100
-			viewport.centerOnY(110);//tiles.getHeight() / 2);
-			viewport.centerOnX(21);//tiles.getWidth() / 2);
-/*
-			if (tiles.getHeight() > viewport.getHeight()) {
-				viewport.centerOnY(playerEntity.getY() + playerEntity.getHeight() / 2);
-			} else {
-				viewport.centerOnY(tiles.getHeight() / 2);
-			}
-			if (tiles.getWidth() > viewport.getWidth()) {
-				viewport.centerOnX(playerEntity.getX() + playerEntity.getWidth() / 2);
-			} else {
-				viewport.centerOnX(tiles.getWidth() / 2);
-			}*/
-		}
-		for (Screen screen : screens) {
-			if (screen.isVisible()) {
-				screen.render(ms, true);
-			}
-		}
-	}
-
+	
+	
 	/**
 	 * Shifts the specified Screen to the end of the screens array
 	 *

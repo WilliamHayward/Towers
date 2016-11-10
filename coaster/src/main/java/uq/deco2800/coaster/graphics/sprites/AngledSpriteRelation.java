@@ -44,7 +44,7 @@ public class AngledSpriteRelation extends SpriteRelation {
 	 * @param tileSize the size of a tile
 	 * @param ownerX   the X coordinate of the entity in pixels
 	 * @param ownerY   the Y coordinate of the entity in pixels
-	 */
+	 */ //TODO: Add int method signature which doesn't convert from tileSize, but is in pixels
 	public void renderSprite(GraphicsContext gc, float tileSize, float ownerX, float ownerY) {
 		gc.save();
 		if (owner.getRenderFacing() > 0) {

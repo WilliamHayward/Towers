@@ -29,7 +29,7 @@ public class GenericExplosion extends Entity{
 		this.radius = radius;
 		this.currentRadius = 1;
 
-		this.setSprite(new Sprite(SpriteList.EXPLOSION));
+		this.setSprite(new Sprite(SpriteList.PLACEHOLDER));
 	}
 
 	/**

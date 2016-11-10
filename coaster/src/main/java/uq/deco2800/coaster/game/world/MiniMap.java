@@ -5,8 +5,6 @@ import java.util.List;
 
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
@@ -52,8 +50,7 @@ public class MiniMap {
 	public static List<Entity> getMapEntities(List<Entity> allEntities) {
 		List<Entity> entities = new ArrayList<>();
 		for (Entity entity : allEntities) {
-			if(entity instanceof BaseNPC || 
-					entity instanceof Player) {
+			if(entity instanceof Player) {
 				entities.add(entity);
 			}
 		}

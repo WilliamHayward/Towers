@@ -5,7 +5,6 @@ import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.AngledSpriteRelation;
-import uq.deco2800.coaster.graphics.sprites.Sprite;
 
 public abstract class Turret extends Entity {
 	protected String name;

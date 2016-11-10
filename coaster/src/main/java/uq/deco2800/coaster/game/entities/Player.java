@@ -10,13 +10,8 @@ import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.debug.Debug;
 import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
 import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
-import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.weapons.LazorParticle;
-import uq.deco2800.coaster.game.entities.weapons.PortalBullet;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
-import uq.deco2800.coaster.game.tiles.TileInfo;
-import uq.deco2800.coaster.game.tiles.Tiles;
 import uq.deco2800.coaster.game.world.Chunk;
 import uq.deco2800.coaster.game.world.MiniMap;
 import uq.deco2800.coaster.game.world.World;
@@ -132,10 +127,6 @@ public class Player extends BasicMovingEntity {
 	// weapons + armour
 	protected ArrayList<String> activeWeapons = new ArrayList<>();
 	
-	// Barney - Portals
-	private PortalBullet portal1;
-	private PortalBullet portal2;
-
 	private List<Integer> spellPhases = new ArrayList<>();
 	private List<Integer> currentSpellPhase = new ArrayList<>();
 	private List<ArrayList<Integer>> spellLoopIterations = new ArrayList<>();
@@ -191,16 +182,7 @@ public class Player extends BasicMovingEntity {
 		sprites.put(EntityState.STANDING, new Sprite(SpriteList.KNIGHT_STANDING));
 		sprites.put(EntityState.JUMPING, new Sprite(SpriteList.KNIGHT_JUMPING));
 		sprites.put(EntityState.MOVING, new Sprite(SpriteList.KNIGHT_WALKING));
-		sprites.put(EntityState.WALL_SLIDING, new Sprite(SpriteList.KNIGHT_WALLSLIDE));
-		sprites.put(EntityState.DASHING, new Sprite(SpriteList.KNIGHT_DASH));
-		sprites.put(EntityState.AIR_DASHING, new Sprite(SpriteList.KNIGHT_DASH));
-		sprites.put(EntityState.SLIDING, new Sprite(SpriteList.KNIGHT_SLIDE));
 		sprites.put(EntityState.CROUCHING, new Sprite(SpriteList.KNIGHT_CROUCH));
-		sprites.put(EntityState.AIR_CROUCHING, new Sprite(SpriteList.KNIGHT_CROUCH));
-		sprites.put(EntityState.SPRINTING, new Sprite(SpriteList.KNIGHT_SPRINT));
-		sprites.put(EntityState.DEAD, new Sprite(SpriteList.KNIGHT_SLIDE));
-		sprites.put(EntityState.KNOCK_BACK, new Sprite(SpriteList.KNIGHT_KNOCK_BACK));
-		sprites.put(EntityState.INVINCIBLE, new Sprite(SpriteList.CARL));
 
 		this.enableManaBar();
 		this.addMana(100);
@@ -400,27 +382,6 @@ public class Player extends BasicMovingEntity {
 	}
 
 	/**
-	 * Barney used for teleporting with portals
-	 */
-	private void updatePortals() {
-		if (this.portal1 != null && this.portal2 != null) {
-			if (this.portal1.collides()) {
-				teleportPortal(true);
-			} else if (this.portal2.collides()) {
-				teleportPortal(false);
-			}
-		}
-		if (this.portal1 != null && this.portal2 != null) {
-			if (this.portal1.collides()) {
-				teleportPortal(true);
-			} else if (this.portal2.collides()) {
-				teleportPortal(false);
-			}
-		}
-
-	}
-
-	/**
 	 * Tick handler for player
 	 *
 	 * @param ms millisecond tick the player attack is being handled on
@@ -456,8 +417,6 @@ public class Player extends BasicMovingEntity {
 		tickDebug();
 
 		updateBuffs(ms);
-
-		updatePortals();
 
 		MiniMap.updateVisited(this);
 	}
@@ -583,8 +542,6 @@ public class Player extends BasicMovingEntity {
 	 */
 	private void tickSpecialAttackFire(long ms) {
 		specialAttackFireTimer += ms;
-		LazorParticle particle = new LazorParticle(this, 150, this.renderFacing);
-		world.addEntity(particle);
 
 		if (specialAttackFireTimer > SPECIAL_ATTACK_FIRE_DURATION) {
 			specialAttackFiring = false;
@@ -1390,7 +1347,7 @@ public class Player extends BasicMovingEntity {
 			return;
 		}
 		for (Entity entity : entities) {
-			if (entity instanceof BaseNPC) {
+			if (false) { //TODO: PLayer knockback
 				if (!this.invincible) {
 					if (getCurrentState() != EntityState.DEAD) {
 						int knockBackDir = (int) Math.signum(entity.getVelX());
@@ -1526,64 +1483,6 @@ public class Player extends BasicMovingEntity {
 	 */
 	public PlayerStats getPlayerStatsClass() {
 		return stats;
-	}
-
-	/**
-	 * Used for the portal gun, set's the current portals so the player knows
-	 * where to teleport to
-	 *
-	 * @param portal - which portal
-	 */
-	public void setPortal(PortalBullet portal, boolean type) {
-		if (portal != null) {
-			if (type) {
-				this.portal1 = portal;
-			} else {
-				this.portal2 = portal;
-			}
-		}
-	}
-
-	/**
-	 * @param type - which portal
-	 * @return portal bullets
-	 */
-	public PortalBullet getPortal(boolean type) {
-		if (type) {
-			return this.portal1;
-		} else {
-			return this.portal2;
-		}
-	}
-
-	/**
-	 * @param type - which portal
-	 */
-	public void killPortal(boolean type) {
-		if (type) {
-			this.portal1.kill(null);
-		} else {
-			this.portal2.kill(null);
-		}
-	}
-
-	/***
-	 * Teleports the player between the two portals in the world.
-	 *
-	 * @param type Type tells the function which way the player is teleporting,
-	 *            i.e. from portal 1 to 2 or from 2 to 1.
-	 */
-	public void teleportPortal(boolean type) {
-		float[] pos;
-		if (type) {
-			pos = this.portal2.getPos();
-		} else {
-			pos = this.portal1.getPos();
-		}
-		this.portal1.teleport(!type);
-		this.portal2.teleport(type);
-		this.setX(pos[0]);
-		this.setY(pos[1]);
 	}
 
 	public void setUpdateHud(boolean bool) {

@@ -7,9 +7,7 @@ import uq.deco2800.coaster.game.entities.Decoration;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.EntityState;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.npcs.*;
 import uq.deco2800.coaster.game.tiles.TileInfo;
-import uq.deco2800.coaster.game.tiles.Tiles;
 import uq.deco2800.singularity.clients.coaster.CoasterClient;
 import uq.deco2800.singularity.common.representations.User;
 
@@ -390,8 +388,6 @@ public class World {
 			allEntities.add(entity);
 			if (entity instanceof Player) {
 				playerEntities.add((Player) entity);
-			} else if (entity instanceof BaseNPC) {
-				npcEntities.add(entity);
 			} else if (entity instanceof Decoration) {
 				decorationEntities.add((Decoration) entity);
 			} 
@@ -408,8 +404,6 @@ public class World {
 			allEntities.remove(entity);
 			if (entity instanceof Player) {
 				playerEntities.remove(entity);
-			} else if (entity instanceof BaseNPC) {
-				npcEntities.remove(entity);
 			} else if (entity instanceof Decoration) {
 				decorationEntities.remove(entity);
 			}
@@ -676,51 +670,6 @@ public class World {
 	public boolean getTerrainDestructionMode() {
 		return this.terrainDestructionEnabled;
 	}
-
-	/**
-	 * Tutorial world
-	 */
-	public static WorldTiles getTutorialWorld() {
-		WorldTiles flatTiles = new WorldTiles(Chunk.CHUNK_WIDTH, Chunk.CHUNK_HEIGHT, Chunk.CHUNK_WIDTH);
-		for (int x = 0; x < flatTiles.getWidth(); x++) {
-			for (int y = 0; y < flatTiles.getHeight(); y++) {
-				flatTiles.set(x, y, TileInfo.get(Tiles.DIRT_BACKGROUND));
-			}
-		}
-		for (int x = 0; x < flatTiles.getWidth(); x++) {
-			flatTiles.set(x, 120, TileInfo.get(Tiles.GRASS));
-			for (int y = 121; y < flatTiles.getHeight(); y++) {
-				flatTiles.set(x, y, TileInfo.get(Tiles.DIRT));
-			}
-			for (int y = 121; y < flatTiles.getHeight(); y++) {
-				if ((y + x) % 2 == 1) {
-					continue;
-				}
-				flatTiles.set(x, y, TileInfo.get(Tiles.DIRT_BACKGROUND));
-			}
-		}
-		return flatTiles;
-	}
-
-	public WorldTiles getMultiWorld() {
-		WorldTiles flatTiles = new WorldTiles(Chunk.CHUNK_WIDTH, Chunk.CHUNK_HEIGHT, Chunk.CHUNK_WIDTH);
-		for (int x = 0; x < 51; x++) {
-			flatTiles.set(x, 0, TileInfo.get(Tiles.ROCK));
-			flatTiles.set(x, 120, TileInfo.get(Tiles.BEDROCK));
-			for (int y = 121; y < flatTiles.getHeight(); y++) {
-				flatTiles.set(x, 120, TileInfo.get(Tiles.DIRT));
-			}
-			flatTiles.set(x, 120, TileInfo.get(Tiles.BEDROCK));
-		}
-		for (int y = 0; y < 120; y++) {
-			flatTiles.set(0, y, TileInfo.get(Tiles.ROCK));
-		}
-		for (int y = 0; y < 120; y++) {
-			flatTiles.set(50, y, TileInfo.get(Tiles.ROCK));
-		}
-		return flatTiles;
-	}
-
 
 	/**
 	 * Update the physics for all decorations in the world

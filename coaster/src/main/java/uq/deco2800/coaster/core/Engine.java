@@ -12,9 +12,6 @@ import uq.deco2800.coaster.game.world.Chunk;
 import uq.deco2800.coaster.game.world.MiniMap;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Renderer;
-import uq.deco2800.coaster.graphics.sprites.Sprite;
-import uq.deco2800.coaster.graphics.sprites.SpriteList;
-
 import java.io.File;
 
 

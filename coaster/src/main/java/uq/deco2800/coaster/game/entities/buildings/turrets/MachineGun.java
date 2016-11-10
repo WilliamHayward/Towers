@@ -14,7 +14,7 @@ import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
 public class MachineGun extends Turret {
 	public MachineGun() {
-		Sprite sprite = new Sprite(SpriteList.BANK);
+		Sprite sprite = new Sprite(SpriteList.PLACEHOLDER);
 		setSprite(sprite);
 		MutableDouble angle = new MutableDouble();
 		angle.setValue(0);

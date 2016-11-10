@@ -1,9 +1,6 @@
 package uq.deco2800.coaster.game.entities;
 
 import javafx.scene.canvas.GraphicsContext;
-import uq.deco2800.coaster.game.entities.npcs.AttackableNPC;
-import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
-import uq.deco2800.coaster.game.entities.weapons.Projectile;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.tiles.Tile;
@@ -507,20 +504,6 @@ public abstract class Entity {
 	 */
 	public List<Entity> getNearbyEntities(int radius) {
 		return getNearbyEntities(radius, Entity.class);
-	}
-
-	/**
-	 * Get a list of nearby enemy NPCs
-	 *
-	 * @param radius the radius of the search
-	 * @return A list of BaseNPCs
-	 */
-	public List<BaseNPC> getNearbyAttackableNPCs(int radius) {
-		ArrayList<BaseNPC> nearbyEnemyNPCs = new ArrayList<>();
-		for (Entity entity : getNearbyEntities(radius, AttackableNPC.class)) {
-			nearbyEnemyNPCs.add((BaseNPC) entity);
-		}
-		return nearbyEnemyNPCs;
 	}
 
 	/**
@@ -1100,13 +1083,8 @@ public abstract class Entity {
 		// see if it collides with anything.
 		// i.e. there is no movement on the first tick.
 		if (firstTick) {
-			if (this instanceof Projectile) {
-				// if its a projectile, we check if it's colliding with terrain and let it kill itself if so
-				firstTickCheckTerrainCollide();
-			} else {
-				// otherwise we push it upwards until its free (in theory)
-				hardcoreCollisionResolution();
-			}
+			// push it upwards until its free (in theory)
+			hardcoreCollisionResolution();
 			firstTick = false;
 		} else {
 			// don't apply physics to decorations or particles. They don't deserve it

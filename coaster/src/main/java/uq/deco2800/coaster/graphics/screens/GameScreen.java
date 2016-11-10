@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.npcs.BaseNPC;
 import uq.deco2800.coaster.game.world.*;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
@@ -20,15 +19,7 @@ public class GameScreen extends Screen {
 	private GraphicsContext gc;
 	private Viewport viewport;
 	Logger logger = LoggerFactory.getLogger(GameScreen.class);
-	boolean drawF;
-	Sprite fSprite;
-	boolean drawQ;
-	Sprite qSprite;
-	boolean drawE;
-	Sprite eSprite;
-	boolean drawR;
-	Sprite rSprite;
-
+	
 	int lastLeft = 0;
 	int lastTop = 0;
 	int lastRight = 0;
@@ -113,10 +104,12 @@ public class GameScreen extends Screen {
 	}
 
 	private void renderEntities(List<Entity> entities, long ms) {
-		float left = viewport.getLeft();
-		float right = viewport.getRight();
-		float top = viewport.getTop();
-		float bottom = viewport.getBottom();
+		float widthLeeway = viewport.getWidth() / 2; // Leeway to make sure that no sprites are cut off
+		float heightLeeway = viewport.getHeight() / 2; // Leeway to make sure that no sprites are cut off
+		float left = viewport.getLeft() - widthLeeway;
+		float right = viewport.getRight() + widthLeeway;
+		float top = viewport.getTop() - heightLeeway;
+		float bottom = viewport.getBottom() + heightLeeway;
 		Player player = null;
 		for (Entity entity : entities) {
 			if (entity instanceof Player) {
@@ -130,17 +123,6 @@ public class GameScreen extends Screen {
 		}
 		if (player != null) { //Render player in front of all entities
 			player.render(gc, viewport, ms);
-			
-			if (player.getSkillSwap()) {
-				player.setUpdateHud(true);
-				player.setSpellKey(player.getSpellKey2());
-				player.setDrawSKill(player.getDrawSkill2());
-				;
-				player.setSpellKey2("");
-				player.setSkillSwap(false);
-				player.setDrawSKill2(null);
-
-			}
 		}
 	}
 
@@ -237,8 +219,6 @@ public class GameScreen extends Screen {
 
 		if (entity instanceof Player) {
 			gc.setFill(Color.BLUE);
-		} else if (entity instanceof BaseNPC) {
-			gc.setFill(Color.RED);
 		}
 		gc.fillRect(x, y, entitySize, entitySize);
 

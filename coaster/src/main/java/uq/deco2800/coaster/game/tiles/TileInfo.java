@@ -46,96 +46,10 @@ public abstract class TileInfo {
 	public static void registerTiles() {
 
 		registerTile((new TileSolid(Tiles.DIRT)).setDisplayName("Dirt").setDefaultFilename("brick.png")
+				
 				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.DIRT)
-				.setBackgroundTile(Tiles.DIRT_BACKGROUND));
-		registerTile((new TileSolid(Tiles.DIRT_DAMAGED)).setDisplayName("Dirt (Damaged)").setDefaultFilename("dirt-damaged.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.DIRT)
-				.setBackgroundTile(Tiles.DIRT_BACKGROUND));
-		registerTile((new TileScenery(Tiles.DIRT_BACKGROUND)).setDisplayName("Dirt (Background)").setDefaultFilename("dirt-background.png")
-				.setNaturalSurface(true).setDestructible(false));
-
-
-		registerTile((new TileSolid(Tiles.ROCK)).setDisplayName("Rock").setDefaultFilename("rock.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.ROCK)
-				.setBackgroundTile(Tiles.ROCK_BACKGROUND));
-		registerTile((new TileSolid(Tiles.ROCK_DAMAGED)).setDisplayName("Rock (Damaged)").setDefaultFilename("rock-damaged.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.ROCK)
-				.setBackgroundTile(Tiles.ROCK_BACKGROUND));
-		registerTile((new TileScenery(Tiles.ROCK_BACKGROUND)).setDisplayName("Rock (Background)").setDefaultFilename("rock-background.png")
-				.setNaturalSurface(true).setDestructible(false));
-
-
-		registerTile((new TileSolid(Tiles.COPPER)).setDisplayName("Copper").setDefaultFilename("copper.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.COPPER)
-				.setBackgroundTile(Tiles.ROCK_BACKGROUND));
-
-		registerTile((new TileSolid(Tiles.SILVER)).setDisplayName("Silver").setDefaultFilename("silver.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.SILVER)
-				.setBackgroundTile(Tiles.ROCK_BACKGROUND));
-
-		registerTile((new TileSolid(Tiles.GOLD)).setDisplayName("Gold").setDefaultFilename("gold.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.GOLD)
-				.setBackgroundTile(Tiles.ROCK_BACKGROUND));
-
-		registerTile((new TileSolid(Tiles.DIAMOND)).setDisplayName("Diamond").setDefaultFilename("diamond.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.DIAMOND)
-				.setBackgroundTile(Tiles.ROCK_BACKGROUND));
-
-
-		registerTile((new TileSolid(Tiles.GRASS)).setDisplayName("Grass").setDefaultFilename("grass.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.GRASS)
-				.setBackgroundTile(Tiles.DIRT_BACKGROUND));
-		registerTile((new TileSolid(Tiles.GRASS_DAMAGED)).setDisplayName("Grass (Damaged)").setDefaultFilename("grass-damaged.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.GRASS)
-				.setBackgroundTile(Tiles.DIRT_BACKGROUND));
-
-
-		registerTile((new TileSolid(Tiles.SAND)).setDisplayName("Sand").setDefaultFilename("sand.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.SAND)
-				.setBackgroundTile(Tiles.SAND_BACKGROUND));
-		registerTile((new TileSolid(Tiles.SAND_DAMAGED)).setDisplayName("Sand (Damaged)").setDefaultFilename("sand-damaged.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.SAND)
-				.setBackgroundTile(Tiles.SAND_BACKGROUND));
-		registerTile((new TileScenery(Tiles.SAND_BACKGROUND)).setDisplayName("Sand (Background)").setDefaultFilename("sand-background.png")
-				.setNaturalSurface(true).setDestructible(false));
-
-
-		registerTile((new TileSolid(Tiles.SNOW)).setDisplayName("Snow").setDefaultFilename("snow.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.SNOW)
-				.setBackgroundTile(Tiles.SNOW_BACKGROUND));
-		registerTile((new TileSolid(Tiles.SNOW_DAMAGED)).setDisplayName("Snow (Damaged)").setDefaultFilename("snow-damaged.png")
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.SNOW)
-				.setBackgroundTile(Tiles.SNOW_BACKGROUND));
-		registerTile((new TileScenery(Tiles.SNOW_BACKGROUND)).setDisplayName("Snow (Background)").setDefaultFilename("snow-background.png")
-				.setNaturalSurface(true).setDestructible(false));
-
-
-		registerTile((new TileSolid(Tiles.BEDROCK)).setDisplayName("Bedrock").setDefaultFilename("bedrock.png")
-				.setNaturalSurface(true).setDestructible(false));
-
+				.setBackgroundTile(Tiles.AIR));
 		registerTile((new TileGas(Tiles.AIR)).setDisplayName("Air").setDefaultFilename("air.png").setDestructible(false));
-
-		registerTile((new TileLiquid(Tiles.WATER)).setDisplayName("Water").setDefaultFilename("water.png")
-				.setNaturalSurface(true).setDestructible(false));
-
-		registerTile((new TileSolid(Tiles.WOOD)).setDisplayName("Wood").setDefaultFilename("wood.png").setDestructible(false));
-		registerTile((new TileSolid(Tiles.BANK)).setDisplayName("Bank").setDefaultFilename("treasure.png").setDestructible(false));
-		registerTile((new TileSolid(Tiles.STORE)).setDisplayName("Store").setDefaultFilename("treasure.png").setDestructible(false));
-		registerTile((new TileScenery(Tiles.ROOF)).setDisplayName("Roof").setDefaultFilename("roof.png").setDestructible(false));
-		registerTile((new TileScenery(Tiles.WALLS)).setDisplayName("Walls").setDefaultFilename("wall.png").setDestructible(false));
-		registerTile((new TileScenery(Tiles.WINDOW)).setDisplayName("Window").setDefaultFilename("window.png").setDestructible(false));
-		// Shifter's sprites are loaded in TileShifter constructor
-		registerTile((new TileShifter()).setDisplayName("Shifter").setDestructible(false));
-		registerTile((new TileSolid(Tiles.PUZZLE_SOLID_BRICK)).setDisplayName("Solid Puzzle Brick")
-				.setDefaultFilename("brickTurquoise.png").setDestructible(false));
-		registerTile((new TileGas(Tiles.PUZZLE_BACKGROUND_BRICK)).setDisplayName("Background Puzzle Brick")
-				.setDefaultFilename("brickGrey.png").setDestructible(false));
-		registerTile((new TileGas(Tiles.BOSS_ROOM_BACKGROUND)).setDisplayName("Boss Room Background")
-				.setDefaultFilename("air.png").setDestructible(false));
-		registerTile((new TileSolid(Tiles.BOSS_ROOM_INVISIBLE_WALL)).setDisplayName("Boss Room WALL")
-				.setDefaultFilename("brickGrey.png").setDestructible(false));
-		registerTile((new TileSolid(Tiles.BOSS_ROOM_GROUND)).setDisplayName("Boss Room WALL")
-				.setDefaultFilename("dirt.png").setDestructible(false));
 		hasLoaded = true;
 	}
 
