@@ -6,7 +6,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import uq.deco2800.coaster.core.Engine;
-import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.screens.Screen;
 
 import java.util.ArrayList;
