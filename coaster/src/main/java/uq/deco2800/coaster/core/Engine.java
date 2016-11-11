@@ -4,14 +4,14 @@ import javafx.animation.AnimationTimer;
 import uq.deco2800.coaster.core.input.GameAction;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
-import uq.deco2800.coaster.game.entities.Player;
-import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
-import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
+import uq.deco2800.coaster.graphics.Camera;
 import uq.deco2800.coaster.graphics.Renderer;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 //The main game loop class. The function handle(long now) is called every tick.
@@ -19,11 +19,12 @@ public class Engine extends AnimationTimer {
 	private Renderer renderer;
 	private long lastTime;
 
-	private boolean skillTreeOn = false;
 	private boolean isPaused = false;
 	private boolean inMenu = false;
 	private boolean passiveInfo = false;
 	private boolean isGameOver;
+	
+	private List<Camera> cameras;
 
 	public void setGraphicsOutput(Renderer renderer) {
 		this.renderer = renderer;
@@ -95,10 +96,6 @@ public class Engine extends AnimationTimer {
 
 		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
 			//renderer.toggleScreen("Debug Console");
-			MachineGun gun = new MachineGun();
-			
-			gun.setPosition(0, 0);
-			world.addEntity(gun);
 		}
 		
 		if (renderer.getViewport() != null) {
@@ -118,6 +115,10 @@ public class Engine extends AnimationTimer {
 		}
 
 		checkInputs();
+		
+		for (Camera camera: cameras) {
+			camera.tick(ms);
+		}
 		// Prevents game from running will paused on in a menu
 		renderer.render(ms, !(isPaused || inMenu));
 		if (!isPaused && !inMenu) {
@@ -188,10 +189,14 @@ public class Engine extends AnimationTimer {
 	 * @throws IllegalStateException
 	 */
 	public void initEngine() {
+		cameras = new ArrayList<>();
 		initGeneric();
 		initDefaults();
 		initWorld(World.getInstance());
 		World.getInstance().loadRoom();
+		Camera camera = new Camera(renderer.getViewport(), 0, 0);
+		cameras.add(camera);
+		World.getInstance().start(camera);
 	}
 
 	private void initGeneric() {
@@ -205,27 +210,13 @@ public class Engine extends AnimationTimer {
 
 	public void initDefaults() {
 		isGameOver = false;
-		skillTreeOn = false;
 		isPaused = false;
 		inMenu = false;
 	}
 
 	public void initWorld(World world) {
-		Player player = new Player();
-		
-		player.setBlocksOtherEntities(true);
-
 		world.resetWorld();
-		world.addEntity(player);
-
-	
-		// get starting X position, chosen randomly from between -WIDTH and +WIDTH
-		int startingX = Room.WIDTH / 2;
-		int startingY = Room.HEIGHT / 2 - 1;
-
-		// set the player to the given starting positions, making sure he spawns slightly above ground.
-		player.setPosition(startingX, startingY - player.getHeight());
-
+		
 		setWorld(world);
 	}
 

@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.debug.Debug;
 import uq.deco2800.coaster.game.entities.Entity;
-import uq.deco2800.coaster.game.entities.EntityState;
 import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.tiles.TileInfo;
+import uq.deco2800.coaster.graphics.Camera;
 import uq.deco2800.singularity.clients.coaster.CoasterClient;
 import uq.deco2800.singularity.common.representations.User;
 
@@ -38,6 +38,9 @@ public class World {
 		
 	private int entityRenderDistance = Room.WIDTH; // default entity rendering distance
 
+	private int spawnX;
+	private int spawnY;
+	
 	// Singularity
 	private CoasterClient client;
 	private User user;
@@ -58,9 +61,16 @@ public class World {
 	 */
 	World() {
 		logger.info("new empty world instance");
-		tiles = new WorldTiles();
+		tiles = new WorldTiles(Room.WIDTH, Room.HEIGHT, Room.WIDTH);
 	}
 
+	public void start(Camera camera) {
+		Player player = new Player();
+		camera.setFollow(player);
+		//player.setX(this.getSpawnX());
+		//player.setY(this.getSpawnY());
+		this.addEntity(player);
+	}
 	/**
 	 * Set the horizontal distance away from the Player that entities will still be processed
 	 */
@@ -109,7 +119,7 @@ public class World {
 	 */
 	public void resetTiles() {
 		logger.info("tiles reset");
-		tiles = new WorldTiles();
+		tiles = new WorldTiles(Room.WIDTH, Room.HEIGHT, Room.WIDTH);
 	}
 
 	/**
@@ -341,7 +351,7 @@ public class World {
 			return;
 		}
 
-		loadAroundPlayer(player);
+		//loadAroundPlayer(player);
 	}
 	
 	/**
@@ -349,11 +359,9 @@ public class World {
 	 * movement).
 	 */
 	private void loadChunk(int chunkLocation, int chunkPlacement) {
-		int left = chunkLocation;
-
+		
 		switch (chunkPlacement) {
 			case 1: // empty chunk left
-				left -= Room.WIDTH; // rounded to nearest beginning of chunk
 				tiles.addChunkLeft();
 				break;
 
@@ -362,28 +370,11 @@ public class World {
 				break;
 
 			case 3: // empty chunk to right
-				left += Room.WIDTH; // rounded to nearest beginning of chunk
 				tiles.addChunkRight();
 				break;
 
 			default:
 				break;
-		}
-
-		//Room chunk = new Room(left);
-		if (true) {
-			return;
-		}
-		Room chunk = null;
-		for (int x = left; x < left + Room.WIDTH; x++) {
-			for (int y = 0; y < Room.HEIGHT; y++) {
-				if (!tiles.test(x, y)) {
-					return;
-				}
-
-				TileInfo chunkTile = chunk.getBlocks().get(x - left, y).getTileType();
-				tiles.get(x, y).setTileType(chunkTile);
-			}
 		}
 	}
 
@@ -473,6 +464,19 @@ public class World {
 		newEntities.clear();
 		deleteEntities.clear();
 	}
+	
+	public void setSpawn(int spawnX, int spawnY) {
+		this.spawnX = spawnX;
+		this.spawnY = spawnY;
+	}
+	
+	public int getSpawnX() {
+		return spawnX;
+	}
+	
+	public int getSpawnY() {
+		return spawnY;
+	}
 
 	public void loadRoom() {
 		Room room = new Room();
@@ -483,7 +487,10 @@ public class World {
 				tiles.get(x, y).setTileType(chunkTile);
 			}
 		}
-
+		//this.getFirstPlayer().setX(spawnX);
+		//this.getFirstPlayer().setY(spawnY);
+		
+		//this.getFirstPlayer().setPosition(spawnX, spawnY);
 		// TODO Auto-generated method stub
 		
 	}

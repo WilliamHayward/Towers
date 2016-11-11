@@ -1,7 +1,6 @@
 package uq.deco2800.coaster.graphics;
 
 import uq.deco2800.coaster.game.world.Room;
-import uq.deco2800.coaster.game.world.World;
 
 //This is the class that controls the "camera" of the game. You can move the camera, position it onto a certain tile,
 //and much more.
@@ -110,8 +109,8 @@ public class Viewport {
 		if (left < 0) {
 			left = 0;
 		}
-		if (left + VIEWPORT_WIDTH > World.getInstance().getTiles().getWidth()) {
-			left = World.getInstance().getTiles().getWidth() - VIEWPORT_WIDTH;
+		if (left + VIEWPORT_WIDTH > Room.WIDTH) {
+			left = Room.WIDTH - VIEWPORT_WIDTH;
 		}
 	}
 

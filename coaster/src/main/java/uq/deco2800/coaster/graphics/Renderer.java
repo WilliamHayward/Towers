@@ -6,9 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import uq.deco2800.coaster.core.Engine;
-import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.world.World;
-import uq.deco2800.coaster.game.world.WorldTiles;
 import uq.deco2800.coaster.graphics.screens.Screen;
 
 import java.util.ArrayList;
@@ -49,23 +47,6 @@ public class Renderer {
 	 * main game loop in the Engine class.
 	 */
 	public void render(long ms, boolean renderBackground) {
-		if (World.getInstance().getPlayerEntities().size() > 0) {
-
-			Entity playerEntity = World.getInstance().getFirstPlayer();
-			
-			WorldTiles tiles = World.getInstance().getTiles();
-			if (tiles.getHeight() > viewport.getHeight()) {
-				viewport.centerOnY(playerEntity.getY() + playerEntity.getHeight() / 2);
-			} else {
-				viewport.centerOnY(tiles.getHeight() / 2);
-			}
-			if (tiles.getWidth() > viewport.getWidth()) {
-				viewport.centerOnX(playerEntity.getX() + playerEntity.getWidth() / 2);
-			} else {
-				viewport.centerOnX(tiles.getWidth() / 2);
-			}
-		}
-		
 		for (Screen screen : screens) {
 			if (screen.isVisible()) {
 				screen.render(ms, renderBackground);

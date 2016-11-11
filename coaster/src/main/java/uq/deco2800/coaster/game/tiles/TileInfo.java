@@ -45,11 +45,9 @@ public abstract class TileInfo {
 	 */
 	public static void registerTiles() {
 
-		registerTile((new TileSolid(Tiles.DIRT)).setDisplayName("Dirt").setDefaultFilename("brick.png")
-				
-				.setNaturalSurface(true).setDestructible(true).setDamagedTile(Tiles.DIRT)
-				.setBackgroundTile(Tiles.AIR));
-		registerTile((new TileGas(Tiles.AIR)).setDisplayName("Air").setDefaultFilename("air.png").setDestructible(false));
+		registerTile((new TileSolid(Tiles.DIRT)).setDisplayName("Dirt").setDefaultFilename("brick.png"));
+		
+		registerTile((new TileGas(Tiles.AIR)).setDisplayName("Air").setDefaultFilename("background.png"));
 		hasLoaded = true;
 	}
 

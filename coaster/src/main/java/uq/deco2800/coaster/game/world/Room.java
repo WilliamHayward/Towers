@@ -1,5 +1,12 @@
 package uq.deco2800.coaster.game.world;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
 
@@ -7,9 +14,10 @@ import uq.deco2800.coaster.game.tiles.Tiles;
  * A Chunk class containing array for the underlying terrain and information for chunks
  */
 public class Room {
-	public static final int WIDTH = 240; // Default chunk width
-	public static final int HEIGHT = 180; // Default chunk height
+	public static final int WIDTH = 50; // Room width
+	public static final int HEIGHT = 50; // Room height
 
+	private String name;
 	private WorldTiles blocks; //array of blocks currently in chunk
 
 	/**
@@ -18,33 +26,74 @@ public class Room {
 	 *
 	 * @param startingX starting x position of the chunk
 	 * @param mapSeed   map seed of the world
+	 * @throws FileNotFoundException 
 	 */
 	public Room() {
+		try {
+			load("rooms/test.room");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void load(String fileName) throws IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
 		blocks = new WorldTiles(WIDTH, HEIGHT, WIDTH);
-
-		generateFlat(0, WIDTH, HEIGHT / 2 + 5, TileInfo.get(Tiles.DIRT), true);
-		generateFlat(0, WIDTH, HEIGHT / 2 - 5, TileInfo.get(Tiles.DIRT), false);
-	}
-
-	/**
-	 * Generate flat landscape in given range
-	 */
-	private void generateFlat(int startX, int endX, int y, TileInfo tile, boolean filled) {
-		for (int x = startX; x < endX; x++) {
-			blocks.get(x, y).setTileType(tile);
-			if (filled) {
-				fillVerticalSpace(x, y, HEIGHT, tile);
+		FileReader fileReader = new FileReader(classLoader.getResource("rooms/test.room").getFile());
+		BufferedReader file = new BufferedReader(fileReader);
+		List<Tuple> waypoints = new ArrayList<>();
+		String line;
+		line = file.readLine();
+		String[] data;
+		data = line.split(",");
+		int position = 0;
+		name = data[position];
+		position++;
+		String type;
+		String modifier;
+		line = file.readLine();
+		for (int y = 0; y < HEIGHT; y++) {
+			data = line.split(",");
+			for (int x = 0; x < WIDTH; x++) {
+				if (data[x].contains("-")) {
+					type = data[x].split("-")[0];
+					modifier = data[x].split("-")[1];
+					if (modifier.equals("P")) {
+						World.getInstance().setSpawn(x, y);
+						System.out.println("Set spawn: " + x + ", " + y);
+					} else {
+						int pos = Integer.parseInt(modifier);
+						Tuple coordinates = new Tuple(x, y);
+						waypoints.add(pos, coordinates);
+					}
+				} else {
+					type = data[x];
+				}
+				switch (Integer.parseInt(type)) {
+					case 0:
+						blocks.get(x, y).setTileType(TileInfo.get(Tiles.AIR));	
+						break;
+					case 1:
+						blocks.get(x, y).setTileType(TileInfo.get(Tiles.DIRT));
+						break;
+					default:
+						System.out.println(type);
+						break;
+				}
 			}
+			line = file.readLine();
 		}
+		file.close();
 	}
-
+	
 	/**
-	 * Make a pillar of given material in given range
+	 * Return name of the room
 	 */
-	private void fillVerticalSpace(int x, int startY, int endY, TileInfo newTile) {
-		for (int y = startY; y < endY; y++) {
-			blocks.set(x, y, newTile);
-		}
+	public String getName() {
+		return name;
 	}
 	
 	/**

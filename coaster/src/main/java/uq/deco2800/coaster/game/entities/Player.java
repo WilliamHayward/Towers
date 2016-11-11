@@ -170,7 +170,6 @@ public class Player extends BasicMovingEntity {
 
 	private boolean checkPointsEnabled = false;
 
-
 	/**
 	 * The Player class is the entity controlled by the user.
 	 */
@@ -212,15 +211,6 @@ public class Player extends BasicMovingEntity {
 		this.moveSpeed = BASE_MOVE_SPEED;
 		this.jumpSpeed = BASE_JUMP_SPEED;
 
-		// Add sprites for arm and head
-		/*commonSpriteSet.put(BodyPart.HEAD, new AngledSpriteRelation(new Sprite(SpriteList.KNIGHT_HEAD), this,
-				headRenderAngle, 0.0f, 0.05f, 0.8f, 0.7f, 0.5f, 0.5f));
-		commonSpriteSet.put(BodyPart.ARM, new AngledSpriteRelation(new Sprite(SpriteList.KNIGHT_ARM), this,
-				armRenderAngle, 0.25f, 0.7f, 0.5f, 0.5f, 0.1f, 0.075f));
-
-		sprintSpriteSet.put(BodyPart.HEAD, new AngledSpriteRelation(new Sprite(SpriteList.KNIGHT_HEAD), this,
-				headRenderAngle, 0.0f, 0.05f, 0.8f, 0.7f, 0.5f, 0.5f));
-		 */
 		// Add this for standing, jumping and moving
 		this.additionalSpritesCache.put(EntityState.STANDING, commonSpriteSet);
 		this.additionalSpritesCache.put(EntityState.JUMPING, commonSpriteSet);
@@ -249,6 +239,11 @@ public class Player extends BasicMovingEntity {
 		this.firingRateTracker = stats.getFiringRate();
 		this.bulletSpeed = 60;
 		this.genericBulletDamage = stats.getDamage();
+
+		System.out.println(World.getInstance().getSpawnX());
+		System.out.println(World.getInstance().getSpawnY());
+		this.setX(World.getInstance().getSpawnX());
+		this.setY(World.getInstance().getSpawnY());
 	}
 
 	public void clear() {
@@ -574,8 +569,8 @@ public class Player extends BasicMovingEntity {
 			}
 			System.out.println("Placed");
 			Turret turret = new MachineGun();
-			float turretPosX = (float) InputManager.getMouseTileX();
-			float turretPosY = (float) InputManager.getMouseTileY();
+			float turretPosX = (float) Math.floor(InputManager.getMouseTileX());
+			float turretPosY = (float) Math.floor(InputManager.getMouseTileY());
 			turret.setPosition(turretPosX, turretPosY);
 			//turret.setPosition(this.getX(), this.getY());
 			System.out.println("Me: " + this.getX() + "," + this.getY());

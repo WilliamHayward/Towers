@@ -1268,43 +1268,7 @@ public abstract class Entity {
 		}
 		return Side.VOID;
 	}
-
-	/**
-	 * Checks all overlapping tiles/terrainEntities/Entities for collisions
-	 * <p>
-	 * Calls the relevant handle methods (onTerrainCollide and onEntityCollide)
-	 * <p>
-	 * To be used for projectiles so that they are still functional if they spawn inside stuff.
-	 */
-
-	private void firstTickCheckTerrainCollide() {
-		List<Entity> collidedEntities = new ArrayList<>();
-		List<BodyPart> hitLocations = new ArrayList<>();
-
-		List<int[]> collidedTerrain = new ArrayList<>();
-		List<Side> hitDirections = new ArrayList<>();
-
-
-		bounds.setPos(posX, posY);
-		processStep(bounds, collidedTerrain, hitDirections, collidedEntities, hitLocations);
-
-		if (hitboxes != null) {
-			for (AABB hitbox : hitboxes) {
-				hitbox.setPos(bounds, renderFacing);
-				processStep(hitbox, collidedTerrain, hitDirections, collidedEntities, hitLocations);
-				bounds.setPos(hitbox, renderFacing);
-			}
-		}
-
-		if (!collidedTerrain.isEmpty()) {
-			collideWithTerrain(collidedTerrain, hitDirections);
-		}
-
-		if (!collidedEntities.isEmpty()) {
-			onEntityCollide(collidedEntities, hitLocations);
-		}
-	}
-
+	
 	/**
 	 * iterates through the list of tile collisions and hit directions <br>
 	 * Applies onTerrainCollide to them
