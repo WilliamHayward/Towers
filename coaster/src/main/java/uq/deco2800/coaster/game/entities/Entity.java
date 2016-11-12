@@ -643,7 +643,7 @@ public abstract class Entity {
 	 *
 	 * @return the number of steps to take.
 	 */
-	private int getCollisionScale(long ms) {
+	protected int getCollisionScale(long ms) {
 		float seconds = ms / (float) 1000;
 		float distX = Math.abs(velX * seconds);
 		float distY = Math.abs(velY * seconds);
@@ -666,7 +666,6 @@ public abstract class Entity {
 	 * @param ms time since the last tick in milliseconds
 	 * @WilliamHayward - I've made this public so that it can be overridden
 	 * @ckent-78 aight
-	 * @WilliamHayward - I've made this public so that it can be overridden
 	 */
 	public void updatePhysics(long ms) {
 		float seconds = ms / (float) 1000;

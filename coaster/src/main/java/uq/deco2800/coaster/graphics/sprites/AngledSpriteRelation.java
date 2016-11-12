@@ -79,6 +79,19 @@ public class AngledSpriteRelation extends SpriteRelation {
 	}
 	
 	/**
+	 * Return the angle between the pivot point and the target. All inputs in tiles.
+	 */
+	public double getAngle(double targetX, double targetY) {
+		if (owner.getRenderFacing() > 0) {
+			return (Math.toDegrees(Math.atan2(targetY - (owner.getY() + pivotY + mountY),
+					targetX - (owner.getX() + pivotX + mountX))));
+		} else {
+			return (Math.toDegrees(Math.atan2(targetY - (owner.getY() + pivotY + mountY),
+					targetX - (owner.getX() + owner.getBounds().getWidth() - pivotX - mountX))));
+		}
+	}
+	
+	/**
 	 * Manually set the angle in degrees
 	 */
 	public void setAngle(double degres) {

@@ -13,6 +13,8 @@ public abstract class Turret extends Entity {
 	private int cooldownTimer;
 	protected int cooldownLength;
 	protected int range;
+	protected int rangeAngle;
+	protected int restingAngle;
 	
 	protected AngledSpriteRelation barrel;
 	
@@ -21,6 +23,7 @@ public abstract class Turret extends Entity {
 	
 	protected void init() {
 		cooldownTimer = cooldownLength;
+		barrel.setAngle(restingAngle);
 	}
 	
 	@Override
@@ -35,11 +38,17 @@ public abstract class Turret extends Entity {
 			cooldownTimer = cooldownLength;
 		}
 		List<Entity> allTargets = World.getInstance().getEnemiesEntities();
-		Entity target = this.getClosest(World.getInstance().getEnemiesEntities());
-		if (target == null || this.distanceFrom(target) > range) {
-			barrel.setAngle(90);
+		Entity target = this.getClosest(allTargets);
+		double targetX = target.getX() + (target.getWidth() / 2);
+		double targetY = target.getY() + (target.getHeight() / 2);
+		double targetAngle = barrel.getAngle(targetX, targetY);
+		
+		boolean targetInRange = (targetAngle > (restingAngle - rangeAngle / 2) && targetAngle < (restingAngle + rangeAngle / 2));
+		//targetInRange = targetInRange && this.distanceFrom(target) > range;
+		if (target == null || !targetInRange) {
+			//barrel.setAngle(restingAngle);
 		} else {
-			barrel.setTarget(target.getX(), target.getY());
+			barrel.setAngle(targetAngle);
 		}
 	}
 	

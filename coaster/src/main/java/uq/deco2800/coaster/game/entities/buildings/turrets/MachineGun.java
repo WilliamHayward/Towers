@@ -18,7 +18,7 @@ public class MachineGun extends Turret {
 		setSprite(sprite);
 		MutableDouble angle = new MutableDouble();
 		angle.setValue(0);
-		barrel = new AngledSpriteRelation(new Sprite(SpriteList.BARREL_MACHINE_GUN), (Entity) this, angle, 1f, 0f, 2.5f, 1f, 0f, 0.5f);
+		barrel = new AngledSpriteRelation(new Sprite(SpriteList.BARREL_MACHINE_GUN), (Entity) this, angle, 0.5f, 0f, 1f, 0.25f, 0f, 0.125f);
 		setBlocksOtherEntities(false);
 
 		bounds = new AABB(posX, posY, sprite.getWidth() / 32, sprite.getHeight() / 32); // No collision for decoration
@@ -26,9 +26,12 @@ public class MachineGun extends Turret {
 		setCollisionFilter(e -> false);
 		cooldownLength = 150;
 		super.init();
-		this.setSize(2f, 1f);
+		this.setSize(1f, 0.5f);
 		name = "Machine Gun";
 		range = 5;
+		rangeAngle = 90;
+		restingAngle = 90;
+		barrel.setAngle(restingAngle);
 	}
 	@Override
 	protected void onEntityCollide(List<Entity> entities, List<BodyPart> hitLocations) {
