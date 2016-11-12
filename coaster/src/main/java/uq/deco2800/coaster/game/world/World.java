@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.debug.Debug;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
+import uq.deco2800.coaster.game.entities.enemies.Emitter;
+import uq.deco2800.coaster.game.entities.enemies.Enemy;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.graphics.Camera;
 import uq.deco2800.singularity.clients.coaster.CoasterClient;
@@ -32,6 +34,7 @@ public class World {
 	private List<Player> playerEntities = new ArrayList<>(); // list of player entities
 	private List<Entity> npcEntities = new ArrayList<>(); // list of npc entities
 	private List<Entity> mountEntities = new ArrayList<>(); // list of npc entities
+	private List<Entity> enemyEntities = new ArrayList<>();
 	private List<Entity> newEntities = new ArrayList<>(); // list of new entities to be added
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
@@ -314,7 +317,9 @@ public class World {
 			allEntities.add(entity);
 			if (entity instanceof Player) {
 				playerEntities.add((Player) entity);
-			} 
+			} else if (entity instanceof Enemy) {
+				enemyEntities.add((Enemy) entity);
+			}
 		}
 		newEntities.clear();
 	}
@@ -328,6 +333,8 @@ public class World {
 			allEntities.remove(entity);
 			if (entity instanceof Player) {
 				playerEntities.remove(entity);
+			} else if (entity instanceof Enemy) {
+				enemyEntities.remove(entity);
 			}
 		}
 		deleteEntities.clear();
@@ -487,11 +494,18 @@ public class World {
 				tiles.get(x, y).setTileType(chunkTile);
 			}
 		}
+		Emitter emitter = new Emitter(room.getWaypoints());
+		emitter.setPosition(room.getWaypoints().get(0).getX(), room.getWaypoints().get(0).getY());
+		this.addEntity(emitter);
 		//this.getFirstPlayer().setX(spawnX);
 		//this.getFirstPlayer().setY(spawnY);
 		
 		//this.getFirstPlayer().setPosition(spawnX, spawnY);
 		// TODO Auto-generated method stub
 		
+	}
+
+	public List<Entity> getEnemiesEntities() {
+		return enemyEntities;
 	}
 }

@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.tiles.Tiles;
@@ -19,6 +19,7 @@ public class Room {
 
 	private String name;
 	private WorldTiles blocks; //array of blocks currently in chunk
+	private Map<Integer, Coordinate> waypoints;
 
 	/**
 	 * Standard chunk constructor. Receives a starting X position and a seed and will randomly generate the rest in a
@@ -29,6 +30,7 @@ public class Room {
 	 * @throws FileNotFoundException 
 	 */
 	public Room() {
+		waypoints = new HashMap<>();
 		try {
 			load("rooms/test.room");
 		} catch (FileNotFoundException e) {
@@ -44,7 +46,6 @@ public class Room {
 		blocks = new WorldTiles(WIDTH, HEIGHT, WIDTH);
 		FileReader fileReader = new FileReader(classLoader.getResource("rooms/test.room").getFile());
 		BufferedReader file = new BufferedReader(fileReader);
-		List<Tuple> waypoints = new ArrayList<>();
 		String line;
 		line = file.readLine();
 		String[] data;
@@ -66,8 +67,8 @@ public class Room {
 						System.out.println("Set spawn: " + x + ", " + y);
 					} else {
 						int pos = Integer.parseInt(modifier);
-						Tuple coordinates = new Tuple(x, y);
-						waypoints.add(pos, coordinates);
+						Coordinate coordinates = new Coordinate(x, y);
+						waypoints.put(pos, coordinates);
 					}
 				} else {
 					type = data[x];
@@ -87,6 +88,13 @@ public class Room {
 			line = file.readLine();
 		}
 		file.close();
+	}
+	
+	/**
+	 * Returns waypoints of room
+	 */
+	public Map<Integer, Coordinate> getWaypoints() {
+		return waypoints;
 	}
 	
 	/**

@@ -1,8 +1,10 @@
 package uq.deco2800.coaster.game.entities.buildings.turrets;
 
+import java.util.List;
+
 import javafx.scene.canvas.GraphicsContext;
-import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.game.entities.Entity;
+import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.AngledSpriteRelation;
 
@@ -10,6 +12,7 @@ public abstract class Turret extends Entity {
 	protected String name;
 	private int cooldownTimer;
 	protected int cooldownLength;
+	protected int range;
 	
 	protected AngledSpriteRelation barrel;
 	
@@ -31,7 +34,13 @@ public abstract class Turret extends Entity {
 			System.out.println("Fire " + name);
 			cooldownTimer = cooldownLength;
 		}
-		barrel.setTarget(InputManager.getMouseTileX(), InputManager.getMouseTileY());
+		List<Entity> allTargets = World.getInstance().getEnemiesEntities();
+		Entity target = this.getClosest(World.getInstance().getEnemiesEntities());
+		if (target == null || this.distanceFrom(target) > range) {
+			barrel.setAngle(90);
+		} else {
+			barrel.setTarget(target.getX(), target.getY());
+		}
 	}
 	
 	@Override

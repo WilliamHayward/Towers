@@ -77,6 +77,20 @@ public class AngledSpriteRelation extends SpriteRelation {
 					targetX - (owner.getX() + owner.getBounds().getWidth() - pivotX - mountX))));
 		}
 	}
+	
+	/**
+	 * Manually set the angle in degrees
+	 */
+	public void setAngle(double degres) {
+		angle.setValue(degres);
+	}
+	
+	/**
+	 * Returns current angle in degrees
+	 */
+	public double getAngle() {
+		return angle.getValue();
+	}
 
 	/**
 	 * Gets the x-offset of the pivot point. Will be useful for rendering held weapons

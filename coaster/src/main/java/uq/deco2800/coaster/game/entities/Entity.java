@@ -515,6 +515,17 @@ public abstract class Entity {
 	public float distanceFrom(Entity e) {
 		return Math.abs((this.posX + this.getWidth() / 2) - (e.posX + e.getWidth() / 2));
 	}
+	
+	/**
+	 * Returns the straight-line distance between this entity's top-left and that of the target
+	 *
+	 * @param e an entity to which the distance is calculated
+	 * @return the straight line distance in tiles
+	 */
+	public float distanceFrom(float x, float y) {
+		return Math.abs((this.posX + this.getWidth() / 2) - (x));
+	}
+
 
 	/**
 	 * Returns the closest entity out of the input list.
