@@ -14,8 +14,8 @@ import uq.deco2800.coaster.game.tiles.Tiles;
  * A Chunk class containing array for the underlying terrain and information for chunks
  */
 public class Room {
-	public static final int WIDTH = 50; // Room width
-	public static final int HEIGHT = 50; // Room height
+	public static final int WIDTH = 100; // Room width
+	public static final int HEIGHT = 100; // Room height
 
 	private String name;
 	private WorldTiles blocks; //array of blocks currently in chunk

@@ -1,12 +1,10 @@
 package uq.deco2800.coaster.graphics;
 
-import uq.deco2800.coaster.game.world.Room;
+import uq.deco2800.coaster.game.tiles.TileInfo;
 
 //This is the class that controls the "camera" of the game. You can move the camera, position it onto a certain tile,
 //and much more.
 public class Viewport {
-	private static final int VIEWPORT_WIDTH = 42; //Remember to keep this aspect ratio 16:9 for maximum compatibility
-	private static final int VIEWPORT_HEIGHT = 24;
 	//These units are in tiles
 	//The viewport render will "snap" to tiles if you try to pan in a map smaller than the screen res, but that's fine
 	//(you shouldn't be able to pan in those maps anyway)
@@ -27,21 +25,17 @@ public class Viewport {
 	public void initViewport(int resWidth, int resHeight) {
 		this.resWidth = resWidth;
 		this.resHeight = resHeight;
-
-		//Use resolution dimensions to determine aspect ratio and borders
-		//The viewport is 16:9, and we box it into the resolution dimensions
-		float viewportAR = VIEWPORT_WIDTH / (float) VIEWPORT_HEIGHT;
-		float screenAR = resWidth / (float) resHeight;
-		if (screenAR <= viewportAR) {
+		tileSideLength = TileInfo.BLOCK_HEIGHT;
+		/**if (screenAR <= viewportAR) {
 			tileSideLength = resHeight / (float) VIEWPORT_HEIGHT;
 		} else {
 			tileSideLength = resWidth / (float) VIEWPORT_WIDTH;
-		}
+		}*/
 	}
 
 	public void calculateBorders(int mapWidth, int mapHeight) {
-		int minWidth = Math.min(mapWidth, VIEWPORT_WIDTH);
-		int minHeight = Math.min(mapHeight, VIEWPORT_HEIGHT);
+		float minWidth = Math.min((float) mapWidth, getWidth());
+		float minHeight = Math.min((float) mapHeight, getHeight());
 
 		borderLeft = (int) ((resWidth - (minWidth * tileSideLength)) / 2);
 		borderTop = (int) ((resHeight - (minHeight * tileSideLength)) / 2);
@@ -52,7 +46,7 @@ public class Viewport {
 			borderTop = 0;
 		}
 	}
-
+	
 	//Takes a tile coordinate input and returns the pixel coordinate.
 	public int getPixelCoordX(float x) {
 		float pixel = (x - left) * tileSideLength;
@@ -105,21 +99,21 @@ public class Viewport {
 	}
 
 	public void centerOnX(float x) {
-		left = x - (VIEWPORT_WIDTH / 2.0f);
-		if (left < 0) {
+		left = x - (getWidth() / 2.0f);
+		/*if (left < 0) {
 			left = 0;
-		}
-		if (left + VIEWPORT_WIDTH > Room.WIDTH) {
+		}*/
+		/*if (left + VIEWPORT_WIDTH > Room.WIDTH) {
 			left = Room.WIDTH - VIEWPORT_WIDTH;
-		}
+		}*/
 	}
 
 	public void centerOnY(float y) {
-		top = y - (VIEWPORT_HEIGHT / 2.0f);
+		top = y - (getHeight() / 2.0f);
 
-		if (top + VIEWPORT_HEIGHT > Room.HEIGHT) {
+		/*if (top + VIEWPORT_HEIGHT > Room.HEIGHT) {
 			top = Room.HEIGHT - VIEWPORT_HEIGHT - 1;
-		}
+		}*/
 	}
 
 	public float getTop() {
@@ -131,19 +125,19 @@ public class Viewport {
 	}
 
 	public float getRight() {
-		return left + VIEWPORT_WIDTH;
+		return left +  getWidth();
 	}
 
 	public float getBottom() {
-		return top + VIEWPORT_HEIGHT;
+		return top + getHeight();
 	}
 
-	public int getWidth() {
-		return VIEWPORT_WIDTH;
+	public float getWidth() {
+		return resWidth / tileSideLength;
 	}
 
-	public int getHeight() {
-		return VIEWPORT_HEIGHT;
+	public float getHeight() {
+		return resHeight / tileSideLength;
 	}
 
 	public int getLeftBorder() {
