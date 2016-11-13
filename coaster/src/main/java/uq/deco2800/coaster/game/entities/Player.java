@@ -8,12 +8,16 @@ import uq.deco2800.coaster.core.input.GameInput;
 import uq.deco2800.coaster.core.input.InputManager;
 import uq.deco2800.coaster.core.sound.SoundCache;
 import uq.deco2800.coaster.game.debug.Debug;
+import uq.deco2800.coaster.game.entities.buildings.turrets.Cannon;
 import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
 import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
+import uq.deco2800.coaster.game.entities.traps.AcidTrap;
+import uq.deco2800.coaster.game.entities.traps.Trap;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
+import uq.deco2800.coaster.graphics.LayerList;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
@@ -174,6 +178,7 @@ public class Player extends BasicMovingEntity {
 	 * The Player class is the entity controlled by the user.
 	 */
 	public Player() {
+		layer = LayerList.PLAYERS;
 		setCollisionFilter(e -> this.knockBackTimer < 0);
 		turretTimer = 0;
 
@@ -509,7 +514,7 @@ public class Player extends BasicMovingEntity {
 			debugString += "# of Entities: " + world.getAllEntities().size() + "\n";
 			debugString += "# of Players: " + world.getPlayerEntities().size() + "\n";
 
-			debugString += "# of Mobs: " + world.getNpcEntities().size() + "\n";
+			debugString += "# of Enemies: " + world.getEnemyEntities().size() + "\n";
 			debugString += "# of loaded Chunks: " + world.getTiles().getWidth() / Room.WIDTH + "\n";
 			debugString += "HP: " + getCurrentHealth() + "\n";
 			debugString += "XP: " + stats.getExperiencePoints() + "\n";
@@ -569,7 +574,7 @@ public class Player extends BasicMovingEntity {
 				return;
 			}
 			System.out.println("Placed");
-			Turret turret = new MachineGun();
+			Trap turret = new AcidTrap();
 			float turretPosX = (float) Math.floor(InputManager.getMouseTileX());
 			float turretPosY = (float) Math.floor(InputManager.getMouseTileY());
 			turret.setPosition(turretPosX, turretPosY);

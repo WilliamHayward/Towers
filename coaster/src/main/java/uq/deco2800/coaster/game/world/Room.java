@@ -64,7 +64,6 @@ public class Room {
 					modifier = data[x].split("-")[1];
 					if (modifier.equals("P")) {
 						World.getInstance().setSpawn(x, y);
-						System.out.println("Set spawn: " + x + ", " + y);
 					} else {
 						int pos = Integer.parseInt(modifier);
 						Coordinate coordinates = new Coordinate(x, y);

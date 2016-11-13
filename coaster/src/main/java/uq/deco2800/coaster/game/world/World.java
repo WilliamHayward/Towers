@@ -5,8 +5,10 @@ import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.debug.Debug;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.Player;
+import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
 import uq.deco2800.coaster.game.entities.enemies.Emitter;
 import uq.deco2800.coaster.game.entities.enemies.Enemy;
+import uq.deco2800.coaster.game.entities.traps.Trap;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.graphics.Camera;
 import uq.deco2800.singularity.clients.coaster.CoasterClient;
@@ -32,9 +34,9 @@ public class World {
 	private int npcSpawnChance = 10; // inverse of the chance of an npc spawning. If this is 50, then chance is 1/50
 	private List<Entity> allEntities = new ArrayList<>(); // list of all entities
 	private List<Player> playerEntities = new ArrayList<>(); // list of player entities
-	private List<Entity> npcEntities = new ArrayList<>(); // list of npc entities
-	private List<Entity> mountEntities = new ArrayList<>(); // list of npc entities
 	private List<Entity> enemyEntities = new ArrayList<>();
+	private List<Entity> turretEntities = new ArrayList<>();
+	private List<Entity> trapEntities = new ArrayList<>();
 	private List<Entity> newEntities = new ArrayList<>(); // list of new entities to be added
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
@@ -206,21 +208,21 @@ public class World {
 	}
 
 	/**
-	 * Returns a list of NPC Entities
+	 * Returns a list of Trap Entities
 	 *
-	 * @return list of NPC Entities
+	 * @return list of Trap Entities
 	 */
-	public List<Entity> getNpcEntities() {
-		return npcEntities;
+	public List<Entity> getTrapEntities() {
+		return trapEntities;
 	}
 
 	/**
-	 * Returns a list of mount Entities
+	 * Returns a list of Turret Entities
 	 *
-	 * @return list of mount Entities
+	 * @return list of Turret Entities
 	 */
-	public List<Entity> getMountEntities() {
-		return mountEntities;
+	public List<Entity> getTurretEntities() {
+		return turretEntities;
 	}
 
 	/**
@@ -266,25 +268,6 @@ public class World {
 		}
 		return 0; // not near any empty chunks
 	}
-
-	/**
-	 * Returns the number of mobs in the chunk specified by a position
-	 */
-	int getNumMobsInChunk(int x) {
-		int chunkPos = Room.WIDTH * (x / Room.WIDTH); // rounds to
-		// nearest
-		// chunk
-		int mobCount = 0;
-
-		for (Entity mob : npcEntities) {
-			// increments mob count if mob is within the specified chunk
-			if (mob.getX() >= chunkPos && mob.getX() < chunkPos + Room.WIDTH) {
-				mobCount++;
-			}
-		}
-
-		return mobCount;
-	}
 	
 	/**
 	 * Loads chunk around player when the entity is near empty
@@ -319,6 +302,10 @@ public class World {
 				playerEntities.add((Player) entity);
 			} else if (entity instanceof Enemy) {
 				enemyEntities.add((Enemy) entity);
+			} else if (entity instanceof Turret) {
+				turretEntities.add((Turret) entity);
+			} else if (entity instanceof Trap) {
+				trapEntities.add((Trap) entity);
 			}
 		}
 		newEntities.clear();
@@ -335,6 +322,10 @@ public class World {
 				playerEntities.remove(entity);
 			} else if (entity instanceof Enemy) {
 				enemyEntities.remove(entity);
+			} else if (entity instanceof Turret) {
+				turretEntities.remove(entity);
+			} else if (entity instanceof Trap) {
+				trapEntities.remove(entity);
 			}
 		}
 		deleteEntities.clear();
@@ -465,8 +456,6 @@ public class World {
 	 */
 	private void clearEntities() {
 		allEntities.clear();
-		npcEntities.clear();
-		mountEntities.clear();
 		playerEntities.clear();
 		newEntities.clear();
 		deleteEntities.clear();
@@ -505,7 +494,7 @@ public class World {
 		
 	}
 
-	public List<Entity> getEnemiesEntities() {
+	public List<Entity> getEnemyEntities() {
 		return enemyEntities;
 	}
 }

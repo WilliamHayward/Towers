@@ -7,6 +7,7 @@ import uq.deco2800.coaster.game.tiles.Tile;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
+import uq.deco2800.coaster.graphics.LayerList;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
 import uq.deco2800.coaster.graphics.sprites.SpriteList;
@@ -16,7 +17,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public abstract class Entity {
-
 	public static final float GRAVITY = 50f;
 	public static final float terminalVelocity = 50f; // Max falling speed
 	public static final float UNDER_WATER_GRAVITY_MULTIPLIER = 0.7f;
@@ -24,6 +24,7 @@ public abstract class Entity {
 	protected World world;
 	protected Sprite sprite = null;
 
+	protected LayerList layer = LayerList.DEFAULT;
 	// For now, coordinate system is top-left just so we don't have to flip it
 	// when rendering. If this turns out
 
@@ -106,6 +107,12 @@ public abstract class Entity {
 		return this.sprite;
 	}
 
+	/**
+	 * Getter for the layer on which this sprite should render
+	 */
+	public LayerList getLayer() {
+		return layer;
+	}
 	/**
 	 * Sets the additional sprites, which are rendered over the top of this entity and are not hitbox-aligned.
 	 *

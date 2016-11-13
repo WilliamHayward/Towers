@@ -5,13 +5,14 @@ import java.util.List;
 import javafx.scene.canvas.GraphicsContext;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.world.World;
+import uq.deco2800.coaster.graphics.LayerList;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.AngledSpriteRelation;
 
 public abstract class Turret extends Entity {
 	protected String name;
-	private int cooldownTimer;
-	protected int cooldownLength;
+	private float cooldownTimer;
+	protected float cooldownLength;
 	protected int range;
 	protected int rangeAngle;
 	protected int restingAngle;
@@ -22,6 +23,7 @@ public abstract class Turret extends Entity {
 	}
 	
 	protected void init() {
+		layer = LayerList.TURRETS;
 		cooldownTimer = cooldownLength;
 		barrel.setAngle(restingAngle);
 	}
@@ -32,12 +34,12 @@ public abstract class Turret extends Entity {
 	
 	@Override
 	protected void tick(long ms) {
-		cooldownTimer--;
-		if (cooldownTimer == 0) {
+		cooldownTimer -= (float) ms / 1000;
+		if (cooldownTimer <= 0) {
 			System.out.println("Fire " + name);
 			cooldownTimer = cooldownLength;
 		}
-		List<Entity> allTargets = World.getInstance().getEnemiesEntities();
+		List<Entity> allTargets = World.getInstance().getEnemyEntities();
 		Entity target = this.getClosest(allTargets);
 		double targetX = target.getX() + (target.getWidth() / 2);
 		double targetY = target.getY() + (target.getHeight() / 2);

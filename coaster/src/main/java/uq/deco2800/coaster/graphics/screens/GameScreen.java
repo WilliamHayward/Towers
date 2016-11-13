@@ -7,11 +7,15 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.entities.Entity;
-import uq.deco2800.coaster.game.entities.Player;
 import uq.deco2800.coaster.game.world.*;
+import uq.deco2800.coaster.graphics.LayerList;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.Sprite;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class GameScreen extends Screen {
@@ -107,19 +111,23 @@ public class GameScreen extends Screen {
 		float right = viewport.getRight() + widthLeeway;
 		float top = viewport.getTop() - heightLeeway;
 		float bottom = viewport.getBottom() + heightLeeway;
-		Player player = null;
+		
+		Map<LayerList, List<Entity>> layers = new HashMap<>();
+		for (LayerList layer: LayerList.values()) {
+			layers.put(layer, new ArrayList<>());
+		}
+		
 		for (Entity entity : entities) {
-			if (entity instanceof Player) {
-				player = (Player) entity;
-			} else {
-				if (entity.getX() + entity.getWidth() > left && entity.getX() < right
-						&& entity.getY() + entity.getHeight() > top && entity.getY() < bottom) {
-					entity.render(gc, viewport, ms);
-				}
+			if (entity.getX() + entity.getWidth() > left && entity.getX() < right
+					&& entity.getY() + entity.getHeight() > top && entity.getY() < bottom) {
+				layers.get(entity.getLayer()).add(entity);
 			}
 		}
-		if (player != null) { //Render player in front of all entities
-			player.render(gc, viewport, ms);
+		
+		for (LayerList layer: LayerList.values()) {
+			for (Entity entity: layers.get(layer)) {
+				entity.render(gc, viewport, ms);
+			}
 		}
 	}
 }

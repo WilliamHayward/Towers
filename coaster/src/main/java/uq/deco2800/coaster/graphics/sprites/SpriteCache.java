@@ -47,7 +47,8 @@ public class SpriteCache {
 		loadStandardSprite(SpriteList.PARTICLE1, "sprites/particle1.png", 50, 50, 1, 1);
 
 		loadStandardSprite(SpriteList.BARREL_MACHINE_GUN, "sprites/barrel-machine-gun.png", 47, 10, 1, 1);
-		loadStandardSprite(SpriteList.TURRET_BASE_MACHINE_GUN, "sprites/turret-base-machine-gun.png", 41, 20, 1, 1);
+		loadStandardSprite(SpriteList.BARREL_CANNON, "sprites/barrel-cannon.png", 41, 16, 1, 1);
+		loadStandardSprite(SpriteList.TURRET_BASE, "sprites/turret-base.png", 41, 20, 1, 1);
 		if (TileInfo.hasLoaded()) {
 			for (TileInfo tileInfo : TileInfo.getTileRegistry().values()) {
 				loadTileSprite(tileInfo);

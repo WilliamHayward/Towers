@@ -1,9 +1,16 @@
 package uq.deco2800.coaster.game.entities.enemies;
 
+import java.util.List;
 import java.util.Map;
 
 import uq.deco2800.coaster.game.entities.Entity;
+import uq.deco2800.coaster.game.entities.traps.Trap;
+import uq.deco2800.coaster.game.entities.traps.TrapEffect;
 import uq.deco2800.coaster.game.world.Coordinate;
+import uq.deco2800.coaster.game.world.World;
+import uq.deco2800.coaster.graphics.LayerList;
+import uq.deco2800.coaster.graphics.sprites.Sprite;
+import uq.deco2800.coaster.graphics.sprites.SpriteList;
 
 public abstract class Enemy extends Entity {
 	protected Map<Integer, Coordinate> waypoints;
@@ -11,7 +18,21 @@ public abstract class Enemy extends Entity {
 	protected int direction = 1;
 	protected float speed;
 	protected void init() {
+		layer = LayerList.ENEMIES;
 		
+	}
+	
+	public TrapEffect processTraps() {
+		TrapEffect effect = new TrapEffect();
+		List<Entity> traps = World.getInstance().getTrapEntities();
+		Sprite sprite = new Sprite(SpriteList.CARL);
+		for (Entity trap: traps) {
+			if (this.getBounds().collides(trap.getBounds())) {
+				sprite = new Sprite(SpriteList.PLACEHOLDER);
+			}
+		}
+		this.setSprite(sprite);
+		return effect;
 	}
 	
 	@Override
@@ -25,6 +46,8 @@ public abstract class Enemy extends Entity {
 		float yDiff = destination.getY() - this.getY();
 		float horizontalSpeed = 0;
 		float verticalSpeed = 0;
+		
+		TrapEffect trap = processTraps();
 		
 		if (Math.abs(xDiff) >= Math.abs(scaledSpeed)) {
 			horizontalSpeed = speed * Math.signum(xDiff);
