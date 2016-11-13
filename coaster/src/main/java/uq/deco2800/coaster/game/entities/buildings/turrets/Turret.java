@@ -54,12 +54,14 @@ public abstract class Turret extends Entity {
 	
 	@Override
 	public void render(GraphicsContext gc, Viewport viewport, long ms) {
-		super.render(gc, viewport, ms);
 
 		float tileSize = viewport.getTileSideLength();
 		float thisX = (this.getX() - viewport.getLeft()) * viewport.getTileSideLength();
 		float thisY = (this.getY() - viewport.getTop()) * viewport.getTileSideLength();
 		barrel.renderSprite(gc, tileSize, thisX, thisY);
+		
+		super.render(gc, viewport, ms);
+
 	}
 	
 	protected void fire() {

@@ -2,7 +2,6 @@ package uq.deco2800.coaster.game.entities.enemies;
 
 import java.util.Map;
 
-import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.world.Coordinate;
 
