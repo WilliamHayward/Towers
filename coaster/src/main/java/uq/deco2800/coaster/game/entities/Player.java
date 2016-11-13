@@ -563,6 +563,7 @@ public class Player extends BasicMovingEntity {
 			default:
 				break;
 		}
+		
 		if (basicAttack) {
 			if (cooldown > 0) {
 				return;

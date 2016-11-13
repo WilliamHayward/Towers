@@ -95,6 +95,7 @@ public class Engine extends AnimationTimer {
 
 
 		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
+			renderer.getViewport().zoom(2.0f);
 			//renderer.toggleScreen("Debug Console");
 		}
 		

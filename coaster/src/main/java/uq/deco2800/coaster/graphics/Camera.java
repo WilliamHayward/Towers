@@ -35,7 +35,7 @@ public class Camera {
 
 	public void tick(long ms) {
 		if (leader != null) {
-			viewport.centerOn(leader.getX(), leader.getY());
+			viewport.centerOn(leader.getX() + leader.getWidth() / 2, leader.getY() + leader.getHeight() / 2);
 		}
 	}
 }

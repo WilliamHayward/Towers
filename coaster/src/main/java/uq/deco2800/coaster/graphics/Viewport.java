@@ -16,6 +16,7 @@ public class Viewport {
 	private int borderLeft;
 	private int borderTop;
 
+	private float defaultTileSideLength;
 	private float tileSideLength;
 
 	public Viewport(int resWidth, int resHeight) {
@@ -25,12 +26,8 @@ public class Viewport {
 	public void initViewport(int resWidth, int resHeight) {
 		this.resWidth = resWidth;
 		this.resHeight = resHeight;
-		tileSideLength = TileInfo.BLOCK_HEIGHT;
-		/**if (screenAR <= viewportAR) {
-			tileSideLength = resHeight / (float) VIEWPORT_HEIGHT;
-		} else {
-			tileSideLength = resWidth / (float) VIEWPORT_WIDTH;
-		}*/
+		defaultTileSideLength = TileInfo.BLOCK_HEIGHT;
+		tileSideLength = defaultTileSideLength;
 	}
 
 	public void calculateBorders(int mapWidth, int mapHeight) {
@@ -47,22 +44,30 @@ public class Viewport {
 		}
 	}
 	
+	public void zoomIn() {
+		tileSideLength *= 2;
+	}
+	public void zoomOut() {
+		tileSideLength /= 2;
+	}
+	
+	public void zoom(float scale) {
+		tileSideLength = defaultTileSideLength * scale;
+	}
+	
 	//Takes a tile coordinate input and returns the pixel coordinate.
 	public int getPixelCoordX(float x) {
 		float pixel = (x - left) * tileSideLength;
-		//pixel += borderLeft;
 		return (int) pixel;
 	}
 
 	public int getPixelCoordY(float y) {
 		float pixel = (y - top) * tileSideLength;
-		//pixel += borderTop;
 		return (int) pixel;
 	}
 
 	//Takes a pixel coordinate and converts it to tile coordinates.
 	public float getTileCoordX(int x) {
-		
 		int adjustedX = (int) (x + left * tileSideLength); //- borderLeft;
 		return (adjustedX / tileSideLength);
 	}

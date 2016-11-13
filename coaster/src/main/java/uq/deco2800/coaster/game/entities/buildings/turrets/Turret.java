@@ -54,7 +54,6 @@ public abstract class Turret extends Entity {
 	
 	@Override
 	public void render(GraphicsContext gc, Viewport viewport, long ms) {
-
 		float tileSize = viewport.getTileSideLength();
 		float thisX = (this.getX() - viewport.getLeft()) * viewport.getTileSideLength();
 		float thisY = (this.getY() - viewport.getTop()) * viewport.getTileSideLength();
