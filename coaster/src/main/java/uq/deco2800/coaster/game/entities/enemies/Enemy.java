@@ -19,30 +19,34 @@ public abstract class Enemy extends Entity {
 	protected void tick(long ms) {
 		float seconds = ms / (float) 1000;
 		float scaledSpeed = speed * seconds / this.getCollisionScale(ms);
+		scaledSpeed *= 2;
 		Coordinate destination = waypoints.get(destinationWaypoint);
+		
 		float xDiff = destination.getX() - this.getX();
 		float yDiff = destination.getY() - this.getY();
 		float horizontalSpeed = 0;
 		float verticalSpeed = 0;
 		
-		if (Math.abs(xDiff) >= Math.abs((speed * seconds / this.getCollisionScale(ms)))) {
+		if (Math.abs(xDiff) >= Math.abs(scaledSpeed)) {
 			horizontalSpeed = speed * Math.signum(xDiff);
 		} else {
 			this.setPosition(destination.getX(), this.getY());
 		}
-		if (Math.abs(yDiff) >= Math.abs((speed * seconds / this.getCollisionScale(ms)))) {
+		
+		if (Math.abs(yDiff) >= Math.abs(scaledSpeed)) {
 			verticalSpeed = speed * Math.signum(yDiff);
 		} else {
 			this.setPosition(this.getX(), destination.getY());
 		}
+		
 		if (horizontalSpeed == 0 && verticalSpeed == 0) {
-			System.out.println("At dest");
 			destinationWaypoint += direction;
 			if (waypoints.get(destinationWaypoint) == null) {
 				direction *= -1;
 				destinationWaypoint += direction;
 			}
 		}
+		
 		this.setVelocity(horizontalSpeed, verticalSpeed);
 	}
 
@@ -56,7 +60,6 @@ public abstract class Enemy extends Entity {
 		float diffY = velY * seconds / collisionScale;
 		// process things one step at a time
 		for (int step = 0; step < collisionScale; step++) {
-
 			// increment position
 			bounds.setX(bounds.left() + diffX);
 			bounds.setY(bounds.top() + diffY);
