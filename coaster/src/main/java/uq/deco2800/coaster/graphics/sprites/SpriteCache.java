@@ -34,16 +34,15 @@ public class SpriteCache {
 		// CARL:
 		loadStandardSprite(SpriteList.CARL, "sprites/carl.png", 32, 32, 1, 1);
 		
-		// Player Sprites
-		loadStandardSprite(SpriteList.KNIGHT_STANDING, "sprites/player-blue-standing.png", 110, 156, 1, 0);
-		
-		loadStandardSprite(SpriteList.KNIGHT_WALKING, "sprites/player-blue-walking.png", 110, 156,
+		// Blue Player Sprites
+		loadStandardSprite(SpriteList.PLAYER_BLUE_STANDING, "sprites/player-blue-standing.png", 110, 156, 1, 0);
+		loadStandardSprite(SpriteList.PLAYER_BLUE_WALKING, "sprites/player-blue-walking.png", 110, 156,
 				2, 200); //TODO: CLipping issues between the two frames
-		
-		loadStandardSprite(SpriteList.KNIGHT_JUMPING, "sprites/player-blue-jumping.png", 110, 156, 1, 1);
-		loadStandardSprite(SpriteList.KNIGHT_CROUCH, "sprites/player-blue-crouching.png", 113, 117, 1, 1); //TODO: The helmet changes size. Investigate!
-		loadStandardSprite(SpriteList.KNIGHT_KNOCK_BACK, "sprites/player-blue-hit.png", 110, 156, 1, 1);
+		loadStandardSprite(SpriteList.PLAYER_BLUE_JUMPING, "sprites/player-blue-jumping.png", 110, 156, 1, 1);
+		loadStandardSprite(SpriteList.PLAYER_BLUE_CROUCH, "sprites/player-blue-crouching.png", 113, 117, 1, 1); //TODO: The helmet changes size. Investigate!
+		loadStandardSprite(SpriteList.PLAYER_BLUE_KNOCK_BACK, "sprites/player-blue-hit.png", 110, 156, 1, 1);
 
+		
 		loadStandardSprite(SpriteList.PARTICLE1, "sprites/particle1.png", 50, 50, 1, 1);
 
 		loadStandardSprite(SpriteList.BARREL_MACHINE_GUN, "sprites/barrel-machine-gun.png", 47, 10, 1, 1);

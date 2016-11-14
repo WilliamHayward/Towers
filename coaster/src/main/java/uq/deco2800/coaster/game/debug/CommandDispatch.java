@@ -29,8 +29,6 @@ public class CommandDispatch {
 		commands = new ArrayList<Command>();
 		// Commands
 		commands.add(new QuitCommands(QuitCommands.CommandType.CLOSE));
-		commands.add(new HealthCommands(HealthCommands.CommandType.HEAL));
-		commands.add(new HealthCommands(HealthCommands.CommandType.HEALTH));
 		commands.add(new MoveCommand());
 		commands.add(new ScottyCommand());
 		commands.add(new QuitCommands(QuitCommands.CommandType.EXIT));

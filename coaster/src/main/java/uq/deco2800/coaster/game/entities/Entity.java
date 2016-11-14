@@ -1,6 +1,7 @@
 package uq.deco2800.coaster.game.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+import uq.deco2800.coaster.game.entities.players.Player;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.tiles.Tile;
@@ -64,8 +65,8 @@ public abstract class Entity {
 	protected boolean renderFlag = true; // Does the sprite get rendered? Other effects still rendered
 	protected int facing = 1; // -1 for left, 1 for right.\
 	protected Predicate<Entity> collisionFilter;
-	Viewport viewport;
-	boolean firstTick = true;
+	protected Viewport viewport;
+	protected boolean firstTick = true;
 
 	protected long latestTick = 5000;
 
@@ -240,14 +241,6 @@ public abstract class Entity {
 		bounds.setY(posY);
 
 		updateHitboxes();
-
-		World tempWorld = World.getInstance();
-		if (this instanceof Player) {
-			int offset = -getNearestChunkX();
-			tempWorld.resetTiles();
-			tempWorld.getTiles().setOffset(offset);
-			tempWorld.loadAroundPlayer((Player) this);
-		}
 	}
 
 	/**

@@ -4,18 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uq.deco2800.coaster.game.debug.Debug;
 import uq.deco2800.coaster.game.entities.Entity;
-import uq.deco2800.coaster.game.entities.Player;
+import uq.deco2800.coaster.game.entities.buildings.traps.Trap;
 import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
 import uq.deco2800.coaster.game.entities.enemies.Emitter;
 import uq.deco2800.coaster.game.entities.enemies.Enemy;
-import uq.deco2800.coaster.game.entities.traps.Trap;
+import uq.deco2800.coaster.game.entities.players.BluePlayer;
+import uq.deco2800.coaster.game.entities.players.Player;
 import uq.deco2800.coaster.game.tiles.TileInfo;
 import uq.deco2800.coaster.graphics.Camera;
-import uq.deco2800.singularity.clients.coaster.CoasterClient;
-import uq.deco2800.singularity.common.representations.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A World class containing array for the underlying terrain as well as the list
@@ -31,7 +31,6 @@ public class World {
 	private long framesPerSecond; // Frames per second of the running game
 	static final int NUM_MOBS_PER_CHUNK = 50; // default number of mobs that can be generated in a chunk
 	private boolean renderHitboxes = false; // whether or not hit boxes are shown.
-	private int npcSpawnChance = 10; // inverse of the chance of an npc spawning. If this is 50, then chance is 1/50
 	private List<Entity> allEntities = new ArrayList<>(); // list of all entities
 	private List<Player> playerEntities = new ArrayList<>(); // list of player entities
 	private List<Entity> enemyEntities = new ArrayList<>();
@@ -43,14 +42,8 @@ public class World {
 		
 	private int entityRenderDistance = Room.WIDTH; // default entity rendering distance
 
-	private int spawnX;
-	private int spawnY;
+	private List<Coordinate> spawns = new ArrayList<>();
 	
-	// Singularity
-	private CoasterClient client;
-	private User user;
-	// Rooms
-	private boolean inRoom = false;
 	//lighting
 	private int globalLightLevel = 100;
 
@@ -70,12 +63,11 @@ public class World {
 	}
 
 	public void start(Camera camera) {
-		Player player = new Player();
+		Player player = new BluePlayer();
 		camera.setFollow(player);
-		//player.setX(this.getSpawnX());
-		//player.setY(this.getSpawnY());
 		this.addEntity(player);
 	}
+	
 	/**
 	 * Set the horizontal distance away from the Player that entities will still be processed
 	 */
@@ -105,20 +97,6 @@ public class World {
 	}
 	
 	/**
-	 * Replaces the current tiles in the world with a new tile set.
-	 *
-	 * @param tileTemplate The new set of tiles to replace the world's current ones
-	 */
-	public void setTiles(WorldTiles tileTemplate) {
-		logger.info("tiles set");
-		if (tileTemplate.getWidth() % Room.WIDTH != 0 || tileTemplate.getHeight() != Room.HEIGHT) {
-			throw new IllegalArgumentException("Invalid chunk dimensions (" +
-					tileTemplate.getWidth() + ", " + tileTemplate.getHeight() + ")");
-		}
-		tiles = tileTemplate;
-	}
-
-	/**
 	 * Reset the world tiles to an empty state and remove all decoration
 	 * entities.
 	 */
@@ -132,7 +110,6 @@ public class World {
 	 */
 	public void resetWorld() {
 		// Firstly make sure to exit the room
-		inRoom = false;
 		clearEntities();
 		renderHitboxes = false;
 		debug = new Debug();
@@ -144,10 +121,8 @@ public class World {
 	 */
 	public void debugReset() {
 		// Firstly make sure to exit the room
-		inRoom = false;
 		clearEntities();
 		renderHitboxes = false;
-		npcSpawnChance = 10;
 		debug = new Debug();
 		resetTiles();
 	}
@@ -253,32 +228,6 @@ public class World {
 	}
 
 	/**
-	 * Returns whether the entity is near any empty (i.e. un-generated) chunks.
-	 *
-	 * @return int representing the border the entity is near, else if not
-	 * within a chunk lengths distance of border will return 0.
-	 */
-	private int isNearEmpty(Entity entity) {
-		if (!tiles.test(entity.getNearestChunkX() - Room.WIDTH, 0)) {
-			return 1; // no chunks left
-		} else if (!tiles.test(entity.getNearestChunkX(), 0)) {
-			return 2; // no chunks underneath
-		} else if (!tiles.test(entity.getNearestChunkX() + Room.WIDTH, 0)) {
-			return 3; // no chunks right
-		}
-		return 0; // not near any empty chunks
-	}
-	
-	/**
-	 * Loads chunk around player when the entity is near empty
-	 */
-	public void loadAroundPlayer(Player player) {
-		while (isNearEmpty(player) != 0) {
-			loadChunk(player.getNearestChunkX(), isNearEmpty(player));
-		}
-	}
-
-	/**
 	 * This is called every game tick, and calls down into our list of entities
 	 * and calls tick on them as well.
 	 */
@@ -338,91 +287,11 @@ public class World {
 	 */
 
 	private void processEntities(long ms) {
-		Player player = getFirstPlayer();
 		for (Entity entity : allEntities) {
-			if (!inRoom && player == null || (entity.getX() > (player.getX() - entityRenderDistance)
-					&& entity.getX() < (player.getX() + entityRenderDistance))) {
-				entity.entityLoop(ms);
-			}
+			entity.entityLoop(ms);
 		}
-		if (player == null) {
-			return;
-		}
-
-		//loadAroundPlayer(player);
 	}
 	
-	/**
-	 * Loads the next row of chunks relative to the players chunk location (aka
-	 * movement).
-	 */
-	private void loadChunk(int chunkLocation, int chunkPlacement) {
-		
-		switch (chunkPlacement) {
-			case 1: // empty chunk left
-				tiles.addChunkLeft();
-				break;
-
-			case 2: // empty chunk under
-				tiles.addChunkRight();
-				break;
-
-			case 3: // empty chunk to right
-				tiles.addChunkRight();
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	/**
-	 * Will get the inverse of the chance of a mob spawning
-	 *
-	 * @return inverse of the chance of a mob spawning
-	 */
-	int getNpcSpawnChance() {
-		return npcSpawnChance;
-	}
-
-	/**
-	 * Set the chance of a mob spawning
-	 *
-	 * @param npcSpawnChance the inverse of the desired chance of the mob
-	 *                       spawning.
-	 */
-	void setNpcSpawnChance(int npcSpawnChance) {
-		this.npcSpawnChance = npcSpawnChance;
-	}
-
-	/**
-	 * @return the client
-	 */
-	public CoasterClient getClient() {
-		return client;
-	}
-
-	/**
-	 * @param client the client to set
-	 */
-	public void setClient(CoasterClient client) {
-		this.client = client;
-	}
-
-	/**
-	 * @return the user
-	 */
-	public User getUser() {
-		return user;
-	}
-
-	/**
-	 * @param user the user to set
-	 */
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	/**
 	 * @return the first player that was added to the world. Currently, should
 	 * be the only player.
@@ -461,19 +330,17 @@ public class World {
 		deleteEntities.clear();
 	}
 	
-	public void setSpawn(int spawnX, int spawnY) {
-		this.spawnX = spawnX;
-		this.spawnY = spawnY;
+	public void addSpawn(int spawnX, int spawnY) {
+		Coordinate spawn = new Coordinate(spawnX, spawnY);
+		spawns.add(spawn);
 	}
 	
-	public int getSpawnX() {
-		return spawnX;
+	public Coordinate getRandomSpawn() {
+		Random random = new Random();
+		Coordinate spawn = spawns.get(random.nextInt(spawns.size()));
+		return spawn;
 	}
 	
-	public int getSpawnY() {
-		return spawnY;
-	}
-
 	public void loadRoom() {
 		Room room = new Room();
 
@@ -485,13 +352,7 @@ public class World {
 		}
 		Emitter emitter = new Emitter(room.getWaypoints());
 		emitter.setPosition(room.getWaypoints().get(0).getX(), room.getWaypoints().get(0).getY());
-		this.addEntity(emitter);
-		//this.getFirstPlayer().setX(spawnX);
-		//this.getFirstPlayer().setY(spawnY);
-		
-		//this.getFirstPlayer().setPosition(spawnX, spawnY);
-		// TODO Auto-generated method stub
-		
+		this.addEntity(emitter);		
 	}
 
 	public List<Entity> getEnemyEntities() {

@@ -1,6 +1,6 @@
 package uq.deco2800.coaster.game.debug;
 
-import uq.deco2800.coaster.game.entities.Player;
+import uq.deco2800.coaster.game.entities.players.Player;
 import uq.deco2800.coaster.game.world.World;
 
 /**

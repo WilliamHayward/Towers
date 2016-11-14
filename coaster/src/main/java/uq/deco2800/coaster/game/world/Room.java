@@ -63,7 +63,7 @@ public class Room {
 					type = data[x].split("-")[0];
 					modifier = data[x].split("-")[1];
 					if (modifier.equals("P")) {
-						World.getInstance().setSpawn(x, y);
+						World.getInstance().addSpawn(x, y);
 					} else {
 						int pos = Integer.parseInt(modifier);
 						Coordinate coordinates = new Coordinate(x, y);

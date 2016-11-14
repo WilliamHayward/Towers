@@ -21,12 +21,12 @@ public abstract class BasicMovingEntity extends StateEntity {
 	protected boolean renderManabar = false;
 	protected int maxMana = 100;
 	protected int currentMana = 0;
-	boolean stunned = false;
-	boolean marked = false;
-	boolean gliding = false;
-	boolean invisible = false;
-	boolean shielded = false;
-	boolean atField = false;
+	protected boolean stunned = false;
+	protected boolean marked = false;
+	protected boolean gliding = false;
+	protected boolean invisible = false;
+	protected boolean shielded = false;
+	protected boolean atField = false;
 	private float tempFallModifier;
 
 	public BasicMovingEntity() {

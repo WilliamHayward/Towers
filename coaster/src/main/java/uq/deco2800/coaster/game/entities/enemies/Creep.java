@@ -23,6 +23,7 @@ public class Creep extends Enemy {
 
 		this.setSize(1f, 1f);
 		speed = 2f;
+		health = 5f;
 	}
 	
 	@Override

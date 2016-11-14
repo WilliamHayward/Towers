@@ -4,12 +4,13 @@ import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
 import uq.deco2800.coaster.game.entities.Entity;
+import uq.deco2800.coaster.game.entities.buildings.Building;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.LayerList;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.AngledSpriteRelation;
 
-public abstract class Turret extends Entity {
+public abstract class Turret extends Building {
 	protected String name;
 	private float cooldownTimer;
 	protected float cooldownLength;

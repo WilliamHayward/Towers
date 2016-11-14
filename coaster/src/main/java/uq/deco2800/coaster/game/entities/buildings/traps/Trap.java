@@ -1,14 +1,15 @@
-package uq.deco2800.coaster.game.entities.traps;
+package uq.deco2800.coaster.game.entities.buildings.traps;
 
 import java.util.List;
 
 import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.Entity;
+import uq.deco2800.coaster.game.entities.buildings.Building;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.graphics.LayerList;
 
-public abstract class Trap extends Entity {
+public abstract class Trap extends Building {
 	TrapEffect effects;
 	
 	protected void init() {
@@ -44,7 +45,7 @@ public abstract class Trap extends Entity {
 		
 	}
 	
-	protected TrapEffect getEffects() {
+	public TrapEffect getEffects() {
 		return effects;
 	}
 	

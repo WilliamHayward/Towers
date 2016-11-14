@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import uq.deco2800.coaster.game.entities.Entity;
-import uq.deco2800.coaster.game.entities.traps.Trap;
-import uq.deco2800.coaster.game.entities.traps.TrapEffect;
+import uq.deco2800.coaster.game.entities.buildings.traps.Trap;
+import uq.deco2800.coaster.game.entities.buildings.traps.TrapEffect;
 import uq.deco2800.coaster.game.world.Coordinate;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.LayerList;
@@ -17,18 +17,21 @@ public abstract class Enemy extends Entity {
 	protected int destinationWaypoint = 0;
 	protected int direction = 1;
 	protected float speed;
+	protected float health;
 	protected void init() {
 		layer = LayerList.ENEMIES;
 		
 	}
 	
-	public TrapEffect processTraps() {
+	public TrapEffect getTraps() {
 		TrapEffect effect = new TrapEffect();
 		List<Entity> traps = World.getInstance().getTrapEntities();
 		Sprite sprite = new Sprite(SpriteList.CARL);
 		for (Entity trap: traps) {
 			if (this.getBounds().collides(trap.getBounds())) {
-				sprite = new Sprite(SpriteList.PLACEHOLDER);
+				Trap trapActual = (Trap) trap;
+				effect.add(trapActual.getEffects());
+				//sprite = new Sprite(SpriteList.PLACEHOLDER);
 			}
 		}
 		this.setSprite(sprite);
@@ -38,8 +41,7 @@ public abstract class Enemy extends Entity {
 	@Override
 	protected void tick(long ms) {
 		float seconds = ms / (float) 1000;
-		float scaledSpeed = speed * seconds / this.getCollisionScale(ms);
-		scaledSpeed *= 2;
+		
 		Coordinate destination = waypoints.get(destinationWaypoint);
 		
 		float xDiff = destination.getX() - this.getX();
@@ -47,16 +49,25 @@ public abstract class Enemy extends Entity {
 		float horizontalSpeed = 0;
 		float verticalSpeed = 0;
 		
-		TrapEffect trap = processTraps();
+		TrapEffect trap = getTraps();
+		
+		// Damage
+		float damage = trap.getDPS() * seconds / this.getCollisionScale(ms);
+		health -= damage;
+
+		// Movement
+		float modifiedSpeed = speed * trap.getSpeedModifier();
+		float scaledSpeed = modifiedSpeed * seconds / this.getCollisionScale(ms);
+		scaledSpeed *= 2;
 		
 		if (Math.abs(xDiff) >= Math.abs(scaledSpeed)) {
-			horizontalSpeed = speed * Math.signum(xDiff);
+			horizontalSpeed = modifiedSpeed * Math.signum(xDiff);
 		} else {
 			this.setPosition(destination.getX(), this.getY());
 		}
 		
 		if (Math.abs(yDiff) >= Math.abs(scaledSpeed)) {
-			verticalSpeed = speed * Math.signum(yDiff);
+			verticalSpeed = modifiedSpeed * Math.signum(yDiff);
 		} else {
 			this.setPosition(this.getX(), destination.getY());
 		}
@@ -70,6 +81,9 @@ public abstract class Enemy extends Entity {
 		}
 		
 		this.setVelocity(horizontalSpeed, verticalSpeed);
+		if (health < 0) {
+			die();
+		}
 	}
 
 	@Override
@@ -96,7 +110,15 @@ public abstract class Enemy extends Entity {
 		}
 	}
 	
+	private void die() {
+		this.delete();
+	}
+	
 	public void setWaypoints(Map<Integer, Coordinate> waypoints) {
 		this.waypoints = waypoints;
+	}
+	
+	protected void onDeath(Entity cause) {
+		this.delete();
 	}
 }
