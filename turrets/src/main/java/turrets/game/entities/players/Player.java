@@ -26,7 +26,6 @@ import java.util.*;
 
 import static turrets.core.input.InputManager.justPressed;
 
-
 public abstract class Player extends BasicMovingEntity {
 
 	protected static final float EPSILON = 0.00001f;

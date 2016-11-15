@@ -1,4 +1,4 @@
-mainClassName = "Launcher"
+mainClassName = "turrets.Launcher"
 
 dependencies {
     testCompile "org.testfx:testfx-core:4.0.+"
