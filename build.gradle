@@ -1,5 +1,5 @@
 allprojects {
-    group 'deco2800-2016-coaster'
+    group 'deco2800-2016-turrets'
     version '1.0-SNAPSHOT'
 }
 
