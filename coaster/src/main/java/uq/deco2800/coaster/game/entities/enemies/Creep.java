@@ -12,6 +12,7 @@ import uq.deco2800.coaster.graphics.sprites.SpriteList;
 public class Creep extends Enemy {
 
 	public Creep() {
+		name = "Creep";
 		super.init();
 		this.setSprite(new Sprite(SpriteList.CARL));
 

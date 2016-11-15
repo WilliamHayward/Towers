@@ -1,7 +1,6 @@
 package uq.deco2800.coaster.game.entities;
 
 import javafx.scene.canvas.GraphicsContext;
-import uq.deco2800.coaster.game.entities.players.Player;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
 import uq.deco2800.coaster.game.tiles.Tile;

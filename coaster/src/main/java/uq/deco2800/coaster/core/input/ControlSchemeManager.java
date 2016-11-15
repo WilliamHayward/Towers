@@ -36,16 +36,11 @@ public class ControlSchemeManager {
 
 		// Hayley, switching weapons (subject to change with inventory
 		// updates)
-		keymap.put(KeyCode.DIGIT1, GameAction.WEAPON_ONE);
-		keymap.put(KeyCode.DIGIT2, GameAction.WEAPON_TWO);
-		keymap.put(KeyCode.DIGIT3, GameAction.WEAPON_THREE);
-		keymap.put(KeyCode.DIGIT4, GameAction.WEAPON_FOUR);
-		keymap.put(KeyCode.DIGIT5, GameAction.WEAPON_FIVE);
-		keymap.put(KeyCode.DIGIT6, GameAction.WEAPON_SIX);
-		keymap.put(KeyCode.DIGIT7, GameAction.WEAPON_SEVEN);
-		keymap.put(KeyCode.DIGIT8, GameAction.WEAPON_EIGHT);
-		keymap.put(KeyCode.DIGIT9, GameAction.WEAPON_NINE);
-
+		keymap.put(KeyCode.DIGIT1, GameAction.SLOT_ONE);
+		keymap.put(KeyCode.DIGIT2, GameAction.SLOT_TWO);
+		keymap.put(KeyCode.DIGIT3, GameAction.SLOT_THREE);
+		keymap.put(KeyCode.DIGIT4, GameAction.SLOT_FOUR);
+		
 		keymap.put(KeyCode.L, GameAction.SHOW_MAP);
 
 		// Daniel, Sound Controls

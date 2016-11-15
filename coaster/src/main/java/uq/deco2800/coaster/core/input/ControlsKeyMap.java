@@ -112,12 +112,6 @@ public class ControlsKeyMap {
 			case BASIC_ATTACK:
 				styledAction = "attack with your newly activated weapon.\n Holding down the left mouse button also works.";
 				break;
-			case WEAPON_ONE:
-				styledAction = "activate the primary weapon.";
-				break;
-			case WEAPON_TWO:
-				styledAction = "activate the secondary weapon.";
-				break;
 			case SHOW_MAP:
 				styledAction = "show the minimap.\nDisable it with the same key.";
 				break;

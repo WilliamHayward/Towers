@@ -39,13 +39,9 @@ public class World {
 	private List<Entity> newEntities = new ArrayList<>(); // list of new entities to be added
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
-		
-	private int entityRenderDistance = Room.WIDTH; // default entity rendering distance
-
+	
 	private List<Coordinate> spawns = new ArrayList<>();
 	
-	//lighting
-	private int globalLightLevel = 100;
 
 	/**
 	 * Returns the singleton instance of World
@@ -66,34 +62,6 @@ public class World {
 		Player player = new BluePlayer();
 		camera.setFollow(player);
 		this.addEntity(player);
-	}
-	
-	/**
-	 * Set the horizontal distance away from the Player that entities will still be processed
-	 */
-	public void setEntityRenderDistance(int entityRenderDistance) {
-		this.entityRenderDistance = entityRenderDistance;
-	}
-
-	/**
-	 * Return the horizontal distance away from the Player that entities will still be processed
-	 */
-	public int getEntityRenderDistance() {
-		return entityRenderDistance;
-	}
-
-	/**
-	 * Set the ambient light level of the world
-	 */
-	public void setGlobalLightLevel(int lightLevel) {
-		this.globalLightLevel = lightLevel;
-	}
-
-	/**
-	 * Return the ambient light level of the world
-	 */
-	public int getGlobalLightLevel() {
-		return globalLightLevel;
 	}
 	
 	/**

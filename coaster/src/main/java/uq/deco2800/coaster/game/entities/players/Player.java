@@ -12,15 +12,11 @@ import uq.deco2800.coaster.game.entities.AABB;
 import uq.deco2800.coaster.game.entities.BasicMovingEntity;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.EntityState;
-import uq.deco2800.coaster.game.entities.buildings.traps.AcidTrap;
-import uq.deco2800.coaster.game.entities.buildings.traps.Trap;
-import uq.deco2800.coaster.game.entities.buildings.turrets.Cannon;
-import uq.deco2800.coaster.game.entities.buildings.turrets.MachineGun;
-import uq.deco2800.coaster.game.entities.buildings.turrets.Turret;
 import uq.deco2800.coaster.game.mechanics.BodyPart;
 import uq.deco2800.coaster.game.mechanics.Side;
+import uq.deco2800.coaster.game.modes.BuildMode;
+import uq.deco2800.coaster.game.modes.BuildingList;
 import uq.deco2800.coaster.game.world.Coordinate;
-import uq.deco2800.coaster.game.world.Room;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.LayerList;
 import uq.deco2800.coaster.graphics.Viewport;
@@ -41,6 +37,8 @@ public abstract class Player extends BasicMovingEntity {
 	protected static final long SPECIAL_ATTACK_FIRE_DURATION = 1000;
 	// The lazor fires for 1 second
 
+	protected Map<GameAction, BuildingList> availableBuildings = new HashMap<>();
+	protected BuildingList activeBuilding = BuildingList.MACHINE_GUN;
 	protected long knockBackDuration = 1000L;
 	protected long knockBackEndDuration = 750L;
 	protected long knockBackRenderTimer = 0L; // used to flip renderFlag
@@ -106,6 +104,14 @@ public abstract class Player extends BasicMovingEntity {
 		this.name = name;
 	}
 
+	public BuildingList getActiveBuilding() {
+		return activeBuilding;
+	}
+
+	public void setActiveBuilding(BuildingList activeBuilding) {
+		this.activeBuilding = activeBuilding;
+	}
+
 	protected String name;
 
 	protected Map<BodyPart, SpriteRelation> commonSpriteSet = new HashMap<>();
@@ -136,6 +142,11 @@ public abstract class Player extends BasicMovingEntity {
 		// adjust firing Rate - currently average of player stats and native gun
 		this.moveSpeed = BASE_MOVE_SPEED;
 		this.jumpSpeed = BASE_JUMP_SPEED;
+		
+		// Pair buildings to keys
+		availableBuildings.put(GameAction.SLOT_ONE, BuildingList.MACHINE_GUN);
+		availableBuildings.put(GameAction.SLOT_TWO, BuildingList.CANNON);
+		availableBuildings.put(GameAction.SLOT_THREE, BuildingList.ACID_TRAP);
 
 		// Add this for standing, jumping and moving
 		this.additionalSpritesCache.put(EntityState.STANDING, commonSpriteSet);
@@ -216,6 +227,11 @@ public abstract class Player extends BasicMovingEntity {
 			return;
 		}
 		
+		for (GameAction action: availableBuildings.keySet()) {
+			if (InputManager.justPressed(action)) {
+				activeBuilding = availableBuildings.get(action);
+			}
+		}
 		if (specialAttackFiring) {
 			tickSpecialAttackFire(ms);
 			return; // You can't do anything if you're firin' your lazor.
@@ -261,7 +277,7 @@ public abstract class Player extends BasicMovingEntity {
 			debugString += "# of Players: " + world.getPlayerEntities().size() + "\n";
 
 			debugString += "# of Enemies: " + world.getEnemyEntities().size() + "\n";
-			debugString += "# of loaded Chunks: " + world.getTiles().getWidth() / Room.WIDTH + "\n";
+			debugString += "Current Building: " + BuildMode.getInstance().getBuildingName(activeBuilding) + "\n";
 			debugString += "HP: " + getCurrentHealth() + "\n";
 			debugString += "X: " + String.format("%.2f", posX) + ", Y: " + String.format("%.2f", posY) + "\n";
 			debugString += "velX: " + String.format("%.2f", velX) + ", velY: " + String.format("%.2f", velY) + "\n";
@@ -318,11 +334,9 @@ public abstract class Player extends BasicMovingEntity {
 			if (cooldown > 0) {
 				return;
 			}
-			Trap turret = new AcidTrap();
-			float turretPosX = (float) Math.floor(InputManager.getMouseTileX());
-			float turretPosY = (float) Math.floor(InputManager.getMouseTileY());
-			turret.setPosition(turretPosX, turretPosY);
-			World.getInstance().addEntity(turret);
+			float x = (float) Math.floor(InputManager.getMouseTileX());
+			float y = (float) Math.floor(InputManager.getMouseTileY());
+			BuildMode.getInstance().build(activeBuilding, x, y);
 		}
 	}
 

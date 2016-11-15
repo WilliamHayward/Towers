@@ -3,15 +3,16 @@ package uq.deco2800.coaster.game.entities.buildings.turrets;
 import java.util.List;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import uq.deco2800.coaster.game.entities.Entity;
 import uq.deco2800.coaster.game.entities.buildings.Building;
+import uq.deco2800.coaster.game.entities.enemies.Enemy;
 import uq.deco2800.coaster.game.world.World;
 import uq.deco2800.coaster.graphics.LayerList;
 import uq.deco2800.coaster.graphics.Viewport;
 import uq.deco2800.coaster.graphics.sprites.AngledSpriteRelation;
 
 public abstract class Turret extends Building {
-	protected String name;
 	private float cooldownTimer;
 	protected float cooldownLength;
 	protected int range;
@@ -35,24 +36,37 @@ public abstract class Turret extends Building {
 	
 	@Override
 	protected void tick(long ms) {
+		Enemy target = aim();
+		
 		cooldownTimer -= (float) ms / 1000;
-		if (cooldownTimer <= 0) {
-			System.out.println("Fire " + name);
-			cooldownTimer = cooldownLength;
+		if (cooldownTimer <= 0 && target != null) {
+			fire(target);
 		}
+		
+	}
+	
+	protected void fire(Enemy target) {
+		System.out.println(name + " fire at " + target.getName());
+		cooldownTimer = cooldownLength;
+		
+	}
+	
+	protected Enemy aim() {
 		List<Entity> allTargets = World.getInstance().getEnemyEntities();
 		Entity target = this.getClosest(allTargets);
+		if (target == null) {
+			return null;
+		}
 		double targetX = target.getX() + (target.getWidth() / 2);
 		double targetY = target.getY() + (target.getHeight() / 2);
 		double targetAngle = barrel.getAngle(targetX, targetY);
 		
 		boolean targetInRange = (targetAngle > (restingAngle - rangeAngle / 2) && targetAngle < (restingAngle + rangeAngle / 2));
-		//targetInRange = targetInRange && this.distanceFrom(target) > range;
-		if (target == null || !targetInRange) {
-			//barrel.setAngle(restingAngle);
-		} else {
-			barrel.setAngle(targetAngle);
+		if (!targetInRange) {
+			return null;
 		}
+		barrel.setAngle(targetAngle);
+		return (Enemy) target;
 	}
 	
 	@Override
@@ -63,14 +77,8 @@ public abstract class Turret extends Building {
 		barrel.renderSprite(gc, tileSize, thisX, thisY);
 		
 		super.render(gc, viewport, ms);
+		gc.setFill(Color.ALICEBLUE);
+		gc.fillRect(thisX, thisY, cooldownTimer / cooldownLength * this.getWidth() * viewport.getTileSideLength(), 10);
 
-	}
-	
-	protected void fire() {
-		
-	}
-	
-	public String getName() {
-		return name;
 	}
 }

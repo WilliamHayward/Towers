@@ -53,8 +53,6 @@ public class GameScreen extends Screen {
 
 
 	public void render(long ms, boolean renderBackground) {
-		World.getInstance();
-		
 		//Background
 		renderBackground(ms);
 		

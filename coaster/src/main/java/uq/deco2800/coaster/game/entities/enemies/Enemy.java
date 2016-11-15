@@ -18,6 +18,16 @@ public abstract class Enemy extends Entity {
 	protected int direction = 1;
 	protected float speed;
 	protected float health;
+	protected String name = "Enemy";
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	protected void init() {
 		layer = LayerList.ENEMIES;
 		

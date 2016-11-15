@@ -95,8 +95,7 @@ public class Engine extends AnimationTimer {
 
 
 		if (InputManager.justPressed(GameAction.DEBUG_CONSOLE)) {
-			renderer.getViewport().zoomIn();
-			//renderer.toggleScreen("Debug Console");
+			World.getInstance().getFirstPlayer().spawn();
 		}
 		
 		if (renderer.getViewport() != null) {
