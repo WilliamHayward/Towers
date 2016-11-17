@@ -2,7 +2,6 @@ package turrets.game.entities.players;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import org.apache.commons.lang3.mutable.MutableDouble;
 import turrets.core.input.GameAction;
 import turrets.core.input.GameInput;
 import turrets.core.input.InputManager;
@@ -24,20 +23,13 @@ import turrets.graphics.sprites.SpriteRelation;
 
 import java.util.*;
 
-import static turrets.core.input.InputManager.justPressed;
-
 public abstract class Player extends BasicMovingEntity {
 
 	protected static final float EPSILON = 0.00001f;
 
-
-	protected static final long SPECIAL_ATTACK_THRESHOLD = 2000;
-	// Need to hold the button for 2 seconds
-	protected static final long SPECIAL_ATTACK_FIRE_DURATION = 1000;
-	// The lazor fires for 1 second
-
 	protected Map<GameAction, BuildingList> availableBuildings = new HashMap<>();
 	protected BuildingList activeBuilding = BuildingList.MACHINE_GUN;
+	
 	protected long knockBackDuration = 1000L;
 	protected long knockBackEndDuration = 750L;
 	protected long knockBackRenderTimer = 0L; // used to flip renderFlag
@@ -49,37 +41,11 @@ public abstract class Player extends BasicMovingEntity {
 
 	GameInput playerInput = new GameInput();
 	
-	protected static final int TARGET_NPC_KILL_COUNT = 100; // Need to kill 100
-	// mobs for the boss
-	// spawn
-	
-	private int cooldown = 0;
-	
-	protected int turretTimer;
-	protected long actionTimer = -1L; // timer used for sliding, dashing and air
-	// dashing. 1000f = 1s
-	protected long wallJumpTimer = -1L; // Timer used to make wall jump motions
-	// feel fluid.
 	protected long knockBackTimer = -1L;
-	protected boolean airDashAvailable = true;
 	protected boolean doubleJumpAvailable = true;
 	protected boolean jumpAvailable;
 	protected boolean invincible = false;
 	protected int inputDir;
-
-	// Set directions for mouse shooting and sprite animation
-	protected double aimAngle;
-	protected int accuracy = 5;// num of degrees deviation of bullet (will be
-	// angle +/- random(accuracy)
-
-	protected MutableDouble armRenderAngle = new MutableDouble();
-	protected MutableDouble headRenderAngle = new MutableDouble();
-	protected MutableDouble weaponRenderAngle = new MutableDouble();
-
-	protected boolean specialAttackCharging;
-	protected boolean specialAttackFiring;
-	protected long specialAttackChargeTimer;
-	protected long specialAttackFireTimer;
 
 	protected static final float BASE_JUMP_SPEED = -20f;
 	protected static final float BASE_MOVE_SPEED = 10f;
@@ -90,10 +56,6 @@ public abstract class Player extends BasicMovingEntity {
 	protected static final float BASE_HEIGHT = 1.41f * scale;
 	protected static final float CROUCH_WIDTH = 0.96f * scale;
 	protected static final float CROUCH_HEIGHT = 1f * scale;
-
-
-	protected int healing;
-	protected boolean updateHud = false;
 
 	public String getName() {
 		return name;
@@ -125,11 +87,6 @@ public abstract class Player extends BasicMovingEntity {
 	 */
 	public Player() {
 		layer = LayerList.PLAYERS;
-		setCollisionFilter(e -> this.knockBackTimer < 0);
-		turretTimer = 0;
-
-		this.enableManaBar();
-		this.addMana(100);
 		
 		setSprite(sprites.get(EntityState.JUMPING));
 		bounds = new AABB(posX, posY, BASE_WIDTH, BASE_HEIGHT); // Size is 1x2
@@ -189,8 +146,7 @@ public abstract class Player extends BasicMovingEntity {
 
 		// Attacks
 		boolean basicAttackPressed = InputManager.justReleased(GameAction.BASIC_ATTACK);
-		boolean specialAttackPressed = InputManager.getActionState(GameAction.SPECIAL_ATTACK);
-		playerAttack(ms, basicAttackPressed, specialAttackPressed);
+		playerAttack(ms, basicAttackPressed);
 
 		if (strafeActive) {
 			if (InputManager.getDiffX(posX) > 0) {
@@ -215,9 +171,6 @@ public abstract class Player extends BasicMovingEntity {
 	 */
 	@Override
 	protected void tick(long ms) {
-		if (cooldown > 0) {
-			cooldown--;
-		}
 		if (this.invincible) {
 			setSprite(sprites.get(EntityState.INVINCIBLE));
 		}
@@ -231,37 +184,10 @@ public abstract class Player extends BasicMovingEntity {
 				activeBuilding = availableBuildings.get(action);
 			}
 		}
-		if (specialAttackFiring) {
-			tickSpecialAttackFire(ms);
-			return; // You can't do anything if you're firin' your lazor.
-		}
-		tickSpecialAttack(ms);
 		updateTimers(ms);
 
 		// This should be if'd
 		tickDebug();
-	}
-	
-	/**
-	 * Tick handler for special attack
-	 *
-	 * @param ms millisecond tick the player attack is being handled on
-	 */
-	private void tickSpecialAttack(long ms) {
-		if (justPressed(GameAction.SPECIAL_ATTACK)) {
-			specialAttackCharging = true;
-		}
-		if (InputManager.justReleased(GameAction.SPECIAL_ATTACK)) {
-			specialAttackCharging = false;
-			specialAttackChargeTimer = 0;
-		}
-
-		if (specialAttackCharging && InputManager.getActionState(GameAction.SPECIAL_ATTACK)) {
-			specialAttackChargeTimer += ms;
-			if (specialAttackChargeTimer > SPECIAL_ATTACK_THRESHOLD) {
-				launchSpecialAttack();
-			}
-		}
 	}
 
 	/**
@@ -289,18 +215,6 @@ public abstract class Player extends BasicMovingEntity {
 			debug.addToDebugString(debugString);
 		}
 	}
-
-	/**
-	 * Tick handler for special attack
-	 */
-	private void tickSpecialAttackFire(long ms) {
-		specialAttackFireTimer += ms;
-
-		if (specialAttackFireTimer > SPECIAL_ATTACK_FIRE_DURATION) {
-			specialAttackFiring = false;
-			specialAttackFireTimer = 0;
-		}
-	}
 	
 	/**
 	 * Method to handle player's attack and to have a look at the attack type.
@@ -312,40 +226,24 @@ public abstract class Player extends BasicMovingEntity {
 	 *
 	 * @param ms            millisecond tick the player attack is being handled on
 	 * @param basicAttack   true if the basic attack is selected by the player
-	 * @param specialAttack true if the special attack is selected by the player
 	 */
-	protected void playerAttack(long ms, boolean basicAttack, boolean specialAttack) {
+	protected void playerAttack(long ms, boolean basicAttack) {
 		switch (currentState) {
 			case DASHING:
 			case AIR_DASHING:
 			case STUNNED:
-			case SLIDING:
 			case CROUCHING:
-			case AIR_CROUCHING:
 			case KNOCK_BACK:
-			case SPRINTING:
 				return;
 			default:
 				break;
 		}
 		
 		if (basicAttack) {
-			if (cooldown > 0) {
-				return;
-			}
 			float x = (float) Math.floor(InputManager.getMouseTileX());
 			float y = (float) Math.floor(InputManager.getMouseTileY());
 			BuildMode.getInstance().build(activeBuilding, x, y);
 		}
-	}
-
-	/**
-	 * Launches player's special attack
-	 */
-	private void launchSpecialAttack() {
-		specialAttackFiring = true;
-		specialAttackCharging = false;
-		specialAttackChargeTimer = 0;
 	}
 
 	/**
@@ -381,7 +279,6 @@ public abstract class Player extends BasicMovingEntity {
 	protected void transitionOnLanding() {
 		setFallModifier(1f);
 		setTerminalVelModifier(1f);
-		airDashAvailable = true;
 		doubleJumpAvailable = true;
 		strafeActive = true;
 		velY = 0;
@@ -624,14 +521,12 @@ public abstract class Player extends BasicMovingEntity {
 	 */
 
 	private void applyJumpingPhysics() {
-		if (wallJumpTimer < 0) {
-			if (velX <= moveSpeed && velX >= -moveSpeed) {
-				velX = inputDir * moveSpeed;
-			} else if (facing != inputDir && inputDir != 0) {
-				velX = -velX;
-			} else if (inputDir == 0) {
-				velX *= 0.9f;
-			}
+		if (velX <= moveSpeed && velX >= -moveSpeed) {
+			velX = inputDir * moveSpeed;
+		} else if (facing != inputDir && inputDir != 0) {
+			velX = -velX;
+		} else if (inputDir == 0) {
+			velX *= 0.9f;
 		}
 	}
 
@@ -646,13 +541,6 @@ public abstract class Player extends BasicMovingEntity {
 	 * @param ms
 	 */
 	protected void updateTimers(float ms) {
-		if (actionTimer >= 0) {
-			actionTimer -= ms;
-		}
-
-		if (wallJumpTimer >= 0) {
-			wallJumpTimer -= ms;
-		}
 
 		if (knockBackTimer >= 0) {
 			knockBackTimer -= ms;

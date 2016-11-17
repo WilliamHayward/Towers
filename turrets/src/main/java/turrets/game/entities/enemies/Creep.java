@@ -20,8 +20,6 @@ public class Creep extends Enemy {
 
 		bounds = new AABB(posX, posY, sprite.getWidth() / 32, sprite.getHeight() / 32); // No collision for decoration
 
-		setCollisionFilter(e -> false);
-
 		this.setSize(1f, 1f);
 		speed = 2f;
 		health = 5f;

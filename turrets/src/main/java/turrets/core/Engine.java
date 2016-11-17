@@ -188,15 +188,20 @@ public class Engine extends AnimationTimer {
 	 *
 	 * @throws IllegalStateException
 	 */
-	public void initEngine() {
+	public void initEngine(boolean editor) {
 		cameras = new ArrayList<>();
 		initGeneric();
 		initDefaults();
 		initWorld(World.getInstance());
-		World.getInstance().loadRoom();
 		Camera camera = new Camera(renderer.getViewport(), 0, 0);
 		cameras.add(camera);
-		World.getInstance().start(camera);
+		if (editor) {
+			World.getInstance().loadEmptyRoom();
+			World.getInstance().startEditor(camera);
+		} else {
+			World.getInstance().loadRoom();
+			World.getInstance().startPlay(camera);
+		}
 	}
 
 	private void initGeneric() {

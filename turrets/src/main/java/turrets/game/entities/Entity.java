@@ -5,7 +5,6 @@ import turrets.game.mechanics.BodyPart;
 import turrets.game.mechanics.Side;
 import turrets.game.tiles.Tile;
 import turrets.game.tiles.TileInfo;
-import turrets.game.world.Room;
 import turrets.game.world.World;
 import turrets.graphics.LayerList;
 import turrets.graphics.Viewport;
@@ -63,7 +62,6 @@ public abstract class Entity {
 	private boolean blocksOtherEntities = true;
 	protected boolean renderFlag = true; // Does the sprite get rendered? Other effects still rendered
 	protected int facing = 1; // -1 for left, 1 for right.\
-	protected Predicate<Entity> collisionFilter;
 	protected Viewport viewport;
 	protected boolean firstTick = true;
 
@@ -74,7 +72,6 @@ public abstract class Entity {
 
 	public Entity() {
 		this.world = World.getInstance();
-		setCollisionFilter(e -> true);
 	}
 
 	/**
@@ -88,7 +85,6 @@ public abstract class Entity {
 		setSprite(new Sprite(sprite));
 		setBlocksOtherEntities(blocksOtherEntities);
 		bounds = new AABB(posX, posY, this.sprite.getWidth() / 32, this.sprite.getHeight() / 32);
-		setCollisionFilter(collisionFilter);
 	}
 
 	/**
@@ -252,14 +248,7 @@ public abstract class Entity {
 		velX = x;
 		velY = y;
 	}
-
-	/**
-	 * Returns the starting x coordinate of the chunk the player is standing on.
-	 */
-	public int getNearestChunkX() {
-		return Room.WIDTH * Math.round(posX / Room.WIDTH);
-	}
-
+	
 	/**
 	 * Gets the x-coordinate of the entity's top-left corner
 	 *
@@ -443,15 +432,6 @@ public abstract class Entity {
 	 */
 	public boolean isUnderLiquid() {
 		return isUnderLiquid;
-	}
-
-	/**
-	 * Sets the collision filter to the input predicate
-	 *
-	 * @param predicate a boolean used to determine whether or not a collision will occur with the input entity
-	 */
-	public void setCollisionFilter(Predicate<Entity> predicate) {
-		collisionFilter = predicate;
 	}
 
 	/**
@@ -871,7 +851,6 @@ public abstract class Entity {
 			}
 			
 		}
-		checkEntityCollisions(hitbox, collidedEntities, hitLocations);
 
 	}
 
@@ -987,33 +966,6 @@ public abstract class Entity {
 			case VOID:
 			default:
 				break;
-		}
-	}
-
-	/**
-	 * Checks if we've collided with any entities <br>
-	 * If we have, records the entity and the BodyPart with which we collided in the lists
-	 *
-	 * @param hitbox           our hitbox that we're processing to check for collisions
-	 * @param collidedEntities a list of entities with which we've collided this tick
-	 * @param hitLocations     a list of BodyParts recording where we hit these enitities
-	 */
-
-
-	protected void checkEntityCollisions(AABB ownHitbox, List<Entity> collidedEntities, List<BodyPart> hitLocations) {
-		if (collidedEntities == null || hitLocations == null) {
-			return;
-		}
-		for (Entity entity : world.getAllEntities()) {
-			if (entity == this || entity == null) {
-				continue;
-			}
-			if (entity.doesItBlockOtherEntities() && collisionFilter.test(entity)) {
-				BodyPart location = ownHitbox.collides(entity);
-				if (location != BodyPart.VOID) {
-					insertInCollidedEntities(collidedEntities, hitLocations, entity, location);
-				}
-			}
 		}
 	}
 
@@ -1184,41 +1136,6 @@ public abstract class Entity {
 			}
 		}
 
-	}
-
-
-	/**
-	 * Inserts the input entity and BodyPart in the corresponding lists, to record the collision and deal with it at the
-	 * end of the tick
-	 * <p>
-	 * If the a collision has already been recorded with the input entity, the BodyPart is overwritten if it has higher
-	 * priority<br>
-	 * Priority is determined by the order these elements occur in the BodyPart enum, with the lower down (higher index)
-	 * elements having greater priority
-	 *
-	 * @param collidedEntities a list of which entities we've collided with this tick
-	 * @param hitLocations     a list of locations with where on those entities we collided
-	 * @param e                the entity with which we have collided, to add to the list
-	 * @param bp               the location on e that the collision occurred, to add to the list
-	 *                         >>>>>>> master
-	 * @require both lists have the same size, so that for all entities in collidedEntities, the BodyPart with equal
-	 * index denotes where the collision with that entity occurred
-	 */
-	private void insertInCollidedEntities(List<Entity> collidedEntities, List<BodyPart> hitLocations, Entity
-			e, BodyPart bp) {
-		if (collidedEntities == null || hitLocations == null) {
-			return;
-		}
-		if (!collidedEntities.contains(e)) {
-			collidedEntities.add(e);
-			hitLocations.add(bp);
-		} else {
-			int index = collidedEntities.indexOf(e);
-			BodyPart currentPart = hitLocations.get(index);
-			if (bp.compareTo(currentPart) > 0) {
-				hitLocations.set(index, bp);
-			}
-		}
 	}
 
 	/**

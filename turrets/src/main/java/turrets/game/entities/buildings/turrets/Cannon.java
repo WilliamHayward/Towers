@@ -25,7 +25,6 @@ public class Cannon extends Turret {
 		
 		bounds = new AABB(posX, posY, sprite.getWidth() / 32, sprite.getHeight() / 32); // No collision for decoration
 
-		setCollisionFilter(e -> false);
 		cooldownLength = 5f;
 		super.init();
 		this.setSize(2.5f, 1.25f);

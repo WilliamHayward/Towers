@@ -3,6 +3,7 @@ package turrets.game.world;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import turrets.game.debug.Debug;
+import turrets.game.entities.Editor;
 import turrets.game.entities.Entity;
 import turrets.game.entities.buildings.traps.Trap;
 import turrets.game.entities.buildings.turrets.Turret;
@@ -58,8 +59,14 @@ public class World {
 		tiles = new WorldTiles(Room.WIDTH, Room.HEIGHT, Room.WIDTH);
 	}
 
-	public void start(Camera camera) {
+	public void startPlay(Camera camera) {
 		Player player = new BluePlayer();
+		camera.setFollow(player);
+		this.addEntity(player);
+	}
+	
+	public void startEditor(Camera camera) {
+		Editor player = new Editor();
 		camera.setFollow(player);
 		this.addEntity(player);
 	}
@@ -310,7 +317,7 @@ public class World {
 	}
 	
 	public void loadRoom() {
-		Room room = new Room();
+		Room room = new Room("rooms/test.room");
 
 		for (int x = 0; x < Room.WIDTH; x++) {
 			for (int y = 0; y < Room.HEIGHT; y++) {
@@ -321,6 +328,18 @@ public class World {
 		Emitter emitter = new Emitter(room.getWaypoints());
 		emitter.setPosition(room.getWaypoints().get(0).getX(), room.getWaypoints().get(0).getY());
 		this.addEntity(emitter);		
+	}
+	
+	public void loadEmptyRoom() {
+		Room room = new Room();
+
+		for (int x = 0; x < Room.WIDTH; x++) {
+			for (int y = 0; y < Room.HEIGHT; y++) {
+				TileInfo chunkTile = room.getBlocks().get(x, y).getTileType();
+				tiles.get(x, y).setTileType(chunkTile);
+			}
+		}
+
 	}
 
 	public List<Entity> getEnemyEntities() {

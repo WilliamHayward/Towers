@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="uq.deco2800.coaster.graphics.screens.controllers.ExampleScreenController">
+  <children>
+    <Button fx:id="btnMain" layoutX="125.0" layoutY="78.0" onAction="#onButtonClick" text="Play" />
+    <Label fx:id="lblMain" layoutX="300.0" layoutY="300.0" textFill="WHITE" />
+    <Button id="btnMain" layoutX="120.0" layoutY="128.0" onAction="#onButtonClick" text="Editor" />
+  </children>
+</AnchorPane>

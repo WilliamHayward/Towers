@@ -32,9 +32,11 @@ import java.io.IOException;
  */
 public class Window extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(Window.class);
+	
+	private boolean editor = true;
 
 	private Settings settings = new Settings();
-	private static final Engine engine = new Engine();
+	private Engine engine = new Engine();
 	private static int resWidth;
 	private static int resHeight;
 	private boolean loaded;
@@ -107,8 +109,8 @@ public class Window extends Application {
 		// Add all screens to renderer
 		renderer.addScreen("Game", gameScreen);
 		renderer.addScreen("Debug", debugScreen);
-
-		Window.initGame();
+		
+		initGame();
 		//renderer.enableScreen("Start Screen");
 
 		// Start
@@ -127,12 +129,12 @@ public class Window extends Application {
 	}
 
 	/**
-	 * Initiate the game, called when start button is pressed. Disables the
-	 * start screen, enables the difficulty screen and starts the engine.
+	 * Initiate the game
 	 */
-	public static void initGame() {
+	public void initGame() {
 		logger.debug("Game initiation started");
-		engine.initEngine();
+		System.out.println(editor);
+		engine.initEngine(editor);
 		Renderer r = engine.getRenderer();
 		// Set the original 'defaults'
 		// This is repeated code, but will not be 'repeated' later
@@ -143,12 +145,27 @@ public class Window extends Application {
 	}
 
 	/**
+	 * Initiate the editor
+	 */
+	public void initEditor() {
+		logger.debug("Editor initiation started");
+		engine.initEngine(editor);
+		Renderer r = engine.getRenderer();
+		// Set the original 'defaults'
+		// This is repeated code, but will not be 'repeated' later
+		r.hideAllScreens();
+		r.getScreen("Menu").setVisible(true);
+		SoundCache.play("game");
+		engine.start();
+	}
+
+	/**
 	 * Switch between the current screen and a specified screen
 	 *
 	 * @param currentScreenID StringID of the current Screen
 	 * @param newScreenID     StringID of the desiredScreen
 	 */
-	public static void goToScreen(String currentScreenID, String newScreenID) {
+	public void goToScreen(String currentScreenID, String newScreenID) {
 		Renderer r = engine.getRenderer();
 		r.disableScreen(currentScreenID);
 		r.enableScreen(newScreenID);
@@ -161,7 +178,7 @@ public class Window extends Application {
 	 * @param screenID      screenID of selected Screen
 	 * @param otherScreenID screenID of another selected Screen
 	 */
-	public static void toggleScreens(String screenID, String otherScreenID) {
+	public void toggleScreens(String screenID, String otherScreenID) {
 		if (engine.getRenderer().isActiveScreen(screenID)) {
 			goToScreen(screenID, otherScreenID);
 		} else {
@@ -174,7 +191,7 @@ public class Window extends Application {
 	 *
 	 * @return the engine
 	 */
-	public static Engine getEngine() {
+	public Engine getEngine() {
 		return engine;
 	}
 
@@ -219,6 +236,17 @@ public class Window extends Application {
 
 	public void begin() {
 		launch();
+	}
+	
+	public void begin(String mode) {
+		switch (mode) {
+		case "editor":
+			this.editor = true;
+			System.out.println("EDITOR YO");
+			break;
+		}
+		launch();
+		System.out.println("EDITOR YO");
 	}
 
 	public static void exit() {
