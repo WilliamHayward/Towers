@@ -20,38 +20,44 @@ public class ControlSchemeManager {
 	 * @param controlScheme The control scheme to use
 	 * @param keymap The KeyCode/GameAction map to store the key mappings in
 	 */
-	public static void loadControlScheme(ControlScheme controlScheme, Map<KeyCode, GameAction> keymap) {
+	public static void loadControlScheme(ControlScheme controlScheme, Map<GameAction, KeyCode> keymap) {
 		// KobiMcKerihan (kobimac)
-		keymap.put(KeyCode.Z, GameAction.BASIC_ATTACK);
-		keymap.put(KeyCode.X, GameAction.SPECIAL_ATTACK);
-		keymap.put(KeyCode.S, GameAction.CROUCH);
-
+		keymap.put(GameAction.BASIC_ATTACK, KeyCode.KANJI);
+		keymap.put(GameAction.CROUCH, KeyCode.S);
+		
 		// WilliamHayward
-		keymap.put(KeyCode.J, GameAction.SHOW_DEBUG);
-		keymap.put(KeyCode.H, GameAction.SHOW_HITBOXES);
-		keymap.put(KeyCode.BACK_SPACE, GameAction.DELETE_TILE);
-		keymap.put(KeyCode.ENTER, GameAction.ADD_TILE);
+		keymap.put(GameAction.SHOW_DEBUG, KeyCode.J);
+		keymap.put(GameAction.SHOW_HITBOXES, KeyCode.H);
+		keymap.put(GameAction.DELETE_TILE, KeyCode.BACK_SPACE);
+		keymap.put(GameAction.ADD_TILE, KeyCode.ENTER);
 
-		keymap.put(KeyCode.BACK_SLASH, GameAction.DEBUG_CONSOLE);
+		keymap.put(GameAction.DEBUG_CONSOLE, KeyCode.BACK_SLASH);
 
 		// Hayley, switching weapons (subject to change with inventory
 		// updates)
-		keymap.put(KeyCode.DIGIT1, GameAction.SLOT_ONE);
-		keymap.put(KeyCode.DIGIT2, GameAction.SLOT_TWO);
-		keymap.put(KeyCode.DIGIT3, GameAction.SLOT_THREE);
-		keymap.put(KeyCode.DIGIT4, GameAction.SLOT_FOUR);
+		keymap.put(GameAction.SLOT_ONE, KeyCode.DIGIT1);
+		keymap.put(GameAction.SLOT_TWO, KeyCode.DIGIT2);
+		keymap.put(GameAction.SLOT_THREE, KeyCode.DIGIT3);
+		keymap.put(GameAction.SLOT_FOUR, KeyCode.DIGIT4);
 		
-		keymap.put(KeyCode.L, GameAction.SHOW_MAP);
+		keymap.put(GameAction.SHOW_MAP, KeyCode.L);
 
 		// Daniel, Sound Controls
-		keymap.put(KeyCode.M, GameAction.MUTE);
-		keymap.put(KeyCode.COMMA, GameAction.VOLUME_DOWN);
-		keymap.put(KeyCode.PERIOD, GameAction.VOLUME_UP);
+		keymap.put(GameAction.MUTE, KeyCode.M);
+		keymap.put(GameAction.VOLUME_DOWN, KeyCode.COMMA);
+		keymap.put(GameAction.VOLUME_UP, KeyCode.PERIOD);
 
 		// KobiMcKerihan (kobimac)
-		keymap.put(KeyCode.A, GameAction.MOVE_LEFT);
-		keymap.put(KeyCode.D, GameAction.MOVE_RIGHT);
-		keymap.put(KeyCode.SPACE, GameAction.JUMP);
+		keymap.put(GameAction.MOVE_LEFT, KeyCode.A);
+		keymap.put(GameAction.MOVE_RIGHT, KeyCode.D);
+		keymap.put(GameAction.JUMP, KeyCode.SPACE);
+		
+		// Camera controls
+		keymap.put(GameAction.CAMERA_UP, KeyCode.W);
+		keymap.put(GameAction.CAMERA_DOWN, KeyCode.S);
+		keymap.put(GameAction.CAMERA_LEFT, KeyCode.A);
+		keymap.put(GameAction.CAMERA_RIGHT, KeyCode.D);
+		keymap.put(GameAction.CAMERA_FAST, KeyCode.SHIFT);
 
 	}
 }

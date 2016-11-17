@@ -2,11 +2,12 @@ package turrets.core.input;
 
 //A list of possible controls/game actions.
 public enum GameAction {
+	UNDEFINED,
+	
 	MOVE_LEFT,
 	MOVE_RIGHT,
 	JUMP,
 	BASIC_ATTACK,
-	SPECIAL_ATTACK,
 	CROUCH,
 
 	//WilliamHayward
@@ -28,4 +29,11 @@ public enum GameAction {
 	MUTE,
 	VOLUME_UP,
 	VOLUME_DOWN,
+	
+	//Freeroaming camera
+	CAMERA_LEFT,
+	CAMERA_RIGHT,
+	CAMERA_UP,
+	CAMERA_DOWN,
+	CAMERA_FAST,
 }

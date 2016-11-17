@@ -3,7 +3,9 @@ package turrets.core.input;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -23,7 +25,7 @@ public class ControlsKeyMap {
 
 	private static Logger logger = LoggerFactory.getLogger(ControlsKeyMap.class);
 	//the map of the keys to actions used by the game
-	private static Map<KeyCode, GameAction> keymap = new HashMap<>();
+	private static Map<GameAction, KeyCode> keymap = new HashMap<>();
 	//the  controller used to handle button remapping for the controls menu
 
 	private ControlsKeyMap() {
@@ -41,7 +43,7 @@ public class ControlsKeyMap {
 	 * @param action The action that is mapped to the given KeyCode
 	 */
 	public static void registerKey(KeyCode code, GameAction action) {
-		keymap.put(code, action);
+		keymap.put(action, code);
 	}
 
 	/**
@@ -51,7 +53,12 @@ public class ControlsKeyMap {
 	 * @return Returns the action corresponding to the given KeyCode.
 	 */
 	public static GameAction getGameAction(KeyCode code) {
-		return keymap.get(code);
+		for (GameAction k : keymap.keySet()) {
+			if (keymap.get(k) == code) {
+				return k;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -64,31 +71,21 @@ public class ControlsKeyMap {
 	 *         key is found returns the UNDEFINED key.
 	 */
 	public static KeyCode getKeyCode(GameAction action) {
-		for (KeyCode k : keymap.keySet()) {
-			if (keymap.get(k) == action) {
-				return k;
-			}
+		return keymap.get(action);
+	}
+	
+	/**
+	 * Return a list of all the key codes mapped to GameActions
+	 */
+	public static List<KeyCode> getAllKeyCodes() {
+		List <KeyCode> keyCodes = new ArrayList<>();
+		for (KeyCode key: keymap.values()) {
+			keyCodes.add(key);
 		}
-		return KeyCode.UNDEFINED;
+			
+		return keyCodes;
 	}
 
-	/**
-	 * Returns a string of the key associated with the specified game action. If
-	 * the active key map contains duplicate entries for a game action, the key
-	 * returned may vary between calls.
-	 *
-	 * @param action The game action for which the string is desired
-	 * @return Returns string of key associated with the specified game action.
-	 *         If no key is found returns "MISSING";.
-	 */
-	public static String getStyledKeyCode(GameAction action) {
-		for (KeyCode k : keymap.keySet()) {
-			if (keymap.get(k) == action) {
-				return k.getName();
-			}
-		}
-		return "MISSING";
-	}
 
 	/**
 	 * Returns a string of the specified game action for the player to see.
