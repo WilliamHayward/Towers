@@ -189,8 +189,7 @@ public abstract class Player extends BasicMovingEntity {
 
 		// Attacks
 		boolean basicAttackPressed = InputManager.justReleased(GameAction.BASIC_ATTACK);
-		boolean specialAttackPressed = InputManager.getActionState(GameAction.SPECIAL_ATTACK);
-		playerAttack(ms, basicAttackPressed, specialAttackPressed);
+		playerAttack(ms, basicAttackPressed);
 
 		if (strafeActive) {
 			if (InputManager.getDiffX(posX) > 0) {
@@ -231,39 +230,12 @@ public abstract class Player extends BasicMovingEntity {
 				activeBuilding = availableBuildings.get(action);
 			}
 		}
-		if (specialAttackFiring) {
-			tickSpecialAttackFire(ms);
-			return; // You can't do anything if you're firin' your lazor.
-		}
-		tickSpecialAttack(ms);
 		updateTimers(ms);
 
 		// This should be if'd
 		tickDebug();
 	}
 	
-	/**
-	 * Tick handler for special attack
-	 *
-	 * @param ms millisecond tick the player attack is being handled on
-	 */
-	private void tickSpecialAttack(long ms) {
-		if (justPressed(GameAction.SPECIAL_ATTACK)) {
-			specialAttackCharging = true;
-		}
-		if (InputManager.justReleased(GameAction.SPECIAL_ATTACK)) {
-			specialAttackCharging = false;
-			specialAttackChargeTimer = 0;
-		}
-
-		if (specialAttackCharging && InputManager.getActionState(GameAction.SPECIAL_ATTACK)) {
-			specialAttackChargeTimer += ms;
-			if (specialAttackChargeTimer > SPECIAL_ATTACK_THRESHOLD) {
-				launchSpecialAttack();
-			}
-		}
-	}
-
 	/**
 	 * Tick handler for Debug screen
 	 */
@@ -289,18 +261,6 @@ public abstract class Player extends BasicMovingEntity {
 			debug.addToDebugString(debugString);
 		}
 	}
-
-	/**
-	 * Tick handler for special attack
-	 */
-	private void tickSpecialAttackFire(long ms) {
-		specialAttackFireTimer += ms;
-
-		if (specialAttackFireTimer > SPECIAL_ATTACK_FIRE_DURATION) {
-			specialAttackFiring = false;
-			specialAttackFireTimer = 0;
-		}
-	}
 	
 	/**
 	 * Method to handle player's attack and to have a look at the attack type.
@@ -312,9 +272,8 @@ public abstract class Player extends BasicMovingEntity {
 	 *
 	 * @param ms            millisecond tick the player attack is being handled on
 	 * @param basicAttack   true if the basic attack is selected by the player
-	 * @param specialAttack true if the special attack is selected by the player
 	 */
-	protected void playerAttack(long ms, boolean basicAttack, boolean specialAttack) {
+	protected void playerAttack(long ms, boolean basicAttack) {
 		switch (currentState) {
 			case DASHING:
 			case AIR_DASHING:
@@ -337,15 +296,6 @@ public abstract class Player extends BasicMovingEntity {
 			float y = (float) Math.floor(InputManager.getMouseTileY());
 			BuildMode.getInstance().build(activeBuilding, x, y);
 		}
-	}
-
-	/**
-	 * Launches player's special attack
-	 */
-	private void launchSpecialAttack() {
-		specialAttackFiring = true;
-		specialAttackCharging = false;
-		specialAttackChargeTimer = 0;
 	}
 
 	/**
