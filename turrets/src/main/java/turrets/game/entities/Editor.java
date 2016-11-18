@@ -21,6 +21,14 @@ public class Editor extends Entity {
 	
 	Tile currentTile = new Tile(Tiles.DIRT);
 	
+	public Tile getCurrentTile() {
+		return currentTile;
+	}
+
+	public void setCurrentTile(Tile currentTile) {
+		this.currentTile = currentTile;
+	}
+
 	boolean validPosition = false;
 
 	public Editor() {

@@ -20,6 +20,7 @@ import turrets.core.sound.SoundLoad;
 import turrets.game.tiles.TileInfo;
 import turrets.game.world.World;
 import turrets.graphics.screens.*;
+import turrets.graphics.screens.controllers.EditorScreenController;
 import turrets.graphics.sprites.SpriteCache;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -70,7 +71,7 @@ public class Window extends Application {
 		}
 
 		// Init game
-		final Viewport viewport = new Viewport(resWidth, resHeight);
+		final Viewport viewport = new Viewport(resWidth / 2, resHeight);
 
 		// Init JavaFX scene
 		Canvas gameScreenCanvas = new Canvas(resWidth, resHeight);
@@ -105,12 +106,14 @@ public class Window extends Application {
 
 		Screen gameScreen = new GameScreen(viewport, gameScreenCanvas);
 		Screen debugScreen = new DebugScreen(viewport, engine, debugCanvas);
-
+		
+		EditorScreenController editor = new EditorScreenController(scene);
+		
 		// Add all screens to renderer
 		renderer.addScreen("Game", gameScreen);
 		renderer.addScreen("Debug", debugScreen);
-		
 		initGame();
+		
 		//renderer.enableScreen("Start Screen");
 
 		// Start
@@ -133,32 +136,19 @@ public class Window extends Application {
 	 */
 	public void initGame() {
 		logger.debug("Game initiation started");
-		System.out.println(editor);
-		engine.initEngine(editor);
+
 		Renderer r = engine.getRenderer();
-		// Set the original 'defaults'
-		// This is repeated code, but will not be 'repeated' later
 		r.hideAllScreens();
 		r.getScreen("Game").setVisible(true);
-		SoundCache.play("game");
-		engine.start();
-	}
-
-	/**
-	 * Initiate the editor
-	 */
-	public void initEditor() {
-		logger.debug("Editor initiation started");
+		
+		System.out.println(editor);
 		engine.initEngine(editor);
-		Renderer r = engine.getRenderer();
 		// Set the original 'defaults'
 		// This is repeated code, but will not be 'repeated' later
-		r.hideAllScreens();
-		r.getScreen("Menu").setVisible(true);
 		SoundCache.play("game");
 		engine.start();
 	}
-
+	
 	/**
 	 * Switch between the current screen and a specified screen
 	 *

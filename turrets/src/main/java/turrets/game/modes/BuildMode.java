@@ -6,7 +6,7 @@ import turrets.game.entities.buildings.turrets.Cannon;
 import turrets.game.entities.buildings.turrets.MachineGun;
 import turrets.game.world.World;
 
-public class BuildMode {
+public class BuildMode extends GameMode {
 	private static BuildMode instance = new BuildMode();
 	private BuildMode() {
 		

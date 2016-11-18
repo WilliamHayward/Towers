@@ -11,6 +11,9 @@ import turrets.game.entities.enemies.Emitter;
 import turrets.game.entities.enemies.Enemy;
 import turrets.game.entities.players.BluePlayer;
 import turrets.game.entities.players.Player;
+import turrets.game.modes.BuildMode;
+import turrets.game.modes.GameMode;
+import turrets.game.modes.GameModes;
 import turrets.game.tiles.TileInfo;
 import turrets.graphics.Camera;
 
@@ -33,13 +36,15 @@ public class World {
 	static final int NUM_MOBS_PER_CHUNK = 50; // default number of mobs that can be generated in a chunk
 	private boolean renderHitboxes = false; // whether or not hit boxes are shown.
 	private List<Entity> allEntities = new ArrayList<>(); // list of all entities
-	private List<Player> playerEntities = new ArrayList<>(); // list of player entities
+	private List<Entity> playerEntities = new ArrayList<>(); // list of player entities
 	private List<Entity> enemyEntities = new ArrayList<>();
 	private List<Entity> turretEntities = new ArrayList<>();
 	private List<Entity> trapEntities = new ArrayList<>();
 	private List<Entity> newEntities = new ArrayList<>(); // list of new entities to be added
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
+	
+	private GameMode gameMode;
 	
 	private List<Coordinate> spawns = new ArrayList<>();
 	
@@ -180,7 +185,7 @@ public class World {
 	 *
 	 * @return list of Player Entities
 	 */
-	public List<Player> getPlayerEntities() {
+	public List<Entity> getPlayerEntities() {
 		return playerEntities;
 	}
 
@@ -222,8 +227,8 @@ public class World {
 	private void addEntities() {
 		for (Entity entity : newEntities) {
 			allEntities.add(entity);
-			if (entity instanceof Player) {
-				playerEntities.add((Player) entity);
+			if (entity instanceof Player || entity instanceof Editor) {
+				playerEntities.add(entity);
 			} else if (entity instanceof Enemy) {
 				enemyEntities.add((Enemy) entity);
 			} else if (entity instanceof Turret) {
@@ -242,7 +247,7 @@ public class World {
 	private void removeEntities() {
 		for (Entity entity : deleteEntities) {
 			allEntities.remove(entity);
-			if (entity instanceof Player) {
+			if (entity instanceof Player || entity instanceof Editor) {
 				playerEntities.remove(entity);
 			} else if (entity instanceof Enemy) {
 				enemyEntities.remove(entity);
@@ -277,7 +282,11 @@ public class World {
 		} else if (!newEntities.isEmpty() && newEntities.get(0) instanceof Player) {
 			return (Player) newEntities.get(0);
 		}
-		return playerEntities.isEmpty() ? null : playerEntities.get(0);
+		return playerEntities.isEmpty() ? null : (Player) playerEntities.get(0);
+	}
+	
+	public Editor getEditor() {
+		return playerEntities.isEmpty() ? null : (Editor) playerEntities.get(0);
 	}
 
 	/**
@@ -344,5 +353,13 @@ public class World {
 
 	public List<Entity> getEnemyEntities() {
 		return enemyEntities;
+	}
+
+	public GameModes getGameMode() {
+		return gameMode;
+	}
+
+	public void setGameMode(GameModes gameMode) {
+		this.gameMode = gameMode;
 	}
 }
