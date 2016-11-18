@@ -20,6 +20,15 @@ public class Room {
 	private String name;
 	private WorldTiles blocks; //array of blocks currently in chunk
 	private Map<Integer, Coordinate> waypoints;
+	
+	public Room() {
+		blocks = new WorldTiles(WIDTH, HEIGHT, WIDTH);
+		for (int x = 0; x < WIDTH; x++) {
+			for (int y = 0; y < HEIGHT; y++) {
+				blocks.get(x, y).setTileType(TileInfo.get(Tiles.AIR));	
+			}
+		}
+	}
 
 	/**
 	 * Standard chunk constructor. Receives a starting X position and a seed and will randomly generate the rest in a
@@ -29,10 +38,10 @@ public class Room {
 	 * @param mapSeed   map seed of the world
 	 * @throws FileNotFoundException 
 	 */
-	public Room() {
+	public Room(String file) {
 		waypoints = new HashMap<>();
 		try {
-			load("rooms/test.room");
+			load(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

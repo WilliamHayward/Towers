@@ -4,11 +4,14 @@ import javafx.animation.AnimationTimer;
 import turrets.core.input.GameAction;
 import turrets.core.input.InputManager;
 import turrets.core.sound.SoundCache;
+import turrets.game.modes.GameModes;
 import turrets.game.tiles.TileInfo;
 import turrets.game.tiles.Tiles;
 import turrets.game.world.World;
 import turrets.graphics.Camera;
 import turrets.graphics.Renderer;
+import turrets.graphics.screens.Screen;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,15 +191,22 @@ public class Engine extends AnimationTimer {
 	 *
 	 * @throws IllegalStateException
 	 */
-	public void initEngine() {
+	public void initEngine(boolean editor) {
 		cameras = new ArrayList<>();
 		initGeneric();
 		initDefaults();
 		initWorld(World.getInstance());
-		World.getInstance().loadRoom();
 		Camera camera = new Camera(renderer.getViewport(), 0, 0);
 		cameras.add(camera);
-		World.getInstance().start(camera);
+		if (editor) {
+			System.out.println("00000");
+			World.getInstance().loadEmptyRoom();
+			World.getInstance().startEditor(camera);
+			World.getInstance().setGameMode(GameModes.EDITOR);
+		} else {
+			World.getInstance().loadRoom();
+			World.getInstance().startPlay(camera);
+		}
 	}
 
 	private void initGeneric() {

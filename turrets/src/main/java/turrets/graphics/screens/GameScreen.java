@@ -2,11 +2,16 @@ package turrets.graphics.screens;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import turrets.game.entities.Editor;
 import turrets.game.entities.Entity;
+import turrets.game.modes.GameModes;
+import turrets.game.tiles.Tile;
 import turrets.game.world.*;
 import turrets.graphics.LayerList;
 import turrets.graphics.Viewport;
@@ -61,6 +66,34 @@ public class GameScreen extends Screen {
 	
 		//Render entities
 		renderEntities(World.getInstance().getAllEntities(), ms);
+		
+		//Render HUD
+		renderHUD(World.getInstance().getGameMode());
+	}
+	
+	private void renderHUD(GameModes mode) {
+		int bottom = viewport.getResHeight();
+		int right = viewport.getResWidth();
+		
+		switch (mode) {
+			case EDITOR:
+				gc.setFill(Color.WHITE);
+				gc.fillRect(0, bottom - 100, right, 100);
+				gc.setFill(Color.BLACK);
+				gc.fillRect(0, bottom - 102, right, 2);
+				Button test = new Button("Test");
+				//test.setGraphic(value);
+				Editor editor = World.getInstance().getEditor();
+				if (editor == null) {
+					return;
+				}
+				Tile currentTile = editor.getCurrentTile();
+				Sprite sprite = currentTile.getSprite();
+				gc.drawImage(sprite.getFrame(), right - sprite.getWidth() - 10, bottom - sprite.getHeight() - 50);
+				break;
+			default:
+				break;
+		}
 	}
 	
 	private void renderBackground(long ms) {

@@ -3,6 +3,7 @@ package turrets.game.world;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import turrets.game.debug.Debug;
+import turrets.game.entities.Editor;
 import turrets.game.entities.Entity;
 import turrets.game.entities.buildings.traps.Trap;
 import turrets.game.entities.buildings.turrets.Turret;
@@ -10,6 +11,9 @@ import turrets.game.entities.enemies.Emitter;
 import turrets.game.entities.enemies.Enemy;
 import turrets.game.entities.players.BluePlayer;
 import turrets.game.entities.players.Player;
+import turrets.game.modes.BuildMode;
+import turrets.game.modes.GameMode;
+import turrets.game.modes.GameModes;
 import turrets.game.tiles.TileInfo;
 import turrets.graphics.Camera;
 
@@ -32,13 +36,15 @@ public class World {
 	static final int NUM_MOBS_PER_CHUNK = 50; // default number of mobs that can be generated in a chunk
 	private boolean renderHitboxes = false; // whether or not hit boxes are shown.
 	private List<Entity> allEntities = new ArrayList<>(); // list of all entities
-	private List<Player> playerEntities = new ArrayList<>(); // list of player entities
+	private List<Entity> playerEntities = new ArrayList<>(); // list of player entities
 	private List<Entity> enemyEntities = new ArrayList<>();
 	private List<Entity> turretEntities = new ArrayList<>();
 	private List<Entity> trapEntities = new ArrayList<>();
 	private List<Entity> newEntities = new ArrayList<>(); // list of new entities to be added
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
+	
+	private GameModes gameMode = GameModes.PLAY;
 	
 	private List<Coordinate> spawns = new ArrayList<>();
 	
@@ -58,8 +64,14 @@ public class World {
 		tiles = new WorldTiles(Room.WIDTH, Room.HEIGHT, Room.WIDTH);
 	}
 
-	public void start(Camera camera) {
+	public void startPlay(Camera camera) {
 		Player player = new BluePlayer();
+		camera.setFollow(player);
+		this.addEntity(player);
+	}
+	
+	public void startEditor(Camera camera) {
+		Editor player = new Editor();
 		camera.setFollow(player);
 		this.addEntity(player);
 	}
@@ -173,7 +185,7 @@ public class World {
 	 *
 	 * @return list of Player Entities
 	 */
-	public List<Player> getPlayerEntities() {
+	public List<Entity> getPlayerEntities() {
 		return playerEntities;
 	}
 
@@ -215,8 +227,8 @@ public class World {
 	private void addEntities() {
 		for (Entity entity : newEntities) {
 			allEntities.add(entity);
-			if (entity instanceof Player) {
-				playerEntities.add((Player) entity);
+			if (entity instanceof Player || entity instanceof Editor) {
+				playerEntities.add(entity);
 			} else if (entity instanceof Enemy) {
 				enemyEntities.add((Enemy) entity);
 			} else if (entity instanceof Turret) {
@@ -235,7 +247,7 @@ public class World {
 	private void removeEntities() {
 		for (Entity entity : deleteEntities) {
 			allEntities.remove(entity);
-			if (entity instanceof Player) {
+			if (entity instanceof Player || entity instanceof Editor) {
 				playerEntities.remove(entity);
 			} else if (entity instanceof Enemy) {
 				enemyEntities.remove(entity);
@@ -270,7 +282,11 @@ public class World {
 		} else if (!newEntities.isEmpty() && newEntities.get(0) instanceof Player) {
 			return (Player) newEntities.get(0);
 		}
-		return playerEntities.isEmpty() ? null : playerEntities.get(0);
+		return playerEntities.isEmpty() ? null : (Player) playerEntities.get(0);
+	}
+	
+	public Editor getEditor() {
+		return playerEntities.isEmpty() ? null : (Editor) playerEntities.get(0);
 	}
 
 	/**
@@ -310,7 +326,7 @@ public class World {
 	}
 	
 	public void loadRoom() {
-		Room room = new Room();
+		Room room = new Room("rooms/test.room");
 
 		for (int x = 0; x < Room.WIDTH; x++) {
 			for (int y = 0; y < Room.HEIGHT; y++) {
@@ -322,8 +338,28 @@ public class World {
 		emitter.setPosition(room.getWaypoints().get(0).getX(), room.getWaypoints().get(0).getY());
 		this.addEntity(emitter);		
 	}
+	
+	public void loadEmptyRoom() {
+		Room room = new Room();
+
+		for (int x = 0; x < Room.WIDTH; x++) {
+			for (int y = 0; y < Room.HEIGHT; y++) {
+				TileInfo chunkTile = room.getBlocks().get(x, y).getTileType();
+				tiles.get(x, y).setTileType(chunkTile);
+			}
+		}
+
+	}
 
 	public List<Entity> getEnemyEntities() {
 		return enemyEntities;
+	}
+
+	public GameModes getGameMode() {
+		return gameMode;
+	}
+
+	public void setGameMode(GameModes gameMode) {
+		this.gameMode = gameMode;
 	}
 }

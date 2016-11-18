@@ -20,6 +20,7 @@ import turrets.core.sound.SoundLoad;
 import turrets.game.tiles.TileInfo;
 import turrets.game.world.World;
 import turrets.graphics.screens.*;
+import turrets.graphics.screens.controllers.EditorScreenController;
 import turrets.graphics.sprites.SpriteCache;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -32,9 +33,11 @@ import java.io.IOException;
  */
 public class Window extends Application {
 	private static final Logger logger = LoggerFactory.getLogger(Window.class);
+	
+	private boolean editor = false;
 
 	private Settings settings = new Settings();
-	private static final Engine engine = new Engine();
+	private Engine engine = new Engine();
 	private static int resWidth;
 	private static int resHeight;
 	private boolean loaded;
@@ -68,7 +71,7 @@ public class Window extends Application {
 		}
 
 		// Init game
-		final Viewport viewport = new Viewport(resWidth, resHeight);
+		final Viewport viewport = new Viewport(resWidth / 2, resHeight);
 
 		// Init JavaFX scene
 		Canvas gameScreenCanvas = new Canvas(resWidth, resHeight);
@@ -103,12 +106,14 @@ public class Window extends Application {
 
 		Screen gameScreen = new GameScreen(viewport, gameScreenCanvas);
 		Screen debugScreen = new DebugScreen(viewport, engine, debugCanvas);
-
+		
+		EditorScreenController editor = new EditorScreenController(scene);
+		
 		// Add all screens to renderer
 		renderer.addScreen("Game", gameScreen);
 		renderer.addScreen("Debug", debugScreen);
-
-		Window.initGame();
+		initGame();
+		
 		//renderer.enableScreen("Start Screen");
 
 		// Start
@@ -127,28 +132,30 @@ public class Window extends Application {
 	}
 
 	/**
-	 * Initiate the game, called when start button is pressed. Disables the
-	 * start screen, enables the difficulty screen and starts the engine.
+	 * Initiate the game
 	 */
-	public static void initGame() {
+	public void initGame() {
 		logger.debug("Game initiation started");
-		engine.initEngine();
+
 		Renderer r = engine.getRenderer();
-		// Set the original 'defaults'
-		// This is repeated code, but will not be 'repeated' later
 		r.hideAllScreens();
 		r.getScreen("Game").setVisible(true);
+		
+		System.out.println(editor);
+		engine.initEngine(editor);
+		// Set the original 'defaults'
+		// This is repeated code, but will not be 'repeated' later
 		SoundCache.play("game");
 		engine.start();
 	}
-
+	
 	/**
 	 * Switch between the current screen and a specified screen
 	 *
 	 * @param currentScreenID StringID of the current Screen
 	 * @param newScreenID     StringID of the desiredScreen
 	 */
-	public static void goToScreen(String currentScreenID, String newScreenID) {
+	public void goToScreen(String currentScreenID, String newScreenID) {
 		Renderer r = engine.getRenderer();
 		r.disableScreen(currentScreenID);
 		r.enableScreen(newScreenID);
@@ -161,7 +168,7 @@ public class Window extends Application {
 	 * @param screenID      screenID of selected Screen
 	 * @param otherScreenID screenID of another selected Screen
 	 */
-	public static void toggleScreens(String screenID, String otherScreenID) {
+	public void toggleScreens(String screenID, String otherScreenID) {
 		if (engine.getRenderer().isActiveScreen(screenID)) {
 			goToScreen(screenID, otherScreenID);
 		} else {
@@ -174,7 +181,7 @@ public class Window extends Application {
 	 *
 	 * @return the engine
 	 */
-	public static Engine getEngine() {
+	public Engine getEngine() {
 		return engine;
 	}
 
@@ -219,6 +226,17 @@ public class Window extends Application {
 
 	public void begin() {
 		launch();
+	}
+	
+	public void begin(String mode) {
+		switch (mode) {
+		case "editor":
+			this.editor = true;
+			System.out.println("EDITOR YO");
+			break;
+		}
+		launch();
+		System.out.println("EDITOR YO");
 	}
 
 	public static void exit() {

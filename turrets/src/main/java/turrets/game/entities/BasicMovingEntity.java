@@ -18,9 +18,6 @@ public abstract class BasicMovingEntity extends StateEntity {
 	protected boolean renderHealthbar = true;
 	protected int maxHealth = 100;
 	protected int currentHealth = 100;
-	protected boolean renderManabar = false;
-	protected int maxMana = 100;
-	protected int currentMana = 0;
 	protected boolean stunned = false;
 	protected boolean marked = false;
 	protected boolean gliding = false;
@@ -56,33 +53,12 @@ public abstract class BasicMovingEntity extends StateEntity {
 	public int getCurrentHealth() {
 		return currentHealth;
 	}
-
-	/**
-	 * Getter for the BME's max mana
-	 */
-	public int getMaxMana() {
-		return maxMana;
-	}
-
-	/**
-	 * Turns on rendering of the BME's mana bar
-	 */
-	public void enableManaBar() {
-		renderManabar = true;
-	}
 	
 	/**
 	 * Turns off rendering of the BME's health bar
 	 */
 	public void disableHealthBar() {
 		renderHealthbar = false;
-	}
-
-	/**
-	 * Getter for the BME's current mana
-	 */
-	public int getCurrentMana() {
-		return currentMana;
 	}
 
 	/**
@@ -117,19 +93,6 @@ public abstract class BasicMovingEntity extends StateEntity {
 		addHealth(health);
 		if (currentHealth <= 0) {
 			this.kill(cause);
-		}
-	}
-
-	/**
-	 * Adjusts the BME's mana by the input amount
-	 */
-	public void addMana(int mana) {
-		currentMana += mana;
-		if (currentMana > maxMana) {
-			currentMana = maxMana;
-		}
-		if (currentMana < 0) {
-			currentMana = 0;
 		}
 	}
 
@@ -201,18 +164,6 @@ public abstract class BasicMovingEntity extends StateEntity {
 		if (marked) {
 			gc.setFill(new Color(1, 0, 0, 0.5));
 			gc.fillRect(x, y, bounds.getWidth() * tileSize, bounds.getHeight() * tileSize);
-		}
-
-		if (renderManabar) {
-			float manaPercent = currentMana / (float) maxMana;
-			// blue bit
-			gc.setFill(new Color(0, 0, 1, 1));
-			gc.fillRect(x, y - 2 * (tileSize / 2), bounds.getWidth() * tileSize * manaPercent, 2 * (tileSize / 10));
-
-			// Empty bit
-			gc.setFill(new Color(0.3, 0.3, 0.3, 1));
-			gc.fillRect(x + bounds.getWidth() * tileSize * manaPercent, y - 2 * (tileSize / 2),
-					bounds.getWidth() * tileSize * (1 - manaPercent), 2 * (tileSize / 10));
 		}
 	}
 

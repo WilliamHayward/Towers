@@ -26,7 +26,7 @@ public class QuitCommands extends Command {
 	}
 	@Override
 	String execute(Object[] arguments) {
-		Window.getEngine().getRenderer().disableScreen("Debug Console");
+		//Window.getEngine().getRenderer().disableScreen("Debug Console");
 		return "Quitting";
 	}
 	
