@@ -21,11 +21,8 @@ import turrets.graphics.Viewport;
  */
 public class InputManager implements EventHandler<InputEvent> {
 	private static Logger logger = LoggerFactory.getLogger(InputManager.class);
-	private static Map<GameAction, Boolean> prevKeyStates = new HashMap<>();
-	private static Map<GameAction, Boolean> keyStates = new HashMap<>();
-	private static Map<GameAction, Boolean> doubleTapKeyStates = new HashMap<>();
-	private static Map<GameAction, Long> keyReleaseTimes = new HashMap<>();
-	private static final float TIME_INTERVAL = 100f; //100 ms
+	private static Map<KeyCode, Boolean> prevKeyStates = new HashMap<>();
+	private static Map<KeyCode, Boolean> keyStates = new HashMap<>();
 	private static final KeyCode[] secretCodeOrder = { KeyCode.UP, KeyCode.UP, KeyCode.DOWN, KeyCode.DOWN, KeyCode.LEFT,
 			KeyCode.RIGHT, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.B, KeyCode.A, KeyCode.ENTER };
 	private int secretCodeProgress = 0;
@@ -33,8 +30,8 @@ public class InputManager implements EventHandler<InputEvent> {
 	private static Viewport viewport;
 	private static double mouseX;
 	private static double mouseY;
-
-	private GameAction mouseAction = GameAction.BASIC_ATTACK;
+	
+	private KeyCode mouseLeft = KeyCode.KANJI;
 
 	static {
 		//Prefill the keystate maps with false's
@@ -54,35 +51,34 @@ public class InputManager implements EventHandler<InputEvent> {
 	}
 
 	public static void updateKeyStates() {
-		for (GameAction action : keyStates.keySet()) {
-			prevKeyStates.put(action, keyStates.get(action));
+		for (KeyCode key : keyStates.keySet()) {
+			prevKeyStates.put(key , keyStates.get(key));
 		}
 	}
 
 	public static void clearKeyStates() {
-		for (GameAction gameAction : GameAction.values()) {
-			prevKeyStates.put(gameAction, false);
-			keyStates.put(gameAction, false);
-			doubleTapKeyStates.put(gameAction, false);
-			keyReleaseTimes.put(gameAction, 0L);
+		for (KeyCode key: ControlsKeyMap.getAllKeyCodes()) {
+			prevKeyStates.put(key, false);
+			keyStates.put(key, false);
 
 		}
 	}
 
 	public static boolean getActionState(GameAction action) {
-		return keyStates.get(action);
+		//TODO: Implenent second set of states for mouse, check against both 
+		KeyCode key = ControlsKeyMap.getKeyCode(action);
+		return keyStates.get(key);
 	}
 
 	public static boolean justPressed(GameAction action) {
-		return keyStates.get(action) && !prevKeyStates.get(action);
+		 
+		KeyCode key = ControlsKeyMap.getKeyCode(action);
+		return keyStates.get(key) && !prevKeyStates.get(key);
 	}
 
-	public static boolean justReleased(GameAction action) {
-		return prevKeyStates.get(action) && !keyStates.get(action);
-	}
-
-	public static boolean getDoublePressed(GameAction action) {
-		return doubleTapKeyStates.get(action);
+	public static boolean justReleased(GameAction action) { 
+		KeyCode key = ControlsKeyMap.getKeyCode(action);
+		return prevKeyStates.get(key) && !keyStates.get(key);
 	}
 
 	public static void setViewport(Viewport port) {
@@ -175,22 +171,10 @@ public class InputManager implements EventHandler<InputEvent> {
 		}
 	}
 
-	/**
-	 * For test use only Sets the value of action to the input state
-	 */
-	public static void setTestValue(GameAction action, boolean state) {
-		keyStates.put(action, state);
-	}
-
-	public static void setDoubleKeyTestValue(GameAction action, boolean state) {
-		doubleTapKeyStates.put(action, state);
-	}
-
 	public static void clearAllValues() {
-		for (GameAction gameAction : GameAction.values()) {
-			prevKeyStates.put(gameAction, false);
-			keyStates.put(gameAction, false);
-			doubleTapKeyStates.put(gameAction, false);
+		for (KeyCode key : ControlsKeyMap.getAllKeyCodes()) {
+			prevKeyStates.put(key, false);
+			keyStates.put(key, false);
 		}
 
 	}
@@ -199,28 +183,23 @@ public class InputManager implements EventHandler<InputEvent> {
 		EventType<?> type = e.getEventType();
 		if (type == KeyEvent.KEY_PRESSED) {
 			KeyCode keyCode = ((KeyEvent) e).getCode();
-			reMap(keyCode);
 			GameAction action = ControlsKeyMap.getGameAction(keyCode);
-			keyStates.put(action, true);
-			if (action != null && System.currentTimeMillis() - keyReleaseTimes.get(action) < TIME_INTERVAL) {
-				doubleTapKeyStates.put(action, true);
+			if (action == null) {
+				return;
 			}
+			reMap(keyCode);
+			keyStates.put(keyCode, true);
 		} else if (type == KeyEvent.KEY_RELEASED) {
 			KeyCode keyCode = ((KeyEvent) e).getCode();
-			GameAction action = ControlsKeyMap.getGameAction(keyCode);
-			keyStates.put(action, false);
-			keyReleaseTimes.put(action, System.currentTimeMillis());
-			doubleTapKeyStates.put(action, false);
+			keyStates.put(keyCode, false);
 			processSecretCode(keyCode);
 		} else if (type == MouseEvent.MOUSE_MOVED) {
 			updateMousePosition(e);
 		} else if (type == MouseEvent.MOUSE_DRAGGED || type == MouseEvent.MOUSE_PRESSED) {
 			updateMousePosition(e);
-			GameAction action = mouseAction;
-			keyStates.put(action, true);
+			keyStates.put(mouseLeft, true);
 		} else if (type == MouseEvent.MOUSE_RELEASED) {
-			GameAction action = mouseAction;
-			keyStates.put(action, false);
+			keyStates.put(mouseLeft, false);
 		}
 	}
 
