@@ -16,8 +16,8 @@ public abstract class BasicMovingEntity extends StateEntity {
 	protected float moveSpeed = 5;
 	protected float jumpSpeed = -15;
 	protected boolean renderHealthbar = true;
-	protected int maxHealth = 100;
-	protected int currentHealth = 100;
+	protected float maxHealth = 100;
+	protected float currentHealth = 100;
 	protected boolean stunned = false;
 	protected boolean marked = false;
 	protected boolean gliding = false;
@@ -34,7 +34,7 @@ public abstract class BasicMovingEntity extends StateEntity {
 	/**
 	 * Getter for the BME's max health
 	 */
-	public int getMaxHealth() {
+	public float getMaxHealth() {
 		return maxHealth;
 	}
 	
@@ -43,14 +43,14 @@ public abstract class BasicMovingEntity extends StateEntity {
 	 * 
 	 * @param newHealth Integer greater than 0
 	 */
-	public void setMaxHealth(int newHealth) {
+	public void setMaxHealth(float newHealth) {
 		this.maxHealth = newHealth;
 	}
 
 	/**
 	 * Getter for the BME's current health
 	 */
-	public int getCurrentHealth() {
+	public float getCurrentHealth() {
 		return currentHealth;
 	}
 	

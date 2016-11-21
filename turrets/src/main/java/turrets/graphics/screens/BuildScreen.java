@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import turrets.game.entities.buildings.Building;
 import turrets.game.modes.BuildMode;
 import turrets.game.modes.BuildingList;
 import turrets.game.world.World;
@@ -45,9 +46,9 @@ public class BuildScreen extends Screen {
 		int right = viewport.getResWidth();
 		int bottom = viewport.getResHeight();
 
-		BuildingList currentBuilding = World.getInstance().getFirstPlayer().getActiveBuilding();
+		Building currentBuilding = World.getInstance().getFirstPlayer().getActiveBuilding();
 		gc.setFill(Color.BLACK);
-		gc.fillText(BuildMode.getInstance().getBuildingName(currentBuilding), right - 5, bottom - 5);
+		gc.fillText(currentBuilding.getName(), right - 5, bottom - 5);
 		
 		gc.setTextAlign(TextAlignment.RIGHT);
 	}

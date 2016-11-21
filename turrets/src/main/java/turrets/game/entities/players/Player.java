@@ -11,6 +11,8 @@ import turrets.game.entities.AABB;
 import turrets.game.entities.BasicMovingEntity;
 import turrets.game.entities.Entity;
 import turrets.game.entities.EntityState;
+import turrets.game.entities.buildings.Building;
+import turrets.game.entities.buildings.turrets.MachineGun;
 import turrets.game.mechanics.BodyPart;
 import turrets.game.mechanics.Side;
 import turrets.game.modes.BuildMode;
@@ -28,7 +30,7 @@ public abstract class Player extends BasicMovingEntity {
 	protected static final float EPSILON = 0.00001f;
 
 	protected Map<GameAction, BuildingList> availableBuildings = new HashMap<>();
-	protected BuildingList activeBuilding = BuildingList.MACHINE_GUN;
+	protected Building activeBuilding = null;
 	
 	protected long knockBackDuration = 1000L;
 	protected long knockBackEndDuration = 750L;
@@ -65,11 +67,11 @@ public abstract class Player extends BasicMovingEntity {
 		this.name = name;
 	}
 
-	public BuildingList getActiveBuilding() {
+	public Building getActiveBuilding() {
 		return activeBuilding;
 	}
 
-	public void setActiveBuilding(BuildingList activeBuilding) {
+	public void setActiveBuilding(Building activeBuilding) {
 		this.activeBuilding = activeBuilding;
 	}
 
@@ -181,10 +183,14 @@ public abstract class Player extends BasicMovingEntity {
 		
 		for (GameAction action: availableBuildings.keySet()) {
 			if (InputManager.justPressed(action)) {
-				activeBuilding = availableBuildings.get(action);
+				activeBuilding = BuildMode.getInstance().getBuilding(availableBuildings.get(action));
 			}
 		}
 		updateTimers(ms);
+		
+		if (activeBuilding != null) {
+			activeBuilding.entityLoop(ms);
+		}
 
 		// This should be if'd
 		tickDebug();
@@ -202,7 +208,9 @@ public abstract class Player extends BasicMovingEntity {
 			debugString += "# of Players: " + world.getPlayerEntities().size() + "\n";
 
 			debugString += "# of Enemies: " + world.getEnemyEntities().size() + "\n";
-			debugString += "Current Building: " + BuildMode.getInstance().getBuildingName(activeBuilding) + "\n";
+			if (activeBuilding != null) {
+				debugString += "Current Building: " + activeBuilding.getName() + "\n";
+			}
 			debugString += "HP: " + getCurrentHealth() + "\n";
 			debugString += "X: " + String.format("%.2f", posX) + ", Y: " + String.format("%.2f", posY) + "\n";
 			debugString += "velX: " + String.format("%.2f", velX) + ", velY: " + String.format("%.2f", velY) + "\n";
@@ -242,7 +250,9 @@ public abstract class Player extends BasicMovingEntity {
 		if (basicAttack) {
 			float x = (float) Math.floor(InputManager.getMouseTileX());
 			float y = (float) Math.floor(InputManager.getMouseTileY());
-			BuildMode.getInstance().build(activeBuilding, x, y);
+			if (activeBuilding.validBuildingPosition()) {
+				activeBuilding.build();
+			}
 		}
 	}
 
@@ -577,7 +587,6 @@ public abstract class Player extends BasicMovingEntity {
 			gc.setFill(new Color(0, 0, 0, 0.5));
 			gc.fillRect(playerLabelX, playerLabelY, bounds.getWidth() * tileSize, 20);
 			*/
-
 		if (name != null && name.length() > 0) {
 			gc.setFill(new Color(0, 0, 0, 0.5));
 			gc.fillRect(playerLabelX, playerLabelY, 60, 20);

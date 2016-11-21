@@ -20,6 +20,7 @@ public class BuildMode extends GameMode {
 		System.out.println(buildingID + ": " + x + ", " + y);
 		Building building = getBuilding(buildingID);
 		building.setPosition(x, y);
+		building.build();
 		World.getInstance().addEntity(building);
 	}
 	

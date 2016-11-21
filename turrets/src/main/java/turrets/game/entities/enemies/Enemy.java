@@ -3,6 +3,7 @@ package turrets.game.entities.enemies;
 import java.util.List;
 import java.util.Map;
 
+import turrets.game.entities.BasicMovingEntity;
 import turrets.game.entities.Entity;
 import turrets.game.entities.buildings.traps.Trap;
 import turrets.game.entities.buildings.traps.TrapEffect;
@@ -12,12 +13,11 @@ import turrets.graphics.LayerList;
 import turrets.graphics.sprites.Sprite;
 import turrets.graphics.sprites.SpriteList;
 
-public abstract class Enemy extends Entity {
+public abstract class Enemy extends BasicMovingEntity {
 	protected Map<Integer, Coordinate> waypoints;
 	protected int destinationWaypoint = 0;
 	protected int direction = 1;
 	protected float speed;
-	protected float health;
 	protected String name = "Enemy";
 	
 	public String getName() {
@@ -29,6 +29,7 @@ public abstract class Enemy extends Entity {
 	}
 
 	protected void init() {
+		currentHealth = maxHealth;
 		layer = LayerList.ENEMIES;
 		
 	}
@@ -63,7 +64,7 @@ public abstract class Enemy extends Entity {
 		
 		// Damage
 		float damage = trap.getDPS() * seconds / this.getCollisionScale(ms);
-		health -= damage;
+		currentHealth -= damage;
 
 		// Movement
 		float modifiedSpeed = speed * trap.getSpeedModifier();
@@ -91,7 +92,7 @@ public abstract class Enemy extends Entity {
 		}
 		
 		this.setVelocity(horizontalSpeed, verticalSpeed);
-		if (health < 0) {
+		if (currentHealth < 0) {
 			die();
 		}
 	}
@@ -131,4 +132,6 @@ public abstract class Enemy extends Entity {
 	protected void onDeath(Entity cause) {
 		this.delete();
 	}
+	
+	
 }

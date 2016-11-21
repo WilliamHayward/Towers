@@ -13,6 +13,7 @@ public class Creep extends Enemy {
 
 	public Creep() {
 		name = "Creep";
+		maxHealth = 5f;
 		super.init();
 		this.setSprite(new Sprite(SpriteList.CARL));
 
@@ -22,7 +23,6 @@ public class Creep extends Enemy {
 
 		this.setSize(1f, 1f);
 		speed = 2f;
-		health = 5f;
 	}
 	
 	@Override
@@ -39,6 +39,12 @@ public class Creep extends Enemy {
 
 	@Override
 	protected void onDeath(Entity cause) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void stateUpdate(long ms) {
 		// TODO Auto-generated method stub
 		
 	}

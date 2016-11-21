@@ -10,8 +10,6 @@ import turrets.game.tiles.Tiles;
 import turrets.game.world.World;
 import turrets.graphics.Camera;
 import turrets.graphics.Renderer;
-import turrets.graphics.screens.Screen;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,5 @@
 package turrets.game.debug;
 
-import turrets.graphics.Window;
-
 public class QuitCommands extends Command {
 	
 	public enum CommandType {

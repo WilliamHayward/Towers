@@ -47,5 +47,4 @@ public class MachineGun extends Turret {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

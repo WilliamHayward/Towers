@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import turrets.game.entities.Editor;
 import turrets.game.entities.Entity;
+import turrets.game.entities.buildings.Building;
+import turrets.game.modes.BuildMode;
+import turrets.game.modes.BuildingList;
 import turrets.game.modes.GameModes;
 import turrets.game.tiles.Tile;
 import turrets.game.world.*;
@@ -81,8 +84,6 @@ public class GameScreen extends Screen {
 				gc.fillRect(0, bottom - 100, right, 100);
 				gc.setFill(Color.BLACK);
 				gc.fillRect(0, bottom - 102, right, 2);
-				Button test = new Button("Test");
-				//test.setGraphic(value);
 				Editor editor = World.getInstance().getEditor();
 				if (editor == null) {
 					return;
@@ -90,6 +91,17 @@ public class GameScreen extends Screen {
 				Tile currentTile = editor.getCurrentTile();
 				Sprite sprite = currentTile.getSprite();
 				gc.drawImage(sprite.getFrame(), right - sprite.getWidth() - 10, bottom - sprite.getHeight() - 50);
+				break;
+			case BUILD:
+				if (World.getInstance().getFirstPlayer() == null) {
+					return;
+				}
+				Building currentBuilding = World.getInstance().getFirstPlayer().getActiveBuilding();
+				if (currentBuilding == null) {
+					return;
+				}
+				
+				currentBuilding.renderUnbuilt(gc, viewport, 1);
 				break;
 			default:
 				break;

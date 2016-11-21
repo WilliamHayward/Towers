@@ -23,7 +23,7 @@ public class Cannon extends Turret {
 				1.5f, -0.5f, 2f, 1.25f, -0.3f, 0.625f);
 		setBlocksOtherEntities(false);
 		
-		bounds = new AABB(posX, posY, sprite.getWidth() / 32, sprite.getHeight() / 32); // No collision for decoration
+		bounds = new AABB(posX, posY, sprite.getWidth() / 32, sprite.getHeight() / 32);
 
 		cooldownLength = 5f;
 		super.init();
@@ -44,7 +44,7 @@ public class Cannon extends Turret {
 	@Override
 	protected void onTerrainCollide(int tileX, int tileY, Side side) {
 		// TODO Auto-generated method stub
-		
+		System.out.print("COLLIDE");
 	}
 
 	@Override

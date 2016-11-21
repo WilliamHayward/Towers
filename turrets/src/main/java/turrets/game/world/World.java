@@ -11,8 +11,6 @@ import turrets.game.entities.enemies.Emitter;
 import turrets.game.entities.enemies.Enemy;
 import turrets.game.entities.players.BluePlayer;
 import turrets.game.entities.players.Player;
-import turrets.game.modes.BuildMode;
-import turrets.game.modes.GameMode;
 import turrets.game.modes.GameModes;
 import turrets.game.tiles.TileInfo;
 import turrets.graphics.Camera;
@@ -44,7 +42,7 @@ public class World {
 	private List<Entity> deleteEntities = new ArrayList<>(); // list of deleted entities to be deleted
 	private Debug debug = new Debug(); // debugger initialiser
 	
-	private GameModes gameMode = GameModes.PLAY;
+	private GameModes gameMode = GameModes.BUILD;
 	
 	private List<Coordinate> spawns = new ArrayList<>();
 	

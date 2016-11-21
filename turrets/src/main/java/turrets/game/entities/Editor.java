@@ -9,7 +9,6 @@ import turrets.core.input.InputManager;
 import turrets.game.mechanics.BodyPart;
 import turrets.game.mechanics.Side;
 import turrets.game.tiles.Tile;
-import turrets.game.tiles.TileInfo;
 import turrets.game.tiles.Tiles;
 import turrets.game.world.Room;
 import turrets.game.world.World;

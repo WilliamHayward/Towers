@@ -12,4 +12,10 @@ public class AcidTrap extends Trap {
 		effects.setDamage(2);
 		effects.setSpeedModifier(0.5f);
 	}
+
+	@Override
+	public boolean validBuildingPosition() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
